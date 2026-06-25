@@ -4,8 +4,9 @@ FROM nginx:alpine
 # Copy your index.html into the Nginx default html directory
 COPY index.html /usr/share/nginx/html/index.html
 
-# ADDED: Copy your logo into the Nginx default html directory
-COPY logo.png /usr/share/nginx/html/logo.png
-
 # Expose port 80 to access the website
 EXPOSE 80
+
+# Startup command: Replaces the placeholder text with the Render Secret environment variable,
+# then starts Nginx.
+CMD sed -i "s|__GROQ_API_KEY__|$GROQ_API_KEY|g" /usr/share/nginx/html/index.html && nginx -g 'daemon off;'
