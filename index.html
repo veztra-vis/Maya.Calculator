@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maya | Utility Terminal</title>
-    <link rel="icon" type="image/png" href="logo.png" onerror="this.href='mayalogo(1).png'">
+    <link rel="icon" type="image/png" href="logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -527,7 +527,8 @@
         });
 
         // --- MAYA AI ASSISTANT ---
-        var GROQ_API_KEY = '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';
+        // Using placeholder here. Render's environment variable will replace it at runtime via Dockerfile CMD
+        var GROQ_API_KEY = '__GROQ_API_KEY__';
 
         var MAYA_SYSTEM_PROMPT = 'You are the Maya Internal Credit Card AI Assistant for Maya employees only. Assist fellow agents, NOT customers. ONLY discuss Maya Black CC and Maya Landers CC.\n\nSTYLE: Short, concise. Max 4-6 bullets. Direct to the point. Use internal terms (MAD, TAD, eSOA).\nFORMATTING: STRICTLY use standard ASCII characters only. DO NOT use Unicode symbols (no arrows, en-dashes, non-breaking hyphens, or multiplication signs). Use standard hyphen (-) for minus, greater-than (>) for greater than, <= for less than or equal to, asterisk (*) for multiply, and capital P for pesos. Use standard hyphen followed by a space (- ) for bullet points.\n\nSCOPE: Maya Black CC, Maya Landers CC, Landers Cashback Everywhere Promo, CC T&Cs.\n\nBLACK CC: Premium real CC. Lounge access, dining perks, high limits, elevated cashback. Waivable annual fee, 0% installments, reduced forex.\n\nLANDERS CC: Co-branded by Maya + Landers. Earn points on all spend, accelerated at Landers. 500 pts = 1 voucher (P500), redeem in-store only. Requires Landers membership.\n\nCASHBACK PROMO (until Sept 30, 2025): Progressive tiers based on monthly accumulated CC spend. T1: P0-20K=3%; T2: >P20K-50K=4%; T3: >P50K=5% on Landers spends. Successive tiers. 2% dining, 1% other retail. Excluded: Petrol, top-up, cash advance, non-Landers supermarkets, casinos, pharma, govt, utilities, telco. 1 pt = P1. Cap P200K/yr. Redeem via app.\n\nMAD CALCULATION:\n- Calculate TAD: Total Account Debt = opening balance + new purchases + cash advances + fees + interest - payments/credits.\n- If TAD <= P500: MAD = TAD (full amount).\n- If TAD > P500: MAD = max(P500, 3% * (TAD - new purchases - cash advances - adjustments) + past due amount).\n- Apply past due first, then add 3% of remaining eligible balance.\n- Example: TAD = P35,000; new purchases = P5,000; cash adv = P2,000; adjustments = P0; past due = P1,200. MAD = max(P500, 0.03 * (35,000 - 5,000 - 2,000 - 0) + 1,200) = 0.03 * 28,000 + 1,200 = P2,040.\n\nFINANCE: Unpaid/late = interest. Daily interest = daily balance * (monthly rate / 30).\n\nMISSED PAYMENT: 30 days=locked, 90 days=suspended. Auto-deduct from Maya accounts.\n\nPAYMENT ORDER: Cash adv fees > Penalty > Other fees > Annual > Interest > Cash adv > Installments > Purchases.\n\neSOA: 30-day dispute. LOST CARD: Report via app immediately. COOLING-OFF: 2 days. SUPP: Shared limit. FOREX: Applies to foreign txns.\n\nDECLINE: Prepaid cards, loans, savings, crypto. Non-Maya topics: "This is outside my knowledge base. I only assist with Maya Black CC and Maya Landers CC."';
 
@@ -675,9 +676,10 @@
             var message = input.value.trim();
             if (!message) return;
 
-            if (GROQ_API_KEY === 'gsk_your_api_key_here') {
+            // Check if the key was injected properly by Render
+            if (GROQ_API_KEY === '__GROQ_API_KEY__' || GROQ_API_KEY === '') {
                 addMayaMessage('user', message);
-                addMayaError('Groq API key not configured. Please set your <code class="bg-zinc-800 px-1 py-0.5 rounded text-[10px]">GROQ_API_KEY</code> in the script.');
+                addMayaError('API Key is missing. Make sure you added <code class="bg-zinc-800 px-1 py-0.5 rounded text-[10px]">GROQ_API_KEY</code> to Render Environment Variables.');
                 input.value = '';
                 return;
             }
@@ -731,7 +733,7 @@
 
                     var errorMsg = 'Unknown error occurred.';
                     if (errorData && errorData.error && errorData.error.message) errorMsg = errorData.error.message;
-                    else if (response.status === 401) errorMsg = 'Invalid API key. Please check your Groq API key.';
+                    else if (response.status === 401) errorMsg = 'Invalid API key. Please check your Groq API key in Render secrets.';
                     else errorMsg = 'API Error (' + response.status + '): ' + errorMsg;
                     
                     addMayaError(errorMsg);
