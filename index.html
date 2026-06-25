@@ -700,61 +700,43 @@
                 var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + GROQ_API_KEY,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + GROQ_API_KEY
                     },
                     body: JSON.stringify({
-                        model: 'gpt-oss-20b',
+                        model: 'llama3-8b-8192',
                         messages: mayaChatHistory,
-                        temperature: 0.3,
-                        max_tokens: 400,
-                        top_p: 0.9
+                        temperature: 0.7,
+                        max_tokens: 600
                     })
                 });
 
                 removeMayaTypingIndicator();
 
                 if (!response.ok) {
-                    var errorData = {};
-                    try { errorData = await response.json(); } catch(e) {}
-
-                    // RATE LIMIT — friendly toast retry with auto-backoff
-                    if (response.status === 429) {
-                        var retryAfter = 6;
-                        removeMayaRetryTimer();
-                        showToast('Server busy. Retrying in 6 seconds...');
-                        mayaChatHistory.pop();
-                        setMayaProcessing(false);
-                        mayaRetryTimer = setTimeout(function() {
-                            sendMayaMessage();
-                        }, retryAfter * 1000);
-                        return;
-                    }
-
-                    var errorMsg = 'Unknown error occurred.';
-                    if (errorData && errorData.error && errorData.error.message) errorMsg = errorData.error.message;
-                    else if (response.status === 401) errorMsg = 'Invalid API key. Please check your Groq API key in Render secrets.';
-                    else errorMsg = 'API Error (' + response.status + '): ' + errorMsg;
-                    
-                    addMayaError(errorMsg);
-                    mayaChatHistory.pop();
-                    setMayaProcessing(false);
-                    return;
+                    var errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
                 }
 
                 var data = await response.json();
-                var assistantMessage = data.choices[0].message.content;
-                mayaChatHistory.push({ role: 'assistant', content: assistantMessage });
-                addMayaMessage('assistant', assistantMessage);
+                var aiReply = data.choices[0].message.content;
 
-            } catch (err) {
+                mayaChatHistory.push({ role: 'assistant', content: aiReply });
+                addMayaMessage('assistant', formatMayaResponse(aiReply));
+
+            } catch (error) {
                 removeMayaTypingIndicator();
-                addMayaError('Network error — unable to reach Groq API. Please check your connection.');
-                mayaChatHistory.pop();
+                console.error('Maya AI Error:', error);
+                addMayaError('Connection error: ' + error.message + '. Please try again in a moment.');
+            } finally {
+                setMayaProcessing(false);
             }
-
-            setMayaProcessing(false);
         }
+
+        // Initialize chat on load
+        window.addEventListener('load', function() {
+            clearMayaChat();
+        });
     </script>
 </body>
 </html>
