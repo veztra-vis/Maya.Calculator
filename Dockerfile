@@ -9,4 +9,4 @@ EXPOSE 80
 
 # Startup command: Replaces the placeholder text with the Render Secret environment variable,
 # then starts Nginx.
-CMD sed -i "s|__GROQ_API_KEY__|$GROQ_API_KEY|g" /usr/share/nginx/html/index.html && nginx -g 'daemon off;'
+CMD sed -i "s|GROQ_API_KEY|$GROQ_API_KEY|g" /usr/share/nginx/html/index.html && nginx -g 'daemon off;'
