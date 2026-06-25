@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maya | Utility Terminal</title>
+    <link rel="icon" type="image/png" href="logo.png" onerror="this.href='mayalogo(1).png'">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        zinc: {
+                            850: '#18181b',
+                            950: '#09090b',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at 50% 50%, #18181b 0%, #09090b 100%);
+            background-attachment: fixed;
+        }
+        .ambient-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        .loader-overlay { transition: opacity 0.6s ease-out, visibility 0.6s; }
+        .hidden-loader { opacity: 0; visibility: hidden; pointer-events: none; }
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        .loader-logo { animation: logoPulse 1.8s ease-in-out infinite; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(39, 39, 42, 1);
+        }
+        .data-font { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        .typing-dot { animation: typingBounce 1.4s infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        #maya-chat::-webkit-scrollbar { width: 4px; }
+        #maya-chat::-webkit-scrollbar-track { background: transparent; }
+        #maya-chat::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+        #maya-chat::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        .header-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; }
+        .footer-logo { width: 18px; height: 18px; object-fit: contain; opacity: 0.5; }
+        .chat-logo { width: 20px; height: 20px; object-fit: contain; }
+        .logo-fallback {
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px; color: #a78bfa;
+        }
+    </style>
+</head>
+<body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
+
+    <div id="loader" class="fixed inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center loader-overlay">
+        <div class="w-16 h-16 flex items-center justify-center loader-logo mb-6">
+            <img src="logo.png" alt="Maya" class="w-16 h-16 object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="logo-fallback hidden w-16 h-16 rounded-xl bg-violet-600/20 border border-violet-500/30">M</div>
+        </div>
+        <p class="text-zinc-500 text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Maya Link...</p>
+    </div>
+
+    <div class="ambient-glow"></div>
+
+    <header class="max-w-6xl mx-auto mb-10 border-b border-zinc-800 pb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
+        <div class="flex items-center gap-4">
+            <div class="header-logo flex items-center justify-center overflow-hidden bg-zinc-800/50">
+                <img src="logo.png" alt="Maya" class="header-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <div class="logo-fallback hidden w-10 h-10 rounded-[10px] bg-violet-600/20 border border-violet-500/30 text-sm">M</div>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v1.8.0</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
+            <span id="live-date-time" class="text-xs font-mono text-zinc-400">Syncing...</span>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
+        
+        <!-- MILES CALCULATOR -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Maya Miles</h2>
+                </div>
+                <span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span>
+            </div>
+            <div class="space-y-5 flex-grow">
+                <div class="group">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Customer Spend (PHP)</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                        <input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700">
+                    </div>
+                </div>
+                <div class="group">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Multiplier Rate</label>
+                    <div class="grid grid-cols-[1fr_auto] gap-2">
+                        <select id="multiplier-select" class="bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors">
+                            <option value="1">1x (Base)</option>
+                            <option value="2">2x (Preferred)</option>
+                            <option value="5">5x (Elite)</option>
+                            <option value="10">10x (Max)</option>
+                            <option value="custom">Custom Multiplier</option>
+                        </select>
+                    </div>
+                    <input type="number" id="custom-multiplier" placeholder="Enter Multiplier (e.g. 3)" class="hidden mt-2 w-full bg-zinc-950/50 border border-emerald-500/50 rounded-lg py-2 px-3 text-emerald-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 animate-fade-in">
+                </div>
+                <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/50 mt-2">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-600 mb-1">Miles Generated</label>
+                    <div class="flex items-baseline justify-between gap-4">
+                        <div class="relative w-full">
+                            <input type="text" id="miles-input" readonly class="w-full bg-transparent border-none text-3xl font-mono font-bold text-emerald-400 focus:outline-none cursor-default data-font" value="0.00">
+                            <button onclick="copyToClipboard('miles-input')" class="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors p-1" title="Copy">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 pt-5 border-t border-zinc-800 mt-4">
+                <div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Est. Cash Value</p>
+                    <p class="text-sm font-bold text-zinc-300 data-font">₱<span id="cash-value">0.00</span></p>
+                </div>
+                <div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Processed Spend</p>
+                    <p class="text-sm font-bold text-zinc-300 data-font">₱<span id="est-spend">0.00</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINANCE CHARGE CALCULATOR -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-red-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Finance Charge</h2>
+                </div>
+                <span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span>
+            </div>
+            <div class="space-y-5 flex-grow">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label>
+                        <input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label>
+                        <input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-zinc-400">
+                        <span>Remaining Principal</span>
+                        <span class="font-mono text-zinc-200" id="fb-principal">₱0.00</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-zinc-400">
+                        <span>Interest Accrued (3%)</span>
+                        <span class="font-mono text-zinc-200" id="fb-interest">₱0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4">
+                <label class="block text-[10px] uppercase tracking-wider text-red-500/80 mb-1">Total Payable Amount</label>
+                <div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('finance-charge-result')">
+                    <p class="text-3xl font-mono font-bold text-white group-hover:text-red-400 transition-colors data-font">₱<span id="finance-charge-result">0.00</span></p>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002 2v-1M8 5a2 2 0 002 2h2a2 2 0 012 2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- LANTERN REWARDS CALCULATOR -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
+            <div class="md:w-1/2 space-y-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-1.5 h-8 bg-blue-500 rounded-full"></span>
+                        <h2 class="text-lg font-bold text-white">Lantern Rewards</h2>
+                    </div>
+                    <span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">
+                            Previous Accumulated (C)
+                            <span class="block text-[8px] normal-case tracking-normal text-zinc-600 mt-0.5">*Spend before this transaction</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label>
+                    <select id="landers-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors">
+                        <option value="landers">Landers Superstore (Progressive)</option>
+                        <option value="dining">Dining (2%)</option>
+                        <option value="other">Other Retail (1%)</option>
+                        <option value="excluded">Excluded Categories (0%)</option>
+                        <option value="custom">Custom Percentage...</option>
+                    </select>
+                    <div id="landers-custom-group" class="hidden mt-3 animate-fade-in">
+                        <label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label>
+                        <div class="relative">
+                            <input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all">
+                                <span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span>
+                            </div>
+                        <p class="text-[9px] text-zinc-600 mt-1">*Overrides automatic tiering.</p>
+                    </div>
+                </div>
+                <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800">
+                    <p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p>
+                    <p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em]">Waiting for input...</p>
+                </div>
+            </div>
+            <div class="md:w-1/2 bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center border border border-dashed border-zinc-800 relative">
+                <p class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Points Earned</p>
+                <div class="flex items-end justify-between mb-4">
+                    <p class="text-4xl md:text-5xl font-mono font-bold text-blue-400 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')">
+                        <span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span>
+                    </p>
+                    <button onclick="copyToClipboard('landers-result')" class="mb-2 p-2 hover:bg-blue-500/20 rounded-lg transition-colors text-blue-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    </button>
+                </div>
+                <div class="w-full h-px bg-zinc-800 my-4"></div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase text-zinc-500">Vouchers Earned</p>
+                        <p class="text-[9px] text-zinc-600 mt-1">500 pts = 1 Voucher (₱500)</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-mono font-bold text-white" id="voucher-result">0</p>
+                        <span class="text-[10px] text-zinc-500 uppercase">Vouchers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAYA AI ASSISTANT -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-violet-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Maya.ph AI</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="clearMayaChat()" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 text-[10px] uppercase font-bold rounded transition-colors">Clear</button>
+                    <span class="px-2 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] uppercase font-bold rounded">Module D</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mb-4 px-3 py-2 bg-violet-500/5 border border-violet-500/10 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-violet-400 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                <p class="text-[10px] text-violet-300/80 leading-relaxed">Internal Agent AI: Only answers queries about <strong class="text-violet-300">Maya Black CC</strong> and <strong class="text-violet-300">Maya Landers CC</strong>. Everything else is declined.</p>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button onclick="sendMayaQuick('What is the Maya Black Credit Card?')" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[10px] rounded-full transition-all">Maya Black</button>
+                <button onclick="sendMayaQuick('Maya Black vs Maya Landers - which should I get?')" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[10px] rounded-full transition-all">Black vs Landers</button>
+                <button onclick="sendMayaQuick('How does the Landers Cashback Everywhere promo work?')" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[10px] rounded-full transition-all">Cashback Promo</button>
+                <button onclick="sendMayaQuick('How do I calculate the Minimum Amount Due?')" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[10px] rounded-full transition-all">MAD Calc</button>
+                <button onclick="sendMayaQuick('What are the excluded categories for cashback?')" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[10px] rounded-full transition-all">Excluded Cats</button>
+                <button onclick="sendMayaQuick('How do I redeem Landers vouchers?')" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[10px] rounded-full transition-all">Redeem Voucher</button>
+            </div>
+            <div id="maya-chat" class="flex-grow h-80 overflow-y-auto space-y-3 pr-2 mb-4 scroll-smooth"></div>
+            <div class="flex gap-2">
+                <input type="text" id="maya-input" placeholder="Ask internal questions about Maya Black or Maya Landers CC..." autocomplete="off" class="flex-grow bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-4 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all" onkeydown="if(event.key==='Enter')sendMayaMessage()">
+                <button onclick="sendMayaMessage()" id="maya-send-btn" class="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg transition-colors flex items-center gap-2 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                    <span class="text-xs font-semibold hidden sm:inline">Send</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="max-w-6xl mx-auto mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-600 animate-fade-in" style="animation-delay: 0.4s;">
+        <div class="flex items-center gap-3">
+            <div class="px-2 py-1 rounded border border-zinc-800 bg-zinc-950/50">
+                <p class="text-[9px] font-mono uppercase text-emerald-500">System Normal</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <img src="logo.png" alt="" class="footer-logo" onerror="this.style.display='none'">
+                <p class="text-[10px] uppercase tracking-widest">Maya Infrastructure</p>
+            </div>
+        </div>
+        <div class="text-center md:text-right">
+            <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p>
+            <p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events-none z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+        <span class="text-xs font-medium" id="toast-message">Value Copied</span>
+    </div>
+
+    <script>
+        // --- UTILS ---
+        var formatCurrency = function(num) {
+            return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+        };
+        var parseCurrency = function(str) {
+            if(!str) return 0;
+            return parseFloat(str.replace(/[^0-9.-]+/g, "")) || 0;
+        };
+        var setupCurrencyInput = function(id) {
+            var el = document.getElementById(id);
+            el.addEventListener('blur', function() {
+                var val = parseCurrency(el.value);
+                if(val > 0) el.value = formatCurrency(val);
+                else el.value = "";
+            });
+            el.addEventListener('focus', function() {
+                var val = parseCurrency(el.value);
+                if(val > 0) el.value = val;
+            });
+            el.addEventListener('input', function() { el.dispatchEvent(new Event('calculate')); });
+        };
+        function showToast(msg) {
+            var toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg || "Value Copied";
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            setTimeout(function() { toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); }, 2000);
+        }
+        window.copyToClipboard = function(elementId) {
+            var text = document.getElementById(elementId).innerText || document.getElementById(elementId).value;
+            navigator.clipboard.writeText(text).then(function() { showToast("Value Copied"); });
+        };
+
+        // --- CLOCK ---
+        function updateClock() {
+            var now = new Date();
+            document.getElementById('live-date-time').textContent = now.toLocaleString('en-US', { 
+                month: 'short', day: 'numeric', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+        }
+        setInterval(updateClock, 1000); 
+        updateClock();
+
+        // --- LOADER ---
+        function hideLoader() {
+            var el = document.getElementById('loader');
+            if (el) el.classList.add('hidden-loader');
+        }
+        window.addEventListener('load', function() { setTimeout(hideLoader, 1200); });
+        setTimeout(hideLoader, 5000);
+
+        // --- MILES CALCULATOR ---
+        var spendInput = document.getElementById('spend-input');
+        var multSelect = document.getElementById('multiplier-select');
+        var customMult = document.getElementById('custom-multiplier');
+        var milesInput = document.getElementById('miles-input');
+        setupCurrencyInput('spend-input');
+        function calculateMiles() {
+            var val = parseCurrency(spendInput.value);
+            var isCustom = multSelect.value === 'custom';
+            var mult = isCustom ? (parseFloat(customMult.value) || 0) : parseFloat(multSelect.value);
+            var miles = (val / 40) * mult;
+            milesInput.value = formatCurrency(miles);
+            document.getElementById('cash-value').textContent = formatCurrency(miles * 0.16);
+            document.getElementById('est-spend').textContent = formatCurrency(val);
+        }
+        spendInput.addEventListener('calculate', calculateMiles);
+        spendInput.addEventListener('input', calculateMiles);
+        customMult.addEventListener('input', calculateMiles);
+        multSelect.addEventListener('change', function() {
+            if(multSelect.value === 'custom') { customMult.classList.remove('hidden'); customMult.focus(); }
+            else { customMult.classList.add('hidden'); }
+            calculateMiles();
+        });
+
+        // --- FINANCE CALCULATOR ---
+        setupCurrencyInput('loan-credit');
+        setupCurrencyInput('partial-payment');
+        function calcFinance() {
+            var loan = parseCurrency(document.getElementById('loan-credit').value);
+            var partial = parseCurrency(document.getElementById('partial-payment').value);
+            var term = parseFloat(document.getElementById('loan-term').value) || 30;
+            var held = parseFloat(document.getElementById('days-held').value) || 20;
+            var interest = (loan * 0.03) / term * held;
+            var remainingPrincipal = loan - partial;
+            var totalDue = remainingPrincipal + interest;
+            document.getElementById('fb-principal').textContent = '₱' + formatCurrency(remainingPrincipal);
+            document.getElementById('fb-interest').textContent = '₱' + formatCurrency(interest);
+            document.getElementById('finance-charge-result').textContent = formatCurrency(totalDue);
+        }
+        document.getElementById('loan-credit').addEventListener('calculate', calcFinance);
+        document.getElementById('loan-credit').addEventListener('input', calcFinance);
+        document.getElementById('partial-payment').addEventListener('calculate', calcFinance);
+        document.getElementById('partial-payment').addEventListener('input', calcFinance);
+        document.getElementById('loan-term').addEventListener('input', calcFinance);
+        document.getElementById('days-held').addEventListener('input', calcFinance);
+
+        // --- LANTERN CALCULATOR ---
+        setupCurrencyInput('landers-spend');
+        setupCurrencyInput('total-card-spend');
+        var lSpend = document.getElementById('landers-spend');
+        var lTotal = document.getElementById('total-card-spend');
+        var lCat = document.getElementById('landers-category');
+        var lCustomInput = document.getElementById('landers-custom-rate');
+        var lCustomGroup = document.getElementById('landers-custom-group');
+        function calcLantern() {
+            var A = parseCurrency(lSpend.value);
+            var C = parseCurrency(lTotal.value);
+            var cat = lCat.value;
+            var points = 0;
+            var breakdownHTML = "";
+            var T1 = 20000;
+            var T2 = 50000;
+            if (cat === 'landers') {
+                var spaceT1 = Math.max(0, T1 - C);
+                var portionT1 = Math.min(A, spaceT1);
+                var ptsT1 = portionT1 * 0.03;
+                points += ptsT1;
+                if (portionT1 > 0) breakdownHTML += '<span class="text-emerald-400">' + formatCurrency(portionT1) + ' @ 3%</span> = ' + ptsT1.toFixed(2) + ' pts<br>';
+                var spaceT2 = Math.max(0, T2 - C);
+                var portionT2 = Math.min(A, spaceT2);
+                var ptsT2 = portionT2 * 0.04;
+                points += ptsT2;
+                if (portionT2 > 0) breakdownHTML += '<span class="text-yellow-400">' + formatCurrency(portionT2) + ' @ 4%</span> = ' + ptsT2.toFixed(2) + ' pts<br>';
+                var amountInT3 = Math.min(C + A, T2) - Math.max(C, T2);
+                var ptsT3 = amountInT3 * 0.05;
+                points += ptsT3;
+                if (amountInT3 > 0) breakdownHTML += '<span class="text-purple-400">' + formatCurrency(amountInT3) + ' @ 5%</span> = ' + ptsT3.toFixed(2) + ' pts<br>';
+                if (breakdownHTML === "") breakdownHTML = "No points earned (0 amount).";
+            } else if (cat === 'dining') {
+                points = A * 0.02;
+                breakdownHTML = 'Flat Rate 2% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+            } else if (cat === 'other') {
+                points = A * 0.01;
+                breakdownHTML = 'Flat Rate 1% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+            } else if (cat === 'excluded') {
+                points = 0;
+                breakdownHTML = 'Excluded Category (0%)';
+            } else if (cat === 'custom') {
+                var customVal = parseFloat(lCustomInput.value) || 0;
+                points = A * (customVal / 100);
+                breakdownHTML = 'Custom Rate ' + customVal + '% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+            }
+            var vouchers = Math.floor(points / 500);
+            document.getElementById('landers-result').textContent = points.toFixed(2);
+            document.getElementById('voucher-result').textContent = vouchers.toLocaleString();
+            document.getElementById('tier-breakdown').innerHTML = breakdownHTML;
+        }
+        lSpend.addEventListener('calculate', calcLantern);
+        lSpend.addEventListener('input', calcLantern);
+        lTotal.addEventListener('calculate', calcLantern);
+        lCat.addEventListener('calculate', calcLantern);
+        lCustomInput.addEventListener('calculate', calcLantern);
+        lCustomInput.addEventListener('input', calcLantern);
+        lCat.addEventListener('change', function() {
+            if(lCat.value === 'custom') { lCustomGroup.classList.remove('hidden'); lCustomInput.focus(); }
+            else { lCustomGroup.classList.add('hidden'); }
+            calcLantern();
+        });
+
+        // --- MAYA AI ASSISTANT ---
+        var GROQ_API_KEY = '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';
+
+        var MAYA_SYSTEM_PROMPT = 'You are the Maya Internal Credit Card AI Assistant for Maya employees only. Assist fellow agents, NOT customers. ONLY discuss Maya Black CC and Maya Landers CC.\n\nSTYLE: Short, concise. Max 4-6 bullets. Direct to the point. Use internal terms (MAD, TAD, eSOA).\nFORMATTING: STRICTLY use standard ASCII characters only. DO NOT use Unicode symbols (no arrows, en-dashes, non-breaking hyphens, or multiplication signs). Use standard hyphen (-) for minus, greater-than (>) for greater than, <= for less than or equal to, asterisk (*) for multiply, and capital P for pesos. Use standard hyphen followed by a space (- ) for bullet points.\n\nSCOPE: Maya Black CC, Maya Landers CC, Landers Cashback Everywhere Promo, CC T&Cs.\n\nBLACK CC: Premium real CC. Lounge access, dining perks, high limits, elevated cashback. Waivable annual fee, 0% installments, reduced forex.\n\nLANDERS CC: Co-branded by Maya + Landers. Earn points on all spend, accelerated at Landers. 500 pts = 1 voucher (P500), redeem in-store only. Requires Landers membership.\n\nCASHBACK PROMO (until Sept 30, 2025): Progressive tiers based on monthly accumulated CC spend. T1: P0-20K=3%; T2: >P20K-50K=4%; T3: >P50K=5% on Landers spends. Successive tiers. 2% dining, 1% other retail. Excluded: Petrol, top-up, cash advance, non-Landers supermarkets, casinos, pharma, govt, utilities, telco. 1 pt = P1. Cap P200K/yr. Redeem via app.\n\nMAD CALCULATION:\n- Calculate TAD: Total Account Debt = opening balance + new purchases + cash advances + fees + interest - payments/credits.\n- If TAD <= P500: MAD = TAD (full amount).\n- If TAD > P500: MAD = max(P500, 3% * (TAD - new purchases - cash advances - adjustments) + past due amount).\n- Apply past due first, then add 3% of remaining eligible balance.\n- Example: TAD = P35,000; new purchases = P5,000; cash adv = P2,000; adjustments = P0; past due = P1,200. MAD = max(P500, 0.03 * (35,000 - 5,000 - 2,000 - 0) + 1,200) = 0.03 * 28,000 + 1,200 = P2,040.\n\nFINANCE: Unpaid/late = interest. Daily interest = daily balance * (monthly rate / 30).\n\nMISSED PAYMENT: 30 days=locked, 90 days=suspended. Auto-deduct from Maya accounts.\n\nPAYMENT ORDER: Cash adv fees > Penalty > Other fees > Annual > Interest > Cash adv > Installments > Purchases.\n\neSOA: 30-day dispute. LOST CARD: Report via app immediately. COOLING-OFF: 2 days. SUPP: Shared limit. FOREX: Applies to foreign txns.\n\nDECLINE: Prepaid cards, loans, savings, crypto. Non-Maya topics: "This is outside my knowledge base. I only assist with Maya Black CC and Maya Landers CC."';
+
+        var mayaChatHistory = [
+            { role: 'system', content: MAYA_SYSTEM_PROMPT },
+            { role: 'assistant', content: "Hello! I'm your Maya Internal Credit Card AI. I assist Maya agents with Maya Black CC and Maya Landers CC queries. Keep it brief and I'll do the same. What do you need help with?" }
+        ];
+        var mayaIsProcessing = false;
+        var mayaRetryTimer = null;
+
+        function getMayaChat() { return document.getElementById('maya-chat'); }
+        function getMayaInput() { return document.getElementById('maya-input'); }
+        function scrollMayaChat() { var c = getMayaChat(); c.scrollTop = c.scrollHeight; }
+
+        function makeLogoAvatar() {
+            var wrap = document.createElement('div');
+            wrap.className = 'w-7 h-7 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center shrink-0 mt-0.5 overflow-hidden';
+            var img = document.createElement('img');
+            img.src = 'logo.png';
+            img.alt = '';
+            img.className = 'chat-logo';
+            img.onerror = function() {
+                this.style.display = 'none';
+                this.nextElementSibling.style.display = 'flex';
+            };
+            wrap.appendChild(img);
+            var fb = document.createElement('div');
+            fb.className = 'logo-fallback hidden w-5 h-5 rounded bg-violet-600/20 border border-violet-500/30 text-[10px]';
+            fb.textContent = 'M';
+            wrap.appendChild(fb);
+            return wrap;
+        }
+
+        function createMsgBubble(role, html) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'flex gap-3 animate-fade-in';
+            if (role === 'user') {
+                var userBubble = document.createElement('div');
+                userBubble.className = 'ml-auto max-w-[85%]';
+                userBubble.innerHTML = '<div class="bg-violet-600/20 border border-violet-500/20 rounded-xl rounded-tr-sm px-4 py-3"><p class="text-xs text-zinc-200 leading-relaxed"></p></div>';
+                userBubble.firstChild.firstChild.textContent = html;
+                wrapper.appendChild(userBubble);
+                var userIcon = document.createElement('div');
+                userIcon.className = 'w-7 h-7 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0 mt-0.5';
+                userIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-zinc-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>';
+                wrapper.appendChild(userIcon);
+            } else {
+                wrapper.appendChild(makeLogoAvatar());
+                var aiBubble = document.createElement('div');
+                aiBubble.className = 'bg-zinc-900/80 border border-zinc-800 rounded-xl rounded-tl-sm px-4 py-3 max-w-[85%]';
+                aiBubble.innerHTML = '<div class="text-xs text-zinc-300 leading-relaxed maya-response-text"></div>';
+                aiBubble.firstChild.innerHTML = html;
+                wrapper.appendChild(aiBubble);
+            }
+            return wrapper;
+        }
+
+        function addMayaMessage(role, content) {
+            var chat = getMayaChat();
+            var wrapper = createMsgBubble(role, content);
+            chat.appendChild(wrapper);
+            scrollMayaChat();
+        }
+
+        function addMayaTypingIndicator() {
+            var chat = getMayaChat();
+            var wrapper = document.createElement('div');
+            wrapper.className = 'flex gap-3 animate-fade-in';
+            wrapper.id = 'maya-typing';
+            var avatar = makeLogoAvatar();
+            avatar.querySelector('img').style.opacity = '0.5';
+            wrapper.appendChild(avatar);
+            var dots = document.createElement('div');
+            dots.className = 'bg-zinc-900/80 border border-zinc-800 rounded-xl rounded-tl-sm px-4 py-3';
+            dots.innerHTML = '<div class="flex items-center gap-1.5 h-4"><div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div><div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div><div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div></div>';
+            wrapper.appendChild(dots);
+            chat.appendChild(wrapper);
+            scrollMayaChat();
+        }
+
+        function removeMayaTypingIndicator() {
+            var el = document.getElementById('maya-typing');
+            if (el) el.remove();
+        }
+
+        function removeMayaRetryTimer() {
+            if (mayaRetryTimer) { clearTimeout(mayaRetryTimer); mayaRetryTimer = null; }
+        }
+
+        function addMayaError(message) {
+            var chat = getMayaChat();
+            var wrapper = document.createElement('div');
+            wrapper.className = 'flex gap-3 animate-fade-in';
+            wrapper.innerHTML = '<div class="w-7 h-7 rounded-lg bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg></div><div class="bg-red-500/5 border border-red-500/20 rounded-xl rounded-tl-sm px-4 py-3 max-w-[85%]"><p class="text-xs text-red-300 leading-relaxed">' + message + '</p></div>';
+            chat.appendChild(wrapper);
+            scrollMayaChat();
+        }
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function formatMayaResponse(text) {
+            var formatted = escapeHtml(text);
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="text-violet-300">$1</strong>');
+            formatted = formatted.replace(/\n/g, '<br>');
+            
+            // Safely replace standard hyphen bullet points only at the start of a line
+            formatted = formatted.replace(/(^|<br>)- /g, '$1<span class="text-violet-400 mr-1">•</span> ');
+            
+            // Safely replace numbered lists only at the start of a line to avoid breaking math (e.g. 0.03 * 28,000)
+            formatted = formatted.replace(/(^|<br>)(\d+)\.\s/g, '$1<span class="text-violet-400 mr-1">$2.</span> ');
+            
+            return formatted;
+        }
+
+        function setMayaProcessing(state) {
+            mayaIsProcessing = state;
+            var btn = document.getElementById('maya-send-btn');
+            var input = getMayaInput();
+            if (state) { btn.disabled = true; input.disabled = true; }
+            else { btn.disabled = false; input.disabled = false; input.focus(); }
+        }
+
+        window.clearMayaChat = function() {
+            var chat = getMayaChat();
+            chat.innerHTML = '';
+            var wrapper = createMsgBubble('assistant', 'Hello! I\'m your <strong class="text-violet-400">Maya Internal Credit Card AI</strong>. I assist Maya agents with **Maya Black CC** and **Maya Landers CC** queries — features, promo mechanics, fees, payments. Keep it brief and I\'ll do the same. What do you need help with?');
+            chat.appendChild(wrapper);
+            mayaChatHistory = [
+                { role: 'system', content: MAYA_SYSTEM_PROMPT },
+                { role: 'assistant', content: "Hello! I'm your Maya Internal Credit Card AI. I assist Maya agents with Maya Black CC and Maya Landers CC queries. Keep it brief and I'll do the same. What do you need help with?" }
+            ];
+            showToast('Chat cleared');
+        };
+
+        window.sendMayaQuick = function(text) { getMayaInput().value = text; sendMayaMessage(); };
+
+        async function sendMayaMessage() {
+            if (mayaIsProcessing) return;
+
+            var input = getMayaInput();
+            var message = input.value.trim();
+            if (!message) return;
+
+            if (GROQ_API_KEY === 'gsk_your_api_key_here') {
+                addMayaMessage('user', message);
+                addMayaError('Groq API key not configured. Please set your <code class="bg-zinc-800 px-1 py-0.5 rounded text-[10px]">GROQ_API_KEY</code> in the script.');
+                input.value = '';
+                return;
+            }
+
+            addMayaMessage('user', message);
+            mayaChatHistory.push({ role: 'user', content: message });
+            input.value = '';
+            setMayaProcessing(true);
+            addMayaTypingIndicator();
+            removeMayaRetryTimer();
+
+            // Keep only the system prompt and the last 6 messages to prevent 413 Request Entity Too Large errors
+            if (mayaChatHistory.length > 7) {
+                mayaChatHistory = [mayaChatHistory[0], ...mayaChatHistory.slice(-6)];
+            }
+
+            try {
+                var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + GROQ_API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'groq/compound',
+                        messages: mayaChatHistory,
+                        temperature: 0.3,
+                        max_tokens: 400,
+                        top_p: 0.9
+                    })
+                });
+
+                removeMayaTypingIndicator();
+
+                if (!response.ok) {
+                    var errorData = {};
+                    try { errorData = await response.json(); } catch(e) {}
+
+                    // RATE LIMIT — friendly toast retry with auto-backoff
+                    if (response.status === 429) {
+                        var retryAfter = 6;
+                        removeMayaRetryTimer();
+                        showToast('Server busy. Retrying in 6 seconds...');
+                        mayaChatHistory.pop();
+                        setMayaProcessing(false);
+                        mayaRetryTimer = setTimeout(function() {
+                            sendMayaMessage();
+                        }, retryAfter * 1000);
+                        return;
+                    }
+
+                    var errorMsg = 'Unknown error occurred.';
+                    if (errorData && errorData.error && errorData.error.message) errorMsg = errorData.error.message;
+                    else if (response.status === 401) errorMsg = 'Invalid API key. Please check your Groq API key.';
+                    else errorMsg = 'API Error (' + response.status + '): ' + errorMsg;
+                    
+                    addMayaError(errorMsg);
+                    mayaChatHistory.pop();
+                    setMayaProcessing(false);
+                    return;
+                }
+
+                var data = await response.json();
+                var assistantMessage = data.choices[0].message.content;
+                mayaChatHistory.push({ role: 'assistant', content: assistantMessage });
+                addMayaMessage('assistant', assistantMessage);
+
+            } catch (err) {
+                removeMayaTypingIndicator();
+                addMayaError('Network error — unable to reach Groq API. Please check your connection.');
+                mayaChatHistory.pop();
+            }
+
+            setMayaProcessing(false);
+        }
+    </script>
+</body>
+</html>
