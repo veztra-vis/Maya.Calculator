@@ -124,7 +124,7 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-2 mt-0.5">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v2.0.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v2.2.0</p>
                 </div>
             </div>
         </div>
@@ -245,7 +245,7 @@
             </div>
         </div>
 
-        <!-- Landers REWARDS CALCULATOR -->
+        <!-- LANTERN REWARDS CALCULATOR -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between">
@@ -437,16 +437,15 @@
         
         <div class="flex items-center gap-2 p-3 bg-violet-500/5 border-b border-violet-500/10">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-violet-400 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-            <p class="text-[10px] text-violet-300/80 leading-relaxed">Internal Agent AI: Only answers queries about <strong class="text-violet-300">Maya Black CC</strong> and <strong class="text-violet-300">Maya Landers CC</strong>.</p>
+            <p class="text-[10px] text-violet-300/80 leading-relaxed">Internal Agent AI: Powered by Llama 3.3 70B. Handles Maya Black/Landers CC, After Sales, and Google Pay.</p>
         </div>
         
         <div class="flex flex-wrap gap-2 p-3 border-b border-zinc-800">
-            <button onclick="sendMayaQuick('What is the Maya Black Credit Card?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Maya Black</button>
-            <button onclick="sendMayaQuick('Maya Black vs Maya Landers - which should I get?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Black vs Landers</button>
-            <button onclick="sendMayaQuick('How does the Landers Cashback Everywhere promo work?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Cashback Promo</button>
+            <button onclick="sendMayaQuick('How do I process a CC Closure with negative balance?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">CC Closure</button>
+            <button onclick="sendMayaQuick('What are the SLA and steps for Reversal of Fees?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Reversal of Fees</button>
+            <button onclick="sendMayaQuick('How to handle uncredited Maya Miles?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Uncredited Miles</button>
+            <button onclick="sendMayaQuick('What to do if customer lost phone with Google Pay linked?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Google Pay</button>
             <button onclick="sendMayaQuick('How do I calculate the Minimum Amount Due?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">MAD Calc</button>
-            <button onclick="sendMayaQuick('What are the excluded categories for cashback?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Excluded Cats</button>
-            <button onclick="sendMayaQuick('How do I redeem Landers vouchers?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Redeem Voucher</button>
         </div>
 
         <div id="maya-chat" class="flex-grow overflow-y-auto space-y-3 p-3 pr-2 scroll-smooth"></div>
@@ -563,7 +562,7 @@
         document.getElementById('loan-term').addEventListener('input', calcFinance);
         document.getElementById('days-held').addEventListener('input', calcFinance);
 
-        // --- Landers CALCULATOR ---
+        // --- LANTERN CALCULATOR ---
         setupCurrencyInput('landers-spend');
         setupCurrencyInput('total-card-spend');
         var lSpend = document.getElementById('landers-spend');
@@ -726,11 +725,11 @@
         // Hardcoded API Key as requested
         var GROQ_API_KEY = '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';
 
-        var MAYA_SYSTEM_PROMPT = 'You are the Maya Internal Credit Card AI Assistant for Maya employees only. Assist fellow agents, NOT customers. ONLY discuss Maya Black CC and Maya Landers CC.\n\nSTYLE: Short, concise. Max 4-6 bullets. Direct to the point. Use internal terms (MAD, TAD, eSOA).\nFORMATTING: STRICTLY use standard ASCII characters only. DO NOT use Unicode symbols (no arrows, en-dashes, non-breaking hyphens, or multiplication signs). Use standard hyphen (-) for minus, greater-than (>) for greater than, <= for less than or equal to, asterisk (*) for multiply, and capital P for pesos. Use standard hyphen followed by a space (- ) for bullet points.\n\nSCOPE: Maya Black CC, Maya Landers CC, Landers Cashback Everywhere Promo, CC T&Cs.\n\nBLACK CC: Premium real CC. Lounge access, dining perks, high limits, elevated cashback. Waivable annual fee, 0% installments, reduced forex.\n\nLANDERS CC: Co-branded by Maya + Landers. Earn points on all spend, accelerated at Landers. 500 pts = 1 voucher (P500), redeem in-store only. Requires Landers membership.\n\nCASHBACK PROMO (until Sept 30, 2025): Progressive tiers based on monthly accumulated CC spend. T1: P0-20K=3%; T2: >P20K-50K=4%; T3: >P50K=5% on Landers spends. Successive tiers. 2% dining, 1% other retail. Excluded: Petrol, top-up, cash advance, non-Landers supermarkets, casinos, pharma, govt, utilities, telco. 1 pt = P1. Cap P200K/yr. Redeem via app.\n\nMAD CALCULATION:\n- Calculate TAD: Total Account Debt = opening balance + new purchases + cash advances + fees + interest - payments/credits.\n- If TAD <= P500: MAD = TAD (full amount).\n- If TAD > P500: MAD = max(P500, 3% * (TAD - new purchases - cash advances - adjustments) + past due amount).\n- Apply past due first, then add 3% of remaining eligible balance.\n- Example: TAD = P35,000; new purchases = P5,000; cash adv = P2,000; adjustments = P0; past due = P1,200. MAD = max(P500, 0.03 * (35,000 - 5,000 - 2,000 - 0) + 1,200) = 0.03 * 28,000 + 1,200 = P2,040.\n\nFINANCE: Unpaid/late = interest. Daily interest = daily balance * (monthly rate / 30).\n\nMISSED PAYMENT: 30 days=locked, 90 days=suspended. Auto-deduct from Maya accounts.\n\nPAYMENT ORDER: Cash adv fees > Penalty > Other fees > Annual > Interest > Cash adv > Installments > Purchases.\n\neSOA: 30-day dispute. LOST CARD: Report via app immediately. COOLING-OFF: 2 days. SUPP: Shared limit. FOREX: Applies to foreign txns.\n\nDECLINE: Prepaid cards, loans, savings, crypto. Non-Maya topics: "This is outside my knowledge base. I only assist with Maya Black CC and Maya Landers CC."';
+        var MAYA_SYSTEM_PROMPT = 'You are the Maya Internal Credit Card AI Assistant for Maya employees only. Assist fellow agents, NOT customers. ONLY discuss Maya Black CC, Maya Landers CC, and After Sales/Operational Procedures.\n\nSTYLE: Short, concise. Max 4-6 bullets. Direct to the point. Use internal terms (MAD, TAD, eSOA, MIN).\nFORMATTING: STRICTLY use standard ASCII characters only. DO NOT use Unicode symbols. Use standard hyphen (-) for bullet points.\n\nSCOPE: Maya Black CC, Maya Landers CC, Landers Cashback Everywhere Promo, CC T&Cs, After Sales Handling.\n\nBLACK CC: Premium real CC. Lounge access, dining perks, high limits, elevated cashback. Waivable annual fee, 0% installments, reduced forex.\n\nLANDERS CC: Co-branded by Maya + Landers. Earn points on all spend, accelerated at Landers. 500 pts = 1 voucher (P500), redeem in-store only. Requires Landers membership.\n\nMAD CALCULATION: TAD = opening balance + new purchases + cash advances + fees + interest - payments/credits. If TAD <= P500: MAD = TAD. If TAD > P500: MAD = max(P500, 3% * (TAD - new purchases - cash advances - adjustments) + past due amount).\n\nAFTER SALES & OPERATIONAL HANDLING:\n- Reversal/Waiver of Fees (SLA 2-4BD): Late payment fee (Maya system error) -> Escalate to SSO-AAM (needs Committee Approval/Meeting Notes). BSP complaints -> Seek BU approval, then escalate to Maya Bank Credit Ops. Annual fee waiver -> Escalate to SSO-AAM.\n- Account Takeover (SLA 2BD): Unauthorized use. Reversal impossible if funds exited or CC txn posted. Requires Police Report, Affidavit of Lost/Stolen, POI sent to secure@maya.ph. Escalate to FCI. For VVIP, route to SSO-AAM for adjustment.\n- Late Payment Inquiry (SLA 1-2BD): Educate or check FAQs. Complaints against collections agency -> Escalate to Maya Bank Collections for RIR.\n- Failed/Delayed CC Payment Posting (SLA 1-3BD): Validate CMS (Wallet) and SF360 (CC). If debit but no credit beyond 3BD -> Escalate to SSO AAM for adjustment. Manual payment errors -> Escalate to OPS ES then PE-Tech Ops.\n- Promo/Rewards/Loyalty (SLA 3BD): Uncredited points/miles -> Validate eligibility, escalate to TL for JIRA ticket to PE-Tech Ops. Needs: MIN, Name, Card type, Date/Time, Amount, Merchant, RRN, Expected points.\n- CC Activation (SLA 3BD): Activation + PIN enrollment MUST be done by Customer. System errors -> Escalate to OPS ES then PE-Tech Ops.\n- CC Limit Change: Decrease -> Escalate to Underwriting Team. Increase -> Educate/Check FAQ.\n- CC Freezing/Unfreezing: Customer-initiated via app. If technical error unfreezing -> Escalate to OPS ES then PE-Tech Ops.\n- Redelivery RTS (SLA 1-2BD): Validate MIN/Email changes (15 days). If both changed -> Advise submit proof of billing to docs-support@maya.ph (PMF Team validates). Escalate to Card Ops -> CLM for SMS/Email notification.\n- CC Closure: Settle balance/disputes first. Freeze card, close in SF. If with reversal of fees -> TL emails Niro Loterte for CS Manager approval, escalate to SSO AAM, CMT monitors closure. LCECC closure: Cannot keep CC but cancel Landers. Canceling LCECC within 30 days allows membership fee reversal; beyond 30 days customer retains Landers membership.\n- CC Closure with Negative Balance (SLA 3BD): Needs CSG approval (Niro L1 / Kramer Regulatory). Escalate to SSO AAM for wallet balance transfer, then CMT processes closure.\n- Google Pay: Only Android 11+. CC must be activated to link. Lost/stolen phone -> Block tokens via Salesforce or escalate via JIRA to PE-Tech Ops (need Dodrio card ID, token ID, action: suspend/delete). Transaction declines -> Check if card is frozen/locked.\n\nDECLINE: Prepaid cards, loans, savings, crypto. Non-Maya topics: "This is outside my knowledge base."';
 
         var mayaChatHistory = [
             { role: 'system', content: MAYA_SYSTEM_PROMPT },
-            { role: 'assistant', content: "Hello! I'm your Maya Internal Credit Card AI. I assist Maya agents with Maya Black CC and Maya Landers CC queries. Keep it brief and I'll do the same. What do you need help with?" }
+            { role: 'assistant', content: "Hello! I'm your Maya Internal AI, now equipped with After Sales and Google Pay handling procedures. What do you need help with?" }
         ];
         var mayaIsProcessing = false;
 
@@ -861,11 +860,11 @@
         window.clearMayaChat = function() {
             var chat = getMayaChat();
             chat.innerHTML = '';
-            var wrapper = createMsgBubble('assistant', 'Hello! I\'m your <strong class="text-violet-400">Maya Internal Credit Card AI</strong>. I assist Maya agents with **Maya Black CC** and **Maya Landers CC** queries — features, promo mechanics, fees, payments. Keep it brief and I\'ll do the same. What do you need help with?');
+            var wrapper = createMsgBubble('assistant', 'Hello! I\'m your <strong class="text-violet-400">Maya Internal AI</strong>. I assist Maya agents with Maya Black CC, Maya Landers CC, After Sales, and Google Pay procedures. What do you need help with?');
             chat.appendChild(wrapper);
             mayaChatHistory = [
                 { role: 'system', content: MAYA_SYSTEM_PROMPT },
-                { role: 'assistant', content: "Hello! I'm your Maya Internal Credit Card AI. I assist Maya agents with Maya Black CC and Maya Landers CC queries. Keep it brief and I'll do the same. What do you need help with?" }
+                { role: 'assistant', content: "Hello! I'm your Maya Internal AI, now equipped with After Sales and Google Pay handling procedures. What do you need help with?" }
             ];
             showToast('Chat cleared');
         };
@@ -900,8 +899,8 @@
                     body: JSON.stringify({
                         model: 'llama-3.3-70b-versatile',
                         messages: mayaChatHistory,
-                        temperature: 0.7,
-                        max_tokens: 600
+                        temperature: 0.5, // Lowered slightly for more factual process adherence
+                        max_tokens: 800
                     })
                 });
 
