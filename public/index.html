@@ -704,11 +704,15 @@
         function updateClock(){var n=new Date();document.getElementById('live-date-time').textContent=n.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
         setInterval(updateClock,1000);updateClock();
 
-        // ===== LOADER =====
-        function hideLoader(){var e=document.getElementById('loader');if(e)e.classList.add('hidden-loader');}
+         // ===== LOADER =====
+        function hideLoader(){
+            var e=document.getElementById('loader');
+            if(e)e.classList.add('hidden-loader');
+            checkAuth();
+        }
         window.addEventListener('load',function(){setTimeout(hideLoader,1200);});
         setTimeout(hideLoader,5000);
-
+        
         // ===== MILES CALCULATOR =====
         var spendInput=document.getElementById('spend-input'),multSelect=document.getElementById('multiplier-select'),customMult=document.getElementById('custom-multiplier'),milesInput=document.getElementById('miles-input');
         setupCurrencyInput('spend-input');
