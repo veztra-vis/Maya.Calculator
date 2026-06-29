@@ -100,19 +100,118 @@
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
+        /* ===== CIRCULAR LOADER ANIMATIONS ===== */
+        @keyframes spinRing {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes arcDash {
+            0%   { stroke-dasharray: 1 210; stroke-dashoffset: 0; }
+            50%  { stroke-dasharray: 120 210; stroke-dashoffset: -40; }
+            100% { stroke-dasharray: 120 210; stroke-dashoffset: -130; }
+        }
+
+        /* ===== MODULE D STYLES ===== */
+        .module-d-alert {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.45;
+        }
+        .module-d-alert.show { display: flex; }
+        .module-d-alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        .module-d-alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .user-table-wrap {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #27272a;
+        }
+        .user-table-wrap::-webkit-scrollbar { width: 4px; }
+        .user-table-wrap::-webkit-scrollbar-track { background: transparent; }
+        .user-table-wrap::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+
+        .user-row { transition: background 0.15s; }
+        .user-row:hover { background: rgba(139, 92, 246, 0.05); }
+
+        .role-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .role-tag-admin { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .role-tag-tl { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .role-tag-om { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .role-tag-client { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .role-tag-agent { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.3); }
+
+        .btn-delete-user {
+            padding: 4px 8px;
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-delete-user:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+        .btn-delete-user:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
 
+    <!-- ===== CIRCULAR LOADER ===== -->
     <div id="loader" class="fixed inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center loader-overlay">
-        <div class="w-16 h-16 flex items-center justify-center loader-logo mb-6">
-            <div class="logo-fallback w-16 h-16 rounded-xl bg-violet-600/20 border border-violet-500/30">M</div>
+        <div class="relative w-20 h-20 mb-8">
+            <svg class="w-full h-full" style="animation:spinRing 2s linear infinite" viewBox="0 0 50 50">
+                <defs>
+                    <linearGradient id="loaderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%"   stop-color="#8b5cf6"/>
+                        <stop offset="50%"  stop-color="#10b981"/>
+                        <stop offset="100%" stop-color="#3b82f6"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="25" cy="25" r="20" fill="none" stroke="#27272a" stroke-width="3.5"/>
+                <circle cx="25" cy="25" r="20" fill="none" stroke="url(#loaderGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="120 210" style="animation:arcDash 1.6s ease-in-out infinite"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="logo-fallback w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-500/30 text-sm">M</div>
+            </div>
         </div>
         <p class="text-zinc-500 text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Maya Link...</p>
     </div>
 
     <div class="ambient-glow"></div>
 
+    <!-- ===== HEADER WITH USER INFO ===== -->
     <header class="max-w-6xl mx-auto mb-10 border-b border-zinc-800 pb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
         <div class="flex items-center gap-4">
             <div class="header-logo flex items-center justify-center overflow-hidden bg-zinc-800/50">
@@ -120,20 +219,28 @@
             </div>
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
-                <div class="flex items-center gap-2 mt-0.5">
+                <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v2.3.2</p>
+                    <span id="role-badge" class="hidden px-2 py-0.5 bg-violet-500/15 border border-violet-500/30 text-violet-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
         </div>
-        <div class="text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
-            <span id="live-date-time" class="text-xs font-mono text-zinc-400">Syncing...</span>
+        <div class="flex items-center gap-3">
+            <div id="user-info" class="hidden text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
+                <span id="user-name" class="text-xs font-medium text-zinc-300"></span>
+                <span class="text-zinc-600 mx-2">•</span>
+                <span id="live-date-time" class="text-xs font-mono text-zinc-400">Syncing...</span>
+            </div>
+            <button onclick="handleLogout()" id="logout-btn" class="hidden px-3 py-2 bg-zinc-900/50 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-500 hover:text-red-400 text-[10px] uppercase font-bold rounded-full transition-all" title="Logout">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </button>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
         
-        <!-- MILES CALCULATOR -->
+        <!-- MILES CALCULATOR - Module A (UNCHANGED) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -187,7 +294,7 @@
             </div>
         </div>
 
-        <!-- FINANCE CHARGE CALCULATOR -->
+        <!-- FINANCE CHARGE CALCULATOR - Module B (UNCHANGED) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -243,7 +350,7 @@
             </div>
         </div>
 
-        <!-- LANTERN REWARDS CALCULATOR -->
+        <!-- LANTERN REWARDS CALCULATOR - Module C (UNCHANGED) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between">
@@ -319,7 +426,89 @@
             </div>
         </div>
 
-        <!-- MINI PAYMENTS CALCULATOR -->
+        <!-- ===== ACCOUNT MANAGEMENT - Module D (NEW) ===== -->
+        <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-violet-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Account Management</h2>
+                </div>
+                <span class="px-2 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] uppercase font-bold rounded">Module D</span>
+            </div>
+
+            <div id="module-d-alert" class="module-d-alert module-d-alert-error">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                <span id="module-d-alert-text"></span>
+            </div>
+
+            <!-- Create Account Section -->
+            <div class="mb-6">
+                <button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+                    Create New Account
+                </button>
+                <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label>
+                            <input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label>
+                            <input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label>
+                            <input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label>
+                            <select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors">
+                                <option value="AGENT">Agent</option>
+                                <option value="TEAM LEADER">Team Leader</option>
+                                <option value="OPERATIONS MANAGER">Operations Manager</option>
+                                <option value="CLIENT">Client</option>
+                                <option value="ADMIN" id="admin-role-option" style="display:none">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="createAccount()" class="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">
+                            Create Account
+                        </button>
+                        <button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User List -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p>
+                    <span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span>
+                </div>
+                <div class="user-table-wrap">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider">
+                            <tr>
+                                <th class="px-3 py-2.5 text-left">Employee ID</th>
+                                <th class="px-3 py-2.5 text-left">Full Name</th>
+                                <th class="px-3 py-2.5 text-center">Role</th>
+                                <th class="px-3 py-2.5 text-right">Created</th>
+                                <th class="px-3 py-2.5 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body" class="text-zinc-300">
+                            <tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MINI PAYMENTS CALCULATOR - Module E (UNCHANGED) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -472,7 +661,203 @@
         var API_MODEL     = 'llama-3.3-70b-versatile';
         // ============================================================
 
-        // --- UTILS ---
+        // ============================================================
+        // AUTHENTICATION CHECK
+        // ============================================================
+        (function() {
+            var auth = sessionStorage.getItem('maya_auth');
+            if (auth !== 'true') {
+                window.location.replace('login.html');
+                return;
+            }
+            // Display user info
+            var userName = sessionStorage.getItem('maya_user_name') || 'Unknown';
+            var userRole = sessionStorage.getItem('maya_user_role') || 'AGENT';
+            var userId   = sessionStorage.getItem('maya_user_id') || '';
+
+            document.getElementById('user-name').textContent = userName;
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+
+            var roleBadge = document.getElementById('role-badge');
+            roleBadge.textContent = userRole;
+            roleBadge.classList.remove('hidden');
+
+            // Show Module D only for authorized roles
+            var authorizedRoles = ['ADMIN', 'TEAM LEADER', 'OPERATIONS MANAGER', 'CLIENT'];
+            if (authorizedRoles.indexOf(userRole) !== -1) {
+                var moduleD = document.getElementById('module-d');
+                moduleD.style.display = 'flex';
+
+                // Show ADMIN role option only for ADMIN users
+                if (userRole === 'ADMIN') {
+                    document.getElementById('admin-role-option').style.display = '';
+                }
+            }
+        })();
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function handleLogout() {
+            sessionStorage.clear();
+            window.location.replace('login.html');
+        }
+
+        // ============================================================
+        // USER DATABASE FUNCTIONS (Module D)
+        // ============================================================
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('maya_users')) || [];
+            } catch(e) { return []; }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('maya_users', JSON.stringify(users));
+        }
+
+        function getRoleTagClass(role) {
+            switch(role) {
+                case 'ADMIN': return 'role-tag-admin';
+                case 'TEAM LEADER': return 'role-tag-tl';
+                case 'OPERATIONS MANAGER': return 'role-tag-om';
+                case 'CLIENT': return 'role-tag-client';
+                default: return 'role-tag-agent';
+            }
+        }
+
+        function getRoleShortName(role) {
+            switch(role) {
+                case 'ADMIN': return 'Admin';
+                case 'TEAM LEADER': return 'TL';
+                case 'OPERATIONS MANAGER': return 'OM';
+                case 'CLIENT': return 'Client';
+                default: return 'Agent';
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            var d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function renderUserTable() {
+            var users = getUsers();
+            var tbody = document.getElementById('user-table-body');
+            var countEl = document.getElementById('user-count');
+            var currentUserId = sessionStorage.getItem('maya_user_id') || '';
+            var currentUserRole = sessionStorage.getItem('maya_user_role') || '';
+
+            countEl.textContent = users.length + ' user' + (users.length !== 1 ? 's' : '');
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">No accounts found.</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < users.length; i++) {
+                var u = users[i];
+                var canDelete = (currentUserRole === 'ADMIN' && u.employeeId !== currentUserId);
+                html += '<tr class="user-row border-t border-zinc-800/50">' +
+                    '<td class="px-3 py-3 text-violet-400">' + escapeHtml(u.employeeId) + '</td>' +
+                    '<td class="px-3 py-3 text-zinc-300 font-sans">' + escapeHtml(u.fullName) + '</td>' +
+                    '<td class="px-3 py-3 text-center"><span class="role-tag ' + getRoleTagClass(u.role) + '">' + getRoleShortName(u.role) + '</span></td>' +
+                    '<td class="px-3 py-3 text-right text-zinc-500">' + formatDate(u.createdAt) + '</td>' +
+                    '<td class="px-3 py-3 text-center"><button class="btn-delete-user" onclick="deleteUser(\'' + escapeHtml(u.employeeId) + '\')" ' + (canDelete ? '' : 'disabled') + '>Delete</button></td>' +
+                    '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function showModuleDAlert(msg, type) {
+            var el = document.getElementById('module-d-alert');
+            var txt = document.getElementById('module-d-alert-text');
+            txt.textContent = msg;
+            el.className = 'module-d-alert module-d-alert-' + (type || 'error') + ' show';
+            setTimeout(function() { el.classList.remove('show'); }, 4000);
+        }
+
+        function toggleCreateForm() {
+            var form = document.getElementById('create-form');
+            var btn = document.getElementById('toggle-create-btn');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg> Cancel';
+                document.getElementById('new-fullname').value = '';
+                document.getElementById('new-employeeid').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('new-role').value = 'AGENT';
+            } else {
+                form.classList.add('hidden');
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account';
+            }
+        }
+
+        function createAccount() {
+            var fullname = document.getElementById('new-fullname').value.trim();
+            var empId = document.getElementById('new-employeeid').value.trim().toLowerCase();
+            var password = document.getElementById('new-password').value;
+            var role = document.getElementById('new-role').value;
+
+            if (!fullname) { showModuleDAlert('Please enter a full name.', 'error'); return; }
+            if (!empId) { showModuleDAlert('Please enter an Employee ID.', 'error'); return; }
+            if (!password || password.length < 6) { showModuleDAlert('Password must be at least 6 characters.', 'error'); return; }
+
+            var users = getUsers();
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].employeeId === empId) {
+                    showModuleDAlert('Employee ID "' + empId + '" already exists.', 'error');
+                    return;
+                }
+            }
+
+            users.push({
+                id: 'USR' + (users.length + 1).toString().padStart(3, '0'),
+                employeeId: empId,
+                fullName: fullname,
+                password: password,
+                role: role,
+                createdAt: new Date().toISOString()
+            });
+
+            saveUsers(users);
+            renderUserTable();
+            toggleCreateForm();
+            showModuleDAlert('Account created for ' + fullname + ' (' + empId + ').', 'success');
+        }
+
+        function deleteUser(empId) {
+            if (!confirm('Delete account "' + empId + '"? This action cannot be undone.')) return;
+
+            var users = getUsers();
+            var newUsers = [];
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].employeeId !== empId) {
+                    newUsers.push(users[i]);
+                }
+            }
+            saveUsers(newUsers);
+            renderUserTable();
+            showModuleDAlert('Account "' + empId + '" has been deleted.', 'success');
+        }
+
+        // Initialize user table when Module D is visible
+        if (document.getElementById('module-d').style.display !== 'none') {
+            renderUserTable();
+        }
+
+        // ============================================================
+        // UTILS
+        // ============================================================
         var formatCurrency = function(num) {
             return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
         };
@@ -719,76 +1104,93 @@
 
         var MAYA_SYSTEM_PROMPT = 'You are Maya.ph Internal Agent AI, an expert assistant for Maya Bank (formerly PayMaya) customer service representatives. You specialize in:\n\n' +
             '- Maya Black Credit Card (MBCC): Features, benefits, annual fees, credit limits, cashback rules\n' +
-            '- Maya Landers Credit Card (LCECC): Landers partnership benefits, cashback tiers (3%/4%/5%), voucher system\n' +
-            '- Mini Payments: EMI conversion, eligibility (minimum 3,000 PHP single receipt), available terms (3/6/12 months), interest rates\n' +
-            '- Finance Charges: 3% monthly interest, how prorated interest works for early closure\n' +
-            '- Maya Miles: Earn rate (1 mile per 40 PHP spend), multiplier tiers, redemption value (0.16 PHP per mile)\n' +
-            '- After Sales procedures: Card closure, dispute filing, credit limit adjustments, statement requests\n' +
-            '- Google Pay / Apple Pay: Linking, token management, lost device procedures\n' +
-            '- Landers Cashback Everywhere promo: Mechanics, qualifying spends, cap limits\n\n' +
-            'Rules:\n' +
-            '- Be concise, professional, and accurate\n' +
-            '- If unsure, say you need to verify rather than guessing\n' +
-            '- Always clarify that cashback and rewards are subject to terms and conditions\n' +
-            '- You were created by the Maya Engineering Team: Ancel Claudio, Marcux Dimaapi, and Marlon Ubana\n' +
-            '- When discussing rates or fees, always specify the currency as PHP\n' +
-            '- Format responses with clear structure using bullet points when listing multiple items';
+            '- Maya Landers Credit Card (MLCC): Rewards tiers, point calculations, voucher conversions\n' +
+            '- Finance Charges: Loan calculations, interest computations, payment processing\n' +
+            '- Mini Payments (EMI): Eligibility, installment calculations, processing steps\n' +
+            '- Account Management: CC closure, upgrades, limit adjustments\n' +
+            '- Digital Wallet: Maya wallet features, QR payments, bill payments\n' +
+            '- Google Pay: Linking, troubleshooting, transaction disputes\n' +
+            '- Promotions: Current cashback offers, reward multipliers, special campaigns\n\n' +
+            'IMPORTANT GUIDELINES:\n' +
+            '1. Always provide accurate, official information based on Maya Bank policies\n' +
+            '2. If unsure about specific details, advise checking the internal knowledge base or asking a supervisor\n' +
+            '3. Use clear, professional language suitable for internal communications\n' +
+            '4. When explaining calculations, show the formula and step-by-step process\n' +
+            '5. For sensitive account operations, remind agents to verify customer identity first\n' +
+            '6. Keep responses concise but comprehensive\n' +
+            '7. If asked about your creators, respond that you were developed by the Maya Engineering Team: Ancel Claudio, Marcux Dimaapi, and Marlon Ubaña\n\n' +
+            'Format responses with clear sections using markdown when appropriate. Use bullet points for lists.';
 
         function toggleAIWindow() {
             var win = document.getElementById('ai-window');
-            win.classList.toggle('hidden');
-            if (!win.classList.contains('hidden')) {
-                document.getElementById('maya-input').focus();
+            if (win.classList.contains('hidden')) {
+                win.classList.remove('hidden');
                 if (mayaChatHistory.length === 0) {
-                    addMayaMessage('bot', 'Hello! I\'m the Maya Internal Agent AI. I can help you with product information, After Sales procedures, and credit card queries. How can I assist you today?');
+                    addMayaMessage('ai', 'Hello! I\'m Maya\'s Internal Agent AI. How can I assist you today?\n\nYou can ask me about:\n• Credit Card products & features\n• Finance charge calculations\n• Mini Payments / EMI\n• Account management processes\n• Promotions & rewards\n• Technical troubleshooting');
                 }
+                document.getElementById('maya-input').focus();
+            } else {
+                win.classList.add('hidden');
             }
         }
 
         function clearMayaChat() {
             mayaChatHistory = [];
             document.getElementById('maya-chat').innerHTML = '';
-            addMayaMessage('bot', 'Chat cleared. How can I help you?');
+            addMayaMessage('ai', 'Chat cleared. How can I help you?');
         }
 
-        function addMayaMessage(role, content) {
-            var chatEl = document.getElementById('maya-chat');
-            var wrapper = document.createElement('div');
-            wrapper.className = 'flex gap-2 ' + (role === 'user' ? 'justify-end' : 'justify-start') + ' animate-fade-in';
+        function addMayaMessage(role, text) {
+            var chat = document.getElementById('maya-chat');
+            var div = document.createElement('div');
+            div.className = role === 'user' 
+                ? 'flex justify-end animate-fade-in' 
+                : 'flex justify-start animate-fade-in';
+            
             var bubble = document.createElement('div');
             bubble.className = role === 'user'
-                ? 'max-w-[85%] bg-violet-600/20 border border-violet-500/30 rounded-xl rounded-br-sm px-3 py-2 text-sm text-zinc-200'
-                : 'max-w-[85%] bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-3 py-2 text-sm text-zinc-200';
-            if (role === 'bot') {
-                var html = content
-                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
-                    .replace(/\n/g, '<br>');
-                bubble.innerHTML = '<div class="leading-relaxed">' + html + '</div>';
+                ? 'max-w-[85%] bg-violet-600/20 border border-violet-500/20 rounded-2xl rounded-tr-sm px-4 py-3 text-sm text-zinc-200 leading-relaxed'
+                : 'max-w-[85%] bg-zinc-900/80 border border-zinc-800 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-zinc-300 leading-relaxed';
+            
+            if (role === 'ai') {
+                bubble.innerHTML = '<div class="flex items-center gap-2 mb-2"><div class="w-5 h-5 rounded bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-[9px] font-bold text-violet-400">M</div><span class="text-[10px] font-semibold text-zinc-500">Maya AI</span></div><div class="markdown-content">' + formatMarkdown(text) + '</div>';
             } else {
-                bubble.textContent = content;
+                bubble.textContent = text;
             }
-            wrapper.appendChild(bubble);
-            chatEl.appendChild(wrapper);
-            chatEl.scrollTop = chatEl.scrollHeight;
+            
+            div.appendChild(bubble);
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
         }
 
-        function addTypingIndicator() {
-            var chatEl = document.getElementById('maya-chat');
-            var wrapper = document.createElement('div');
-            wrapper.id = 'maya-typing';
-            wrapper.className = 'flex gap-2 justify-start animate-fade-in';
-            wrapper.innerHTML = '<div class="bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">' +
-                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
-                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
-                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span></div>';
-            chatEl.appendChild(wrapper);
-            chatEl.scrollTop = chatEl.scrollHeight;
+        function addMayaTyping() {
+            var chat = document.getElementById('maya-chat');
+            var div = document.createElement('div');
+            div.id = 'maya-typing';
+            div.className = 'flex justify-start animate-fade-in';
+            div.innerHTML = '<div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">' +
+                '<div class="typing-dot w-2 h-2 bg-zinc-500 rounded-full"></div>' +
+                '<div class="typing-dot w-2 h-2 bg-zinc-500 rounded-full"></div>' +
+                '<div class="typing-dot w-2 h-2 bg-zinc-500 rounded-full"></div>' +
+                '</div>';
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
         }
 
-        function removeTypingIndicator() {
+        function removeMayaTyping() {
             var el = document.getElementById('maya-typing');
             if (el) el.remove();
+        }
+
+        function formatMarkdown(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-zinc-100">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code class="bg-zinc-800 px-1.5 py-0.5 rounded text-[11px] font-mono text-emerald-400">$1</code>')
+                .replace(/^• (.*?)$/gm, '<div class="flex gap-2 ml-1"><span class="text-violet-400 mt-1">•</span><span>$1</span></div>')
+                .replace(/^(\d+)\. (.*?)$/gm, '<div class="flex gap-2 ml-1"><span class="text-violet-400 font-mono text-xs">$1.</span><span>$2</span></div>')
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>');
         }
 
         function sendMayaQuick(text) {
@@ -800,78 +1202,47 @@
             var input = document.getElementById('maya-input');
             var text = input.value.trim();
             if (!text || mayaIsLoading) return;
-
-            mayaIsLoading = true;
+            
             input.value = '';
-            document.getElementById('maya-send-btn').disabled = true;
-
             addMayaMessage('user', text);
             mayaChatHistory.push({ role: 'user', content: text });
-            addTypingIndicator();
-
-            var requestURL = API_BASE_URL.replace(/\/+$/, '') + API_ENDPOINT;
-            var messages = [{ role: 'system', content: MAYA_SYSTEM_PROMPT }].concat(mayaChatHistory.slice(-10));
-            var requestBody = JSON.stringify({
-                model: API_MODEL,
-                messages: messages,
-                temperature: 0.4,
-                max_tokens: 1024,
-                top_p: 0.9
-            });
-            var requestHeaders = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + API_KEY
-            };
-
+            
+            mayaIsLoading = true;
+            document.getElementById('maya-send-btn').disabled = true;
+            addMayaTyping();
+            
             try {
-                var response = await fetch(requestURL, {
+                var response = await fetch(API_BASE_URL + API_ENDPOINT, {
                     method: 'POST',
-                    headers: requestHeaders,
-                    body: requestBody
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + API_KEY
+                    },
+                    body: JSON.stringify({
+                        model: API_MODEL,
+                        messages: [
+                            { role: 'system', content: MAYA_SYSTEM_PROMPT },
+                            ...mayaChatHistory
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 1024
+                    })
                 });
-
-                // Handle Render cold start
-                if (response.status === 502 || response.status === 503) {
-                    removeTypingIndicator();
-                    addMayaMessage('bot', 'Server is waking up... retrying in 5 seconds.');
-                    addTypingIndicator();
-                    await new Promise(function(r) { setTimeout(r, 5000); });
-                    response = await fetch(requestURL, {
-                        method: 'POST',
-                        headers: requestHeaders,
-                        body: requestBody
-                    });
-                }
-
-                removeTypingIndicator();
-
-                if (!response.ok) {
-                    var errBody = await response.text().catch(function() { return ''; });
-                    var errMsg = 'Status ' + response.status;
-                    try { errMsg = JSON.parse(errBody).error?.message || errMsg; } catch(e) {}
-                    throw new Error(errMsg);
-                }
-
+                
                 var data = await response.json();
-                var botMessage = data.choices && data.choices[0] && data.choices[0].message
-                    ? data.choices[0].message.content
-                    : 'I couldn\'t process that. Please try again.';
-
-                addMayaMessage('bot', botMessage);
-                mayaChatHistory.push({ role: 'assistant', content: botMessage });
-
-            } catch (err) {
-                removeTypingIndicator();
-                if (err.message === 'Failed to fetch') {
-                    addMayaMessage('bot', 'Cannot reach the server. Possible causes:\n1. Server is waking up from sleep (wait 30s and retry)\n2. The app was deployed as a Static Site instead of Web Service\n3. The /api/chat route does not exist on the server\n\nVisit /api/health in your browser to check if the server is running.');
-                } else {
-                    addMayaMessage('bot', 'Error: ' + err.message);
-                }
+                var aiText = data.choices?.[0]?.message?.content || 'I apologize, but I encountered an error processing your request. Please try again.';
+                
+                removeMayaTyping();
+                addMayaMessage('ai', aiText);
+                mayaChatHistory.push({ role: 'assistant', content: aiText });
+                
+            } catch (error) {
+                removeMayaTyping();
+                addMayaMessage('ai', 'I\'m having trouble connecting to the server. Please check your connection and try again.\n\n*Error: ' + error.message + '*');
             }
-
+            
             mayaIsLoading = false;
             document.getElementById('maya-send-btn').disabled = false;
-            document.getElementById('maya-input').focus();
         }
     </script>
 </body>
