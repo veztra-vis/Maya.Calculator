@@ -1,1 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maya | Secure Login</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #18181b 0%, #09090b 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+
+        .ambient-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 40%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== CIRCULAR LOADER ===== */
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: #09090b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            transition: opacity 0.7s ease-out, visibility 0.7s;
+        }
+        .loader-overlay.dismissed {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .spinner-ring {
+            position: relative;
+            width: 88px;
+            height: 88px;
+            margin-bottom: 36px;
+        }
+
+        .spinner-ring svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            animation: spinRing 2s linear infinite;
+        }
+
+        .spinner-ring .track {
+            fill: none;
+            stroke: #27272a;
+            stroke-width: 3.5;
+        }
+
+        .spinner-ring .arc {
+            fill: none;
+            stroke: url(#spinGrad);
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            stroke-dasharray: 120 210;
+            animation: arcDash 1.6s ease-in-out infinite;
+        }
+
+        .spinner-logo {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 18px;
+            color: #a78bfa;
+            user-select: none;
+        }
+
+        @keyframes spinRing { to { transform: rotate(360deg); } }
+
+        @keyframes arcDash {
+            0%   { stroke-dasharray: 1 210; stroke-dashoffset: 0; }
+            50%  { stroke-dasharray: 120 210; stroke-dashoffset: -40; }
+            100% { stroke-dasharray: 120 210; stroke-dashoffset: -130; }
+        }
+
+        .loader-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #52525b;
+            animation: labelPulse 2s ease-in-out infinite;
+        }
+        @keyframes labelPulse { 0%,100%{opacity:.45} 50%{opacity:1} }
+
+        /* ===== LOGIN WRAPPER ===== */
+        .page-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 20px;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+        }
+        .page-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .brand-block { text-align: center; margin-bottom: 36px; }
+
+        .brand-icon {
+            width: 64px; height: 64px;
+            margin: 0 auto 18px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            font-weight: 800; font-size: 24px; color: #a78bfa;
+        }
+
+        .brand-title {
+            font-size: 22px; font-weight: 700; color: #fff;
+            letter-spacing: -0.02em; margin-bottom: 6px;
+        }
+
+        .brand-sub { font-size: 13px; color: #71717a; }
+
+        /* ===== CARD ===== */
+        .card {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid #27272a;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 25px 60px -12px rgba(0,0,0,0.55);
+        }
+
+        /* ===== FORM ===== */
+        .field { margin-bottom: 22px; }
+
+        .field-label {
+            display: block;
+            font-size: 10px; text-transform: uppercase;
+            letter-spacing: 0.1em; color: #71717a;
+            margin-bottom: 8px; font-weight: 500;
+            transition: color 0.2s;
+        }
+        .field:focus-within .field-label { color: #8b5cf6; }
+
+        .input-wrap { position: relative; }
+
+        .field-input {
+            width: 100%;
+            background: #09090b;
+            border: 1px solid #27272a;
+            border-radius: 10px;
+            padding: 13px 16px;
+            font-size: 14px;
+            color: #f4f4f5;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field-input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+        }
+        .field-input::placeholder { color: #3f3f46; }
+
+        .field-input.padded-left { padding-left: 44px; }
+        .field-input.padded-right { padding-right: 48px; }
+
+        .input-icon {
+            position: absolute; left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #52525b; pointer-events: none;
+        }
+
+        .pw-toggle {
+            position: absolute; right: 12px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            color: #52525b; cursor: pointer;
+            padding: 4px; transition: color 0.2s;
+            line-height: 0;
+        }
+        .pw-toggle:hover { color: #a1a1aa; }
+
+        /* ===== OPTIONS ROW ===== */
+        .options-row {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .check-label {
+            display: flex; align-items: center; gap: 8px;
+            cursor: pointer; font-size: 13px; color: #a1a1aa;
+            user-select: none;
+        }
+        .check-label input { display: none; }
+        .check-box {
+            width: 18px; height: 18px;
+            border: 1px solid #3f3f46;
+            border-radius: 4px; background: #09090b;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; flex-shrink: 0;
+        }
+        .check-label input:checked + .check-box {
+            background: #8b5cf6; border-color: #8b5cf6;
+        }
+        .check-box svg {
+            width: 12px; height: 12px; color: #fff;
+            opacity: 0; transition: opacity 0.15s;
+        }
+        .check-label input:checked + .check-box svg { opacity: 1; }
+
+        .link-btn {
+            font-size: 13px; color: #8b5cf6;
+            text-decoration: none; background: none; border: none;
+            cursor: pointer; transition: color 0.2s;
+            font-family: inherit;
+        }
+        .link-btn:hover { color: #a78bfa; }
+
+        /* ===== SUBMIT BTN ===== */
+        .submit-btn {
+            width: 100%;
+            background: #8b5cf6; color: #fff;
+            border: none; border-radius: 10px;
+            padding: 15px; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            position: relative; overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+        .submit-btn:hover:not(.busy) {
+            background: #7c3aed;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 28px -6px rgba(139,92,246,0.45);
+        }
+        .submit-btn:active:not(.busy) { transform: translateY(0); }
+        .submit-btn.busy { pointer-events: none; }
+
+        .submit-btn .btn-label { transition: opacity 0.25s; }
+        .submit-btn.busy .btn-label { opacity: 0; }
+
+        .btn-spinner {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 26px; height: 26px;
+            opacity: 0; transition: opacity 0.25s;
+        }
+        .submit-btn.busy .btn-spinner { opacity: 1; }
+
+        .btn-spinner svg {
+            display: block; width: 100%; height: 100%;
+            animation: spinRing 1s linear infinite;
+        }
+        .btn-spinner .track { fill: none; stroke: rgba(255,255,255,0.25); stroke-width: 4; }
+        .btn-spinner .arc {
+            fill: none; stroke: #fff; stroke-width: 4;
+            stroke-linecap: round; stroke-dasharray: 50 80;
+            animation: arcDashSmall 1s ease-in-out infinite;
+        }
+        @keyframes arcDashSmall {
+            0%   { stroke-dasharray: 1 80; stroke-dashoffset: 0; }
+            50%  { stroke-dasharray: 50 80; stroke-dashoffset: -15; }
+            100% { stroke-dasharray: 50 80; stroke-dashoffset: -50; }
+        }
+
+        /* ===== ALERT ===== */
+        .alert {
+            padding: 12px 16px; border-radius: 8px;
+            font-size: 13px; margin-bottom: 20px;
+            display: none; align-items: flex-start; gap: 10px;
+            line-height: 1.45;
+        }
+        .alert.show { display: flex; }
+        .alert-error {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+            color: #fca5a5;
+        }
+        .alert-success {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.2);
+            color: #6ee7b7;
+        }
+        .alert-info {
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            color: #93c5fd;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-status {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; margin-top: 20px;
+            font-size: 11px; color: #52525b;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .dot-live {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #10b981;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+        @keyframes dotPulse { 0%,100%{opacity:.35} 50%{opacity:1} }
+
+        .footer-copy {
+            text-align: center; margin-top: 12px;
+            font-size: 11px; color: #3f3f46;
+        }
+
+        /* ===== FORGOT PASSWORD MODAL ===== */
+        .modal-backdrop {
+            position: fixed; inset: 0; z-index: 300;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .modal-backdrop.open { display: flex; }
+
+        .modal-card {
+            background: rgba(24,24,27,0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid #27272a;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%; max-width: 400px;
+            box-shadow: 0 30px 70px -15px rgba(0,0,0,0.6);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-title {
+            font-size: 18px; font-weight: 700; color: #fff;
+            margin-bottom: 6px;
+        }
+        .modal-desc {
+            font-size: 13px; color: #71717a;
+            margin-bottom: 24px; line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex; gap: 10px; margin-top: 24px;
+        }
+        .modal-actions .submit-btn { flex: 1; }
+
+        .btn-ghost {
+            flex: 1;
+            background: transparent; color: #a1a1aa;
+            border: 1px solid #27272a; border-radius: 10px;
+            padding: 15px; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-ghost:hover { background: #18181b; color: #f4f4f5; }
+
+        /* ===== VIEW TOGGLE (login / reset) ===== */
+        .view { display: none; }
+        .view.active { display: block; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="ambient-glow"></div>
+
+<!-- ========== CIRCULAR LOADER ========== -->
+<div id="loader" class="loader-overlay">
+    <div class="spinner-ring">
+        <svg viewBox="0 0 50 50">
+            <defs>
+                <linearGradient id="spinGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stop-color="#8b5cf6"/>
+                    <stop offset="50%"  stop-color="#10b981"/>
+                    <stop offset="100%" stop-color="#3b82f6"/>
+                </linearGradient>
+            </defs>
+            <circle class="track" cx="25" cy="25" r="20"/>
+            <circle class="arc"   cx="25" cy="25" r="20"/>
+        </svg>
+        <div class="spinner-logo">M</div>
+    </div>
+    <p class="loader-label">Establishing Secure Connection...</p>
+</div>
+
+<!-- ========== LOGIN VIEW ========== -->
+<div class="page-content" id="pageContent">
+
+    <div class="brand-block">
+        <div class="brand-icon">M</div>
+        <h1 class="brand-title">Maya Terminal</h1>
+        <p class="brand-sub">Authenticate to access internal systems</p>
+    </div>
+
+    <div class="card">
+        <div id="login-alert" class="alert alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0;margin-top:1px"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <span id="login-alert-text"></span>
+        </div>
+
+        <form id="loginForm" autocomplete="off">
+            <div class="field">
+                <label class="field-label" for="loginUser">Employee ID</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                    <input type="text" id="loginUser" class="field-input padded-left" placeholder="Enter your Employee ID" required>
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label" for="loginPass">Password</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+                    <input type="password" id="loginPass" class="field-input padded-left padded-right" placeholder="Enter your password" required>
+                    <button type="button" class="pw-toggle" onclick="togglePw('loginPass',this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="options-row">
+                <label class="check-label">
+                    <input type="checkbox" id="rememberMe">
+                    <div class="check-box"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></div>
+                    Remember me
+                </label>
+                <button type="button" class="link-btn" onclick="openForgotModal()">Forgot Password?</button>
+            </div>
+
+            <button type="submit" class="submit-btn" id="loginBtn">
+                <span class="btn-label">Access Terminal</span>
+                <span class="btn-spinner">
+                    <svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="arc" cx="25" cy="25" r="20"/></svg>
+                </span>
+            </button>
+        </form>
+    </div>
+
+    <div class="footer-status">
+        <span class="dot-live"></span>
+        Secure Connection &bull; TLS 1.3
+    </div>
+    <p class="footer-copy">Maya Infrastructure v2.3.2 &bull; Internal Use Only</p>
+</div>
+
+<!-- ========== FORGOT PASSWORD MODAL ========== -->
+<div id="forgotModal" class="modal-backdrop">
+    <div class="modal-card">
+        <!-- Step 1: Enter Employee ID -->
+        <div id="forgotStep1" class="view active">
+            <h2 class="modal-title">Reset Password</h2>
+            <p class="modal-desc">Enter your Employee ID to verify your identity and set a new password.</p>
+            <div id="forgot-alert-1" class="alert alert-error"><span id="forgot-alert-text-1"></span></div>
+            <div class="field">
+                <label class="field-label" for="forgotUser">Employee ID</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                    <input type="text" id="forgotUser" class="field-input padded-left" placeholder="Enter your Employee ID">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" onclick="closeForgotModal()">Cancel</button>
+                <button type="button" class="submit-btn" id="forgotVerifyBtn" onclick="verifyForgotUser()">
+                    <span class="btn-label">Verify</span>
+                    <span class="btn-spinner"><svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="arc" cx="25" cy="25" r="20"/></svg></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Set New Password -->
+        <div id="forgotStep2" class="view">
+            <h2 class="modal-title">Set New Password</h2>
+            <p class="modal-desc">Creating new password for <strong id="forgotUsername" style="color:#a78bfa"></strong>.</p>
+            <div id="forgot-alert-2" class="alert alert-error"><span id="forgot-alert-text-2"></span></div>
+            <div class="field">
+                <label class="field-label" for="newPass">New Password</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+                    <input type="password" id="newPass" class="field-input padded-left padded-right" placeholder="Enter new password">
+                    <button type="button" class="pw-toggle" onclick="togglePw('newPass',this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label" for="confirmPass">Confirm Password</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+                    <input type="password" id="confirmPass" class="field-input padded-left padded-right" placeholder="Confirm new password">
+                    <button type="button" class="pw-toggle" onclick="togglePw('confirmPass',this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" onclick="forgotBackToStep1()">Back</button>
+                <button type="button" class="submit-btn" id="forgotResetBtn" onclick="resetPassword()">
+                    <span class="btn-label">Reset Password</span>
+                    <span class="btn-spinner"><svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="arc" cx="25" cy="25" r="20"/></svg></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="forgotStep3" class="view">
+            <div style="text-align:center;padding:16px 0">
+                <div style="width:56px;height:56px;margin:0 auto 18px;border-radius:50%;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 20 20" fill="#10b981"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                </div>
+                <h2 class="modal-title">Password Updated</h2>
+                <p class="modal-desc">Your password has been changed successfully. You can now log in with your new credentials.</p>
+            </div>
+            <button type="button" class="submit-btn" onclick="closeForgotModal()" style="margin-top:8px">
+                <span class="btn-label">Back to Login</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ================================================================
+   USER DATABASE (localStorage)
+   ================================================================ */
+function getUsers() {
+    try {
+        return JSON.parse(localStorage.getItem('maya_users')) || null;
+    } catch(e) { return null; }
+}
+
+function saveUsers(users) {
+    localStorage.setItem('maya_users', JSON.stringify(users));
+}
+
+function initDefaultUsers() {
+    var existing = getUsers();
+    if (existing) return;
+    saveUsers([
+        {
+            id: 'USR001',
+            employeeId: 'ancel',
+            fullName: 'Ancel Claudio',
+            password: 'maya2026',
+            role: 'ADMIN',
+            createdAt: '2025-01-01T00:00:00'
+        }
+    ]);
+}
+
+initDefaultUsers();
+
+/* ================================================================
+   LOADER
+   ================================================================ */
+var loaderEl = document.getElementById('loader');
+var pageEl   = document.getElementById('pageContent');
+
+function dismissLoader() {
+    loaderEl.classList.add('dismissed');
+    setTimeout(function() { pageEl.classList.add('visible'); }, 150);
+}
+
+window.addEventListener('load', function() {
+    setTimeout(dismissLoader, 2000);
+});
+setTimeout(dismissLoader, 6000);
+
+/* ================================================================
+   AUTH CHECK — redirect if already logged in
+   ================================================================ */
+if (sessionStorage.getItem('maya_auth') === 'true') {
+    window.location.replace('index.html');
+}
+
+/* ================================================================
+   TOGGLE PASSWORD VISIBILITY
+   ================================================================ */
+function togglePw(inputId, btn) {
+    var inp = document.getElementById(inputId);
+    var isHidden = inp.type === 'password';
+    inp.type = isHidden ? 'text' : 'password';
+    btn.querySelector('svg').innerHTML = isHidden
+        ? '<path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/><path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>'
+        : '<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>';
+}
+
+/* ================================================================
+   SHOW ALERT HELPER
+   ================================================================ */
+function showAlert(id, text, type) {
+    var el = document.getElementById(id);
+    var txt = document.getElementById(id + '-text') || el.querySelector('span');
+    if (txt) txt.textContent = text;
+    el.className = 'alert alert-' + (type || 'error') + ' show';
+}
+
+function hideAlert(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+}
+
+/* ================================================================
+   LOGIN
+   ================================================================ */
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    hideAlert('login-alert');
+
+    var uid   = document.getElementById('loginUser').value.trim();
+    var pass  = document.getElementById('loginPass').value;
+    var btn   = document.getElementById('loginBtn');
+
+    if (!uid || !pass) {
+        showAlert('login-alert', 'Please fill in all fields.', 'error');
+        return;
+    }
+
+    btn.classList.add('busy');
+
+    setTimeout(function() {
+        var users = getUsers();
+        var found = null;
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].employeeId === uid && users[i].password === pass) {
+                found = users[i];
+                break;
+            }
+        }
+
+        if (found) {
+            sessionStorage.setItem('maya_auth',     'true');
+            sessionStorage.setItem('maya_user_id',  found.employeeId);
+            sessionStorage.setItem('maya_user_name', found.fullName);
+            sessionStorage.setItem('maya_user_role', found.role);
+            window.location.replace('index.html');
+        } else {
+            showAlert('login-alert', 'Invalid Employee ID or Password. Please try again.', 'error');
+            btn.classList.remove('busy');
+        }
+    }, 1400);
+});
+
+/* ================================================================
+   FORGOT PASSWORD MODAL
+   ================================================================ */
+var forgotTarget = null;
+
+function openForgotModal() {
+    hideAlert('login-alert');
+    forgotTarget = null;
+    document.getElementById('forgotUser').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('confirmPass').value = '';
+    hideAlert('forgot-alert-1');
+    hideAlert('forgot-alert-2');
+    showForgotStep(1);
+    document.getElementById('forgotModal').classList.add('open');
+}
+
+function closeForgotModal() {
+    document.getElementById('forgotModal').classList.remove('open');
+}
+
+function showForgotStep(n) {
+    document.getElementById('forgotStep1').classList.toggle('active', n === 1);
+    document.getElementById('forgotStep2').classList.toggle('active', n === 2);
+    document.getElementById('forgotStep3').classList.toggle('active', n === 3);
+}
+
+function verifyForgotUser() {
+    hideAlert('forgot-alert-1');
+    var uid = document.getElementById('forgotUser').value.trim();
+    var btn = document.getElementById('forgotVerifyBtn');
+
+    if (!uid) {
+        showAlert('forgot-alert-1', 'Please enter your Employee ID.', 'error');
+        return;
+    }
+
+    btn.classList.add('busy');
+
+    setTimeout(function() {
+        var users = getUsers();
+        var found = null;
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].employeeId === uid) { found = users[i]; break; }
+        }
+
+        btn.classList.remove('busy');
+
+        if (found) {
+            forgotTarget = found;
+            document.getElementById('forgotUsername').textContent = found.employeeId;
+            showForgotStep(2);
+        } else {
+            showAlert('forgot-alert-1', 'No account found with that Employee ID.', 'error');
+        }
+    }, 800);
+}
+
+function forgotBackToStep1() {
+    showForgotStep(1);
+    document.getElementById('newPass').value = '';
+    document.getElementById('confirmPass').value = '';
+    hideAlert('forgot-alert-2');
+}
+
+function resetPassword() {
+    hideAlert('forgot-alert-2');
+    var np = document.getElementById('newPass').value;
+    var cp = document.getElementById('confirmPass').value;
+    var btn = document.getElementById('forgotResetBtn');
+
+    if (!np || !cp) {
+        showAlert('forgot-alert-2', 'Please fill in both password fields.', 'error');
+        return;
+    }
+    if (np.length < 6) {
+        showAlert('forgot-alert-2', 'Password must be at least 6 characters.', 'error');
+        return;
+    }
+    if (np !== cp) {
+        showAlert('forgot-alert-2', 'Passwords do not match.', 'error');
+        return;
+    }
+
+    btn.classList.add('busy');
+
+    setTimeout(function() {
+        var users = getUsers();
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].employeeId === forgotTarget.employeeId) {
+                users[i].password = np;
+                break;
+            }
+        }
+        saveUsers(users);
+        btn.classList.remove('busy');
+        showForgotStep(3);
+    }, 800);
+}
+
+/* Close modal on backdrop click */
+document.getElementById('forgotModal').addEventListener('click', function(e) {
+    if (e.target === this) closeForgotModal();
+});
+
+/* Enter key support for forgot modal */
+document.getElementById('forgotUser').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); verifyForgotUser(); }
+});
+document.getElementById('confirmPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); resetPassword(); }
+});
+</script>
+
+</body>
+</html>
