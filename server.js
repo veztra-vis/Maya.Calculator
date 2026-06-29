@@ -282,10 +282,10 @@ app.post('/api/chat', async function(req, res) {
     var token = authHeader.replace('Bearer ', '').trim();
 
     if (token !== process.env.RENDER_AUTH_KEY) {
-        return res.status(401).json({ error: { message: 'Unauthorized — API_KEY mismatch' } });
+        return res.status(401).json({ error: { message: 'Please contact support.' } });
     }
     if (!process.env.GROQ_API_KEY) {
-        return res.status(500).json({ error: { message: 'GROQ_API_KEY not set on server' } });
+        return res.status(500).json({ error: { message: 'Please contact support.' } });
     }
     try {
         var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
