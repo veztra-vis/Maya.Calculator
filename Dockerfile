@@ -1,12 +1,19 @@
-# Use a light version of the Nginx web server
-FROM nginx:alpine
+# Use Node.js
+FROM node:18-alpine
 
-# Copy your index.html into the Nginx default html directory
-COPY index.html /usr/share/nginx/html/index.html
+# Set working directory
+WORKDIR /app
 
-# Expose port 80 to access the website
-EXPOSE 80
+# Copy package.json and install dependencies
+COPY package.json ./
+RUN npm install
 
-# Startup command: Replaces the placeholder text with the Render Secret environment variable,
-# then starts Nginx.
-CMD sed -i "s|__GROQ_API_KEY__|${GROQ_API_KEY}|g" /usr/share/nginx/html/index.html && nginx -g 'daemon off;'
+# Copy the rest of the files
+COPY server.js ./
+COPY public ./public
+
+# Expose the port Render uses
+EXPOSE 10000
+
+# Start the server
+CMD ["node", "server.js"]
