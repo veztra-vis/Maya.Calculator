@@ -7,21 +7,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files (logo.png, etc.) from the "public" folder
+// Serve everything in /public as static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve the main HTML page
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Health check — visit /api/health in browser to confirm server is alive
+// Health check — visit this in your browser to test if server is alive
 app.get('/api/health', function(req, res) {
     res.json({
         status: 'online',
         message: 'Maya API Proxy is running',
         groqKeySet: !!process.env.GROQ_API_KEY,
-        authKeySet: !!process.env.RENDER_AUTH_KEY
+        authKeySet: !!process.env.RENDER_AUTH_KEY,
+        groqKeyPrefix: process.env.GROQ_API_KEY ? process.env.GROQ_API_KEY.substring(0, 6) + '...' : 'NOT SET'
     });
 });
 
@@ -31,11 +27,11 @@ app.post('/api/chat', async function(req, res) {
     var token = authHeader.replace('Bearer ', '').trim();
 
     if (token !== process.env.RENDER_AUTH_KEY) {
-        return res.status(401).json({ error: { message: 'Unauthorized' } });
+        return res.status(401).json({ error: { message: 'Unauthorized — API_KEY in HTML does not match RENDER_AUTH_KEY env var on server' } });
     }
 
     if (!process.env.GROQ_API_KEY) {
-        return res.status(500).json({ error: { message: 'GROQ_API_KEY not set on server' } });
+        return res.status(500).json({ error: { message: 'GROQ_API_KEY environment variable is not set on the server' } });
     }
 
     try {
@@ -56,7 +52,16 @@ app.post('/api/chat', async function(req, res) {
     }
 });
 
+// All other routes serve index.html (so direct URL access works)
+app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 var PORT = process.env.PORT || 3000;
 app.listen(PORT, function() {
+    console.log('===================================');
     console.log('Maya app running on port ' + PORT);
+    console.log('GROQ_API_KEY set: ' + !!process.env.GROQ_API_KEY);
+    console.log('RENDER_AUTH_KEY set: ' + !!process.env.RENDER_AUTH_KEY);
+    console.log('===================================');
 });
