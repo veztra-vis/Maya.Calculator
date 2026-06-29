@@ -57,7 +57,7 @@ app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 10000;
 app.listen(PORT, function() {
     console.log('===================================');
     console.log('Maya app running on port ' + PORT);
