@@ -37,6 +37,20 @@ function writeUsers(users) {
     fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 }
 
+// ROLE HIERARCHY MAP
+// Higher number = more power. 0 = No access.
+function getRoleLevel(role) {
+    var levels = {
+        'ADMIN': 6,
+        'CLIENT': 5,
+        'OPERATIONS MANAGER': 4,
+        'TEAM LEADER': 3,
+        'AGENT': 2,
+        'TRAINING': 1
+    };
+    return levels[role] || 0;
+}
+
 function generateToken(user) {
     var payload = JSON.stringify({
         id: user.employeeId,
@@ -76,7 +90,7 @@ function authMiddleware(req, res, next) {
     next();
 }
 
-// Serve login at root — THIS MUST COME BEFORE express.static
+// Serve login at root
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
@@ -88,7 +102,7 @@ app.get('/app', function(req, res) {
 
 // LOGIN
 app.post('/api/auth/login', function(req, res) {
-    var employeeId = req.body.employeeId;
+    var employeeId = (req.body.employeeId || '').toLowerCase();
     var password = req.body.password;
     if (!employeeId || !password) {
         return res.status(400).json({ error: 'Employee ID and password are required' });
@@ -121,6 +135,10 @@ app.get('/api/auth/verify', authMiddleware, function(req, res) {
 
 // GET ALL USERS
 app.get('/api/auth/users', authMiddleware, function(req, res) {
+    // Only roles Team Leader and above can view the user list
+    if (getRoleLevel(req.user.role) < 3) {
+        return res.status(403).json({ error: 'Not authorized to view accounts' });
+    }
     var users = readUsers();
     var safe = [];
     for (var i = 0; i < users.length; i++) {
@@ -138,26 +156,33 @@ app.get('/api/auth/users', authMiddleware, function(req, res) {
 // CREATE USER
 app.post('/api/auth/users', authMiddleware, function(req, res) {
     var creatorRole = req.user.role;
-    var allowed = ['ADMIN', 'TEAM LEADER', 'OPERATIONS MANAGER', 'CLIENT'];
-    if (allowed.indexOf(creatorRole) === -1) {
+    var creatorLevel = getRoleLevel(creatorRole);
+    
+    // Only Team Leader (3) and above can create accounts
+    if (creatorLevel < 3) {
         return res.status(403).json({ error: 'Not authorized to create accounts' });
     }
+    
     var fullName = req.body.fullName;
     var employeeId = req.body.employeeId;
     var password = req.body.password;
     var role = req.body.role;
+    
     if (!fullName || !employeeId || !password || !role) {
         return res.status(400).json({ error: 'All fields are required' });
     }
     if (password.length < 6) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
-    if (role === 'ADMIN' && creatorRole !== 'ADMIN') {
-        return res.status(403).json({ error: 'Only ADMIN can create ADMIN accounts' });
+
+    // Hierarchy Enforcement: Cannot create an account with equal or higher role than yourself
+    if (getRoleLevel(role) >= creatorLevel) {
+        return res.status(403).json({ error: 'Cannot create an account with equal or higher privileges than your own' });
     }
+
     var users = readUsers();
     for (var i = 0; i < users.length; i++) {
-        if (users[i].employeeId === employeeId) {
+        if (users[i].employeeId === employeeId.toLowerCase()) {
             return res.status(409).json({ error: 'Employee ID already exists' });
         }
     }
@@ -179,37 +204,50 @@ app.post('/api/auth/users', authMiddleware, function(req, res) {
 
 // DELETE USER
 app.delete('/api/auth/users/:employeeId', authMiddleware, function(req, res) {
-    if (req.user.role !== 'ADMIN') {
-        return res.status(403).json({ error: 'Only ADMIN can delete accounts' });
+    var creatorRole = req.user.role;
+    var creatorLevel = getRoleLevel(creatorRole);
+    
+    // Only Team Leader (3) and above can delete accounts
+    if (creatorLevel < 3) {
+        return res.status(403).json({ error: 'Not authorized to delete accounts' });
     }
-    var targetId = req.params.employeeId;
+    
+    var targetId = req.params.employeeId.toLowerCase();
     if (targetId === req.user.id) {
         return res.status(400).json({ error: 'Cannot delete your own account' });
     }
+    
     var users = readUsers();
-    var before = users.length;
-    var newUsers = [];
+    var targetUser = null;
     for (var i = 0; i < users.length; i++) {
-        if (users[i].employeeId !== targetId) newUsers.push(users[i]);
+        if (users[i].employeeId === targetId) {
+            targetUser = users[i];
+            break;
+        }
     }
-    if (newUsers.length === before) {
+
+    if (!targetUser) {
         return res.status(404).json({ error: 'User not found' });
     }
+
+    // Hierarchy Enforcement: Cannot delete an account with equal or higher role than yourself
+    if (getRoleLevel(targetUser.role) >= creatorLevel) {
+        return res.status(403).json({ error: 'Cannot delete an account with equal or higher privileges than your own' });
+    }
+
+    var newUsers = users.filter(function(u) { return u.employeeId !== targetId; });
     writeUsers(newUsers);
     res.json({ message: 'Account "' + targetId + '" deleted' });
 });
 
 // CHECK USER EXISTS
 app.post('/api/auth/check-user', function(req, res) {
-    var employeeId = req.body.employeeId;
+    var employeeId = (req.body.employeeId || '').toLowerCase();
     if (!employeeId) {
         return res.status(400).json({ error: 'Employee ID is required' });
     }
     var users = readUsers();
-    var user = null;
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].employeeId === employeeId) { user = users[i]; break; }
-    }
+    var user = users.find(function(u) { return u.employeeId === employeeId; });
     if (!user) {
         return res.status(404).json({ error: 'No account found with that Employee ID' });
     }
@@ -218,7 +256,7 @@ app.post('/api/auth/check-user', function(req, res) {
 
 // RESET PASSWORD
 app.post('/api/auth/reset-password', function(req, res) {
-    var employeeId = req.body.employeeId;
+    var employeeId = (req.body.employeeId || '').toLowerCase();
     var newPassword = req.body.newPassword;
     if (!employeeId || !newPassword) {
         return res.status(400).json({ error: 'Employee ID and new password are required' });
@@ -227,10 +265,7 @@ app.post('/api/auth/reset-password', function(req, res) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
     var users = readUsers();
-    var user = null;
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].employeeId === employeeId) { user = users[i]; break; }
-    }
+    var user = users.find(function(u) { return u.employeeId === employeeId; });
     if (!user) {
         return res.status(404).json({ error: 'No account found with that Employee ID' });
     }
@@ -247,17 +282,11 @@ app.post('/api/chat', async function(req, res) {
     var token = authHeader.replace('Bearer ', '').trim();
 
     if (token !== process.env.RENDER_AUTH_KEY) {
-        return res.status(401).json({
-            error: { message: 'Unauthorized — API_KEY mismatch' }
-        });
+        return res.status(401).json({ error: { message: 'Unauthorized — API_KEY mismatch' } });
     }
-
     if (!process.env.GROQ_API_KEY) {
-        return res.status(500).json({
-            error: { message: 'GROQ_API_KEY not set on server' }
-        });
+        return res.status(500).json({ error: { message: 'GROQ_API_KEY not set on server' } });
     }
-
     try {
         var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -275,9 +304,7 @@ app.post('/api/chat', async function(req, res) {
     }
 });
 
-// ============================================================
 // HEALTH CHECK
-// ============================================================
 app.get('/api/health', function(req, res) {
     res.json({
         status: 'online',
@@ -287,21 +314,13 @@ app.get('/api/health', function(req, res) {
     });
 });
 
-// ============================================================
-// STATIC FILES — LAST SO ROUTES TAKE PRIORITY
-// ============================================================
+// STATIC FILES
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ============================================================
 // START SERVER
-// ============================================================
 var PORT = process.env.PORT || 10000;
 app.listen(PORT, function() {
     console.log('===================================');
     console.log('Maya app running on port ' + PORT);
-    console.log('Login:     http://localhost:' + PORT + '/');
-    console.log('Dashboard: http://localhost:' + PORT + '/app');
-    console.log('GROQ_API_KEY set: ' + !!process.env.GROQ_API_KEY);
-    console.log('RENDER_AUTH_KEY set: ' + !!process.env.RENDER_AUTH_KEY);
     console.log('===================================');
 });
