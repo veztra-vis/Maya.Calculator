@@ -1,15 +1,12 @@
-// auth-routes.js
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
 const USERS_FILE = path.join(__dirname, 'users.json');
 
-// ---- helpers ----
 function readUsers() {
     try {
         if (!fs.existsSync(USERS_FILE)) {
-            // Seed with default admin on first run
             const seed = [{
                 id: 'USR001',
                 employeeId: 'ancel',
@@ -36,7 +33,7 @@ function generateToken(user) {
         id: user.employeeId,
         name: user.fullName,
         role: user.role,
-        exp: Date.now() + (12 * 60 * 60 * 1000) // 12 hours
+        exp: Date.now() + (12 * 60 * 60 * 1000)
     });
     const cipher = crypto.createCipheriv('aes-256-cbc',
         crypto.createHash('sha256').update('maya-secret-salt-2025').digest(),
@@ -56,14 +53,13 @@ function verifyToken(token) {
         let payload = decipher.update(token, 'hex', 'utf8');
         payload += decipher.final('utf8');
         const data = JSON.parse(payload);
-        if (data.exp < Date.now()) return null; // expired
+        if (data.exp < Date.now()) return null;
         return data;
     } catch (e) {
         return null;
     }
 }
 
-// ---- middleware ----
 function authMiddleware(req, res, next) {
     const token = req.headers['x-maya-token'] || req.query.token;
     if (!token) return res.status(401).json({ error: 'No token provided' });
@@ -73,17 +69,16 @@ function authMiddleware(req, res, next) {
     next();
 }
 
-// ---- routes ----
 function setupAuthRoutes(app) {
 
     // Serve login page at root
     app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'login.html'));
+        res.sendFile(path.join(__dirname, 'public', 'login.html'));
     });
 
     // Serve dashboard at /app
     app.get('/app', (req, res) => {
-        res.sendFile(path.join(__dirname, 'index.html'));
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
 
     // LOGIN
@@ -108,15 +103,14 @@ function setupAuthRoutes(app) {
         });
     });
 
-    // VERIFY TOKEN (used by index.html on load)
+    // VERIFY TOKEN
     app.get('/api/auth/verify', authMiddleware, (req, res) => {
         res.json({ valid: true, user: req.user });
     });
 
-    // GET ALL USERS (Module D)
+    // GET ALL USERS
     app.get('/api/auth/users', authMiddleware, (req, res) => {
         const users = readUsers();
-        // Don't send passwords to client
         const safe = users.map(u => ({
             id: u.id,
             employeeId: u.employeeId,
@@ -127,7 +121,7 @@ function setupAuthRoutes(app) {
         res.json(safe);
     });
 
-    // CREATE USER (Module D)
+    // CREATE USER
     app.post('/api/auth/users', authMiddleware, (req, res) => {
         const creatorRole = req.user.role;
         const allowed = ['ADMIN', 'TEAM LEADER', 'OPERATIONS MANAGER', 'CLIENT'];
@@ -168,7 +162,7 @@ function setupAuthRoutes(app) {
         });
     });
 
-    // DELETE USER (Module D - ADMIN only)
+    // DELETE USER
     app.delete('/api/auth/users/:employeeId', authMiddleware, (req, res) => {
         if (req.user.role !== 'ADMIN') {
             return res.status(403).json({ error: 'Only ADMIN can delete accounts' });
@@ -188,7 +182,21 @@ function setupAuthRoutes(app) {
         res.json({ message: 'Account "' + targetId + '" deleted' });
     });
 
-    // RESET PASSWORD (Forgot Password)
+    // CHECK IF USER EXISTS
+    app.post('/api/auth/check-user', (req, res) => {
+        const { employeeId } = req.body;
+        if (!employeeId) {
+            return res.status(400).json({ error: 'Employee ID is required' });
+        }
+        const users = readUsers();
+        const user = users.find(u => u.employeeId === employeeId);
+        if (!user) {
+            return res.status(404).json({ error: 'No account found with that Employee ID' });
+        }
+        res.json({ found: true, employeeId: user.employeeId, fullName: user.fullName });
+    });
+
+    // RESET PASSWORD
     app.post('/api/auth/reset-password', (req, res) => {
         const { employeeId, newPassword } = req.body;
         if (!employeeId || !newPassword) {
@@ -207,20 +215,6 @@ function setupAuthRoutes(app) {
         user.password = newPassword;
         writeUsers(users);
         res.json({ message: 'Password updated successfully' });
-    });
-
-    // CHECK IF USER EXISTS (for forgot password step 1)
-    app.post('/api/auth/check-user', (req, res) => {
-        const { employeeId } = req.body;
-        if (!employeeId) {
-            return res.status(400).json({ error: 'Employee ID is required' });
-        }
-        const users = readUsers();
-        const user = users.find(u => u.employeeId === employeeId);
-        if (!user) {
-            return res.status(404).json({ error: 'No account found with that Employee ID' });
-        }
-        res.json({ found: true, employeeId: user.employeeId, fullName: user.fullName });
     });
 }
 
