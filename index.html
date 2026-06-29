@@ -465,6 +465,18 @@
     </div>
 
     <script>
+        // ============================================================
+        // API CONFIGURATION — UPDATE THESE WHEN DEPLOYING TO RENDER
+        // ============================================================
+        // Set API_BASE_URL to your Render backend URL (e.g. "https://maya-api.onrender.com")
+        // The backend should proxy requests to Groq and add the API key server-side.
+        // If using direct Groq calls, set API_BASE_URL to "https://api.groq.com/openai/v1"
+        // and set API_KEY to your Groq API key.
+        var API_BASE_URL = 'https://maya-api.onrender.com';
+        var API_KEY = 'RENDER_API_KEY_HERE'; // Replace with your Render API key
+        var API_MODEL = 'llama-3.3-70b-versatile';
+        // ============================================================
+
         // --- UTILS ---
         var formatCurrency = function(num) {
             return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
@@ -673,7 +685,6 @@
                 var prevDate = new Date(currentDate);
                 currentDate.setMonth(currentDate.getMonth() + 1);
                 
-                // Calculate exact days in the period
                 var days = Math.round((currentDate - prevDate) / (1000 * 60 * 60 * 24));
                 
                 var interestAmt = remainingPrincipal * dailyRate * days;
@@ -681,7 +692,6 @@
                 var installmentAmt = 0;
                 
                 if (i === n) {
-                    // Final month adjustment
                     principalPaid = remainingPrincipal;
                     installmentAmt = principalPaid + interestAmt;
                     remainingPrincipal = 0;
@@ -693,21 +703,18 @@
                 
                 totalInterest += interestAmt;
                 
-                // Format date nicely
                 var dueDateStr = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
                 
                 var tr = document.createElement('tr');
                 tr.className = 'border-t border-zinc-800/50 hover:bg-zinc-900/50';
-                tr.innerHTML = `
-                    <td class="px-3 py-3 text-center text-zinc-500">${i}</td>
-                    <td class="px-3 py-3 text-zinc-400">${dueDateStr}</td>
-                    <td class="px-3 py-3 text-right text-zinc-400">${days}</td>
-                    <td class="px-3 py-3 text-right text-zinc-300">₱${formatCurrency(remainingPrincipal + principalPaid)}</td>
-                    <td class="px-3 py-3 text-right text-red-400">₱${formatCurrency(interestAmt)}</td>
-                    <td class="px-3 py-3 text-right text-emerald-400">₱${formatCurrency(principalPaid)}</td>
-                    <td class="px-3 py-3 text-right text-amber-400 font-bold">₱${formatCurrency(installmentAmt)}</td>
-                    <td class="px-3 py-3 text-right text-zinc-200">₱${formatCurrency(Math.max(0, remainingPrincipal))}</td>
-                `;
+                tr.innerHTML = '<td class="px-3 py-3 text-center text-zinc-500">' + i + '</td>' +
+                    '<td class="px-3 py-3 text-zinc-400">' + dueDateStr + '</td>' +
+                    '<td class="px-3 py-3 text-right text-zinc-400">' + days + '</td>' +
+                    '<td class="px-3 py-3 text-right text-zinc-300">₱' + formatCurrency(remainingPrincipal + principalPaid) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-red-400">₱' + formatCurrency(interestAmt) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-emerald-400">₱' + formatCurrency(principalPaid) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-amber-400 font-bold">₱' + formatCurrency(installmentAmt) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-zinc-200">₱' + formatCurrency(Math.max(0, remainingPrincipal)) + '</td>';
                 tbody.appendChild(tr);
             }
             
@@ -720,217 +727,152 @@
         emiMonths.addEventListener('input', calcEMI);
         emiStartDate.addEventListener('change', calcEMI);
         emiDaysYear.addEventListener('input', calcEMI);
-        calcEMI(); // Initial run
+        calcEMI();
 
         // --- MAYA AI ASSISTANT ---
-        // Hardcoded API Key as requested
-        var GROQ_API_KEY = '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';
+        var mayaChatHistory = [];
+        var mayaIsLoading = false;
 
-        var MAYA_SYSTEM_PROMPT = 'You are the Maya Internal Credit Card AI Assistant for Maya employees only. Assist fellow agents, NOT customers. Your role is to comprehensively explain Maya products (features, benefits, mechanics) AND provide step-by-step operational procedures, SLAs, and escalation paths. ONLY discuss Maya Black CC (MBCC), Maya Landers CC (LCECC), Mini Payments, Google Pay, After Sales procedures, and your creators if asked.\n\nSTYLE: Short, concise. Max 4-6 bullets. Use internal terms (MAD, TAD, eSOA, MIN). STRICTLY use standard ASCII characters only. DO NOT use Unicode symbols. Use standard hyphen (-) for bullet points.\n\nCREATORS / ENGINEERING TEAM:\nIf asked who created you, who built this tool, or who the developers are, state that the Maya Utility Terminal was developed by the Engineering Team: Ancel Claudio, Marcux Dimaapi, and Marlon Ubaña.\nIf asked about them individually:\n- Ancel Claudio: Lead Developer and Systems Architect for the Maya Terminal.\n- Marcux Dimaapi: Backend Engineer and AI Integration Specialist.\n- Marlon Ubaña: Frontend Developer and UI/UX Designer.\n\nPRODUCT KNOWLEDGE:\n- MBCC (Maya Black CC): Premium real credit card. Features: Airport lounge access, dining perks, high credit limits, elevated cashback. Waivable annual fee, 0% installments, reduced forex.\n- LCECC (Maya Landers CC): Co-branded by Maya + Landers. Earn points on all spend, accelerated at Landers. 500 pts = 1 voucher (P500), redeem in-store only. Requires active Landers membership. Cannot cancel Landers membership while keeping the CC.\n- Landers Cashback Promo (Until Sept 30, 2025): Progressive tiers based on monthly accumulated CC spend. T1 (P0-20K)=3%, T2 (>P20K-50K)=4%, T3 (>P50K)=5% on Landers spends. Successive tiers. 2% dining, 1% other retail. Excluded: Petrol, top-up, cash advance, non-Landers supermarkets, casinos, pharma, govt, utilities, telco. 1 pt = P1. Cap P200K/yr.\n- Mini Payments: Installment conversion feature for CC purchases. Eligibility: Transaction must be posted, within current billing period, not past due. Excluded categories: cash advance, quasi-cash/gambling, fees, govt payments, money transfer.\n\nCALCULATIONS (Only if explicitly asked):\n- MAD: TAD = opening balance + new purchases + cash advances + fees + interest - payments/credits. If TAD <= P500: MAD = TAD. If TAD > P500: MAD = max(P500, 3% * (TAD - new purchases - cash advances - adjustments) + past due amount).\n\nAFTER SALES & OPERATIONAL HANDLING:\n- Reversal/Waiver of Fees (SLA 2-4BD): Late payment fee (Maya system error) -> Escalate to SSO-AAM (needs Committee Approval). BSP complaints -> Seek BU approval, then escalate to Maya Bank Credit Ops. Annual fee waiver -> Escalate to SSO-AAM.\n- Account Takeover (SLA 2BD): Unauthorized use. Reversal impossible if funds exited or CC txn posted. Requires Police Report, Affidavit of Lost/Stolen, POI sent to secure@maya.ph. Escalate to FCI. VVIP route to SSO-AAM.\n- Failed/Delayed CC Payment Posting (SLA 1-3BD): Validate CMS (Wallet) and SF360 (CC). If debit but no credit beyond 3BD -> Escalate to SSO AAM for adjustment. Manual payment errors -> Escalate to OPS ES then PE-Tech Ops.\n- Promo/Rewards/Loyalty (SLA 3BD): Uncredited points/miles -> Validate eligibility, escalate to TL for JIRA ticket to PE-Tech Ops. Needs: MIN, Name, Card type, Date/Time, Amount, Merchant, RRN, Expected points.\n- CC Activation (SLA 3BD): Activation + PIN enrollment MUST be done by Customer. System errors -> Escalate to OPS ES then PE-Tech Ops.\n- CC Limit Change: Decrease -> Escalate to Underwriting Team. Increase -> Educate/Check FAQ.\n- CC Freezing/Unfreezing: Customer-initiated via app. If technical error unfreezing -> Escalate to OPS ES then PE-Tech Ops.\n- Redelivery RTS (SLA 1-2BD): Validate MIN/Email changes (15 days). If both changed -> Advise submit proof of billing to docs-support@maya.ph (PMF Team validates). Escalate to Card Ops -> CLM for notification.\n- CC Closure: Settle balance/disputes first. Freeze card, close in SF. If with reversal of fees -> TL emails Niro Loterte for approval, escalate to SSO AAM, CMT monitors closure. LCECC closure: Cannot keep CC but cancel Landers. Canceling LCECC within 30 days allows fee reversal; beyond 30 days customer retains Landers membership.\n- CC Closure with Negative Balance (SLA 3BD): Needs CSG approval (Niro L1 / Kramer Regulatory). Escalate to SSO AAM for wallet balance transfer, then CMT processes closure.\n\nMINI PAYMENTS HANDLING:\n- About/Eligibility (SLA 1BD): General inquiries -> Educate/Refer to FAQ. Eligibility: Transaction must be posted, within current billing period, not past due. Excluded categories: cash advance, quasi-cash/gambling, fees, govt payments, money transfer. Educate customer if ineligible.\n- Missing Option/Errors (SLA 1BD): If "Convert to Mini Payments" option missing or repeated error for qualified txn -> Validate on backend. If discrepancy found, escalate to TL for JIRA to PE-Tech Ops.\n\nGOOGLE PAY HANDLING:\n- Only Android 11+. CC must be activated to link. Lost/stolen phone -> Block tokens via Salesforce or escalate via JIRA to PE-Tech Ops (need Dodrio card ID, token ID, action: suspend/delete). Transaction declines -> Check if card is frozen/locked.\n\nDECLINE: Prepaid cards, loans, savings, crypto. Non-Maya topics: "This is outside my knowledge base."';
-
-        var mayaChatHistory = [
-            { role: 'system', content: MAYA_SYSTEM_PROMPT },
-            { role: 'assistant', content: "Hello! I'm your Maya Internal AI. I can explain our products (MBCC, LCECC, Mini Payments) and guide you through After Sales procedures. What do you need help with?" }
-        ];
-        var mayaIsProcessing = false;
+        var MAYA_SYSTEM_PROMPT = 'You are Maya.ph Internal Agent AI, an expert assistant for Maya Bank (formerly PayMaya) customer service representatives. You specialize in:\n\n' +
+            '- Maya Black Credit Card (MBCC): Features, benefits, annual fees, credit limits, cashback rules\n' +
+            '- Maya Landers Credit Card (LCECC): Landers partnership benefits, cashback tiers (3%/4%/5%), voucher system\n' +
+            '- Mini Payments: EMI conversion, eligibility (minimum ₱3,000 single receipt), available terms (3/6/12 months), interest rates\n' +
+            '- Finance Charges: 3% monthly interest, how prorated interest works for early closure\n' +
+            '- Maya Miles: Earn rate (1 mile per ₱40 spend), multiplier tiers, redemption value (₱0.16 per mile)\n' +
+            '- After Sales procedures: Card closure, dispute filing, credit limit adjustments, statement requests\n' +
+            '- Google Pay / Apple Pay: Linking, token management, lost device procedures\n' +
+            '- Landers Cashback Everywhere promo: Mechanics, qualifying spends, cap limits\n\n' +
+            'Rules:\n' +
+            '- Be concise, professional, and accurate\n' +
+            '- If unsure, say you need to verify rather than guessing\n' +
+            '- Always clarify that cashback and rewards are subject to terms and conditions\n' +
+            '- You were created by the Maya Engineering Team: Ancel Claudio, Marcux Dimaapi, and Marlon Ubaña\n' +
+            '- When discussing rates or fees, always specify the currency as PHP (₱)\n' +
+            '- Format responses with clear structure using bullet points when listing multiple items';
 
         function toggleAIWindow() {
             var win = document.getElementById('ai-window');
-            var fab = document.getElementById('ai-fab');
-            if (win.classList.contains('hidden')) {
-                win.classList.remove('hidden');
-                fab.classList.add('hidden');
-            } else {
-                win.classList.add('hidden');
-                fab.classList.remove('hidden');
+            win.classList.toggle('hidden');
+            if (!win.classList.contains('hidden')) {
+                document.getElementById('maya-input').focus();
+                if (mayaChatHistory.length === 0) {
+                    addMayaMessage('bot', 'Hello! I\'m the Maya Internal Agent AI. I can help you with product information, After Sales procedures, and credit card queries. How can I assist you today?');
+                }
             }
         }
 
-        function getMayaChat() { return document.getElementById('maya-chat'); }
-        function getMayaInput() { return document.getElementById('maya-input'); }
-        function scrollMayaChat() { var c = getMayaChat(); c.scrollTop = c.scrollHeight; }
-
-        function makeLogoAvatar() {
-            var wrap = document.createElement('div');
-            wrap.className = 'w-7 h-7 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center shrink-0 mt-0.5 overflow-hidden';
-            var img = document.createElement('img');
-            img.src = 'logo.png';
-            img.alt = '';
-            img.className = 'chat-logo';
-            img.onerror = function() {
-                this.style.display = 'none';
-                this.nextElementSibling.style.display = 'flex';
-            };
-            wrap.appendChild(img);
-            var fb = document.createElement('div');
-            fb.className = 'logo-fallback hidden w-5 h-5 rounded bg-violet-600/20 border border-violet-500/30 text-[10px]';
-            fb.textContent = 'M';
-            wrap.appendChild(fb);
-            return wrap;
-        }
-
-        function createMsgBubble(role, html) {
-            var wrapper = document.createElement('div');
-            wrapper.className = 'flex gap-3 animate-fade-in';
-            if (role === 'user') {
-                var userBubble = document.createElement('div');
-                userBubble.className = 'ml-auto max-w-[85%]';
-                userBubble.innerHTML = '<div class="bg-violet-600/20 border border-violet-500/20 rounded-xl rounded-tr-sm px-4 py-3"><p class="text-xs text-zinc-200 leading-relaxed"></p></div>';
-                userBubble.firstChild.firstChild.textContent = html;
-                wrapper.appendChild(userBubble);
-                var userIcon = document.createElement('div');
-                userIcon.className = 'w-7 h-7 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0 mt-0.5';
-                userIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-zinc-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>';
-                wrapper.appendChild(userIcon);
-            } else {
-                wrapper.appendChild(makeLogoAvatar());
-                var aiBubble = document.createElement('div');
-                aiBubble.className = 'bg-zinc-900/80 border border-zinc-800 rounded-xl rounded-tl-sm px-4 py-3 max-w-[85%]';
-                aiBubble.innerHTML = '<div class="text-xs text-zinc-300 leading-relaxed maya-response-text"></div>';
-                aiBubble.firstChild.innerHTML = html;
-                wrapper.appendChild(aiBubble);
-            }
-            return wrapper;
+        function clearMayaChat() {
+            mayaChatHistory = [];
+            document.getElementById('maya-chat').innerHTML = '';
+            addMayaMessage('bot', 'Chat cleared. How can I help you?');
         }
 
         function addMayaMessage(role, content) {
-            var chat = getMayaChat();
-            var wrapper = createMsgBubble(role, content);
-            chat.appendChild(wrapper);
-            scrollMayaChat();
-        }
-
-        function addMayaTypingIndicator() {
-            var chat = getMayaChat();
+            var chatEl = document.getElementById('maya-chat');
             var wrapper = document.createElement('div');
-            wrapper.className = 'flex gap-3 animate-fade-in';
-            wrapper.id = 'maya-typing';
-            var avatar = makeLogoAvatar();
-            avatar.querySelector('img').style.opacity = '0.5';
-            wrapper.appendChild(avatar);
-            var dots = document.createElement('div');
-            dots.className = 'bg-zinc-900/80 border border-zinc-800 rounded-xl rounded-tl-sm px-4 py-3';
-            dots.innerHTML = '<div class="flex items-center gap-1.5 h-4"><div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div><div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div><div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div></div>';
-            wrapper.appendChild(dots);
-            chat.appendChild(wrapper);
-            scrollMayaChat();
+            wrapper.className = 'flex gap-2 ' + (role === 'user' ? 'justify-end' : 'justify-start') + ' animate-fade-in';
+
+            var bubble = document.createElement('div');
+            bubble.className = role === 'user'
+                ? 'max-w-[85%] bg-violet-600/20 border border-violet-500/30 rounded-xl rounded-br-sm px-3 py-2 text-sm text-zinc-200'
+                : 'max-w-[85%] bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-3 py-2 text-sm text-zinc-200';
+
+            if (role === 'bot') {
+                // Simple markdown-ish rendering
+                var html = content
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+                    .replace(/\n/g, '<br>');
+                bubble.innerHTML = '<div class="leading-relaxed">' + html + '</div>';
+            } else {
+                bubble.textContent = content;
+            }
+
+            wrapper.appendChild(bubble);
+            chatEl.appendChild(wrapper);
+            chatEl.scrollTop = chatEl.scrollHeight;
         }
 
-        function removeMayaTypingIndicator() {
+        function addTypingIndicator() {
+            var chatEl = document.getElementById('maya-chat');
+            var wrapper = document.createElement('div');
+            wrapper.id = 'maya-typing';
+            wrapper.className = 'flex gap-2 justify-start animate-fade-in';
+            wrapper.innerHTML = '<div class="bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">' +
+                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+                '</div>';
+            chatEl.appendChild(wrapper);
+            chatEl.scrollTop = chatEl.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
             var el = document.getElementById('maya-typing');
             if (el) el.remove();
         }
 
-        function addMayaError(message) {
-            var chat = getMayaChat();
-            var wrapper = document.createElement('div');
-            wrapper.className = 'flex gap-3 animate-fade-in';
-            wrapper.innerHTML = '<div class="w-7 h-7 rounded-lg bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg></div><div class="bg-red-500/5 border border-red-500/20 rounded-xl rounded-tl-sm px-4 py-3 max-w-[85%]"><p class="text-xs text-red-300 leading-relaxed">' + message + '</p></div>';
-            chat.appendChild(wrapper);
-            scrollMayaChat();
+        function sendMayaQuick(text) {
+            document.getElementById('maya-input').value = text;
+            sendMayaMessage();
         }
-
-        function escapeHtml(str) {
-            var div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        function formatMayaResponse(text) {
-            var formatted = escapeHtml(text);
-            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="text-violet-300">$1</strong>');
-            formatted = formatted.replace(/\n/g, '<br>');
-            
-            // Safely replace standard hyphen bullet points only at the start of a line
-            formatted = formatted.replace(/(^|<br>)- /g, '$1<span class="text-violet-400 mr-1">•</span> ');
-            
-            // Safely replace numbered lists only at the start of a line to avoid breaking math (e.g. 0.03 * 28,000)
-            formatted = formatted.replace(/(^|<br>)(\d+)\.\s/g, '$1<span class="text-violet-400 mr-1">$2.</span> ');
-            
-            return formatted;
-        }
-
-        function setMayaProcessing(state) {
-            mayaIsProcessing = state;
-            var btn = document.getElementById('maya-send-btn');
-            var input = getMayaInput();
-            if (state) { btn.disabled = true; input.disabled = true; }
-            else { btn.disabled = false; input.disabled = false; input.focus(); }
-        }
-
-        window.clearMayaChat = function() {
-            var chat = getMayaChat();
-            chat.innerHTML = '';
-            var wrapper = createMsgBubble('assistant', 'Hello! I\'m your <strong class="text-violet-400">Maya Internal AI</strong>. I can explain our products (MBCC, LCECC, Mini Payments) and guide you through After Sales procedures. What do you need help with?');
-            chat.appendChild(wrapper);
-            mayaChatHistory = [
-                { role: 'system', content: MAYA_SYSTEM_PROMPT },
-                { role: 'assistant', content: "Hello! I'm your Maya Internal AI. I can explain our products (MBCC, LCECC, Mini Payments) and guide you through After Sales procedures. What do you need help with?" }
-            ];
-            showToast('Chat cleared');
-        };
-
-        window.sendMayaQuick = function(text) { getMayaInput().value = text; sendMayaMessage(); };
 
         async function sendMayaMessage() {
-            if (mayaIsProcessing) return;
+            var input = document.getElementById('maya-input');
+            var text = input.value.trim();
+            if (!text || mayaIsLoading) return;
 
-            var input = getMayaInput();
-            var message = input.value.trim();
-            if (!message) return;
-
-            addMayaMessage('user', message);
-            mayaChatHistory.push({ role: 'user', content: message });
+            mayaIsLoading = true;
             input.value = '';
-            setMayaProcessing(true);
-            addMayaTypingIndicator();
+            document.getElementById('maya-send-btn').disabled = true;
 
-            // Keep only the system prompt and the last 6 messages to prevent 413 Request Entity Too Large errors
-            if (mayaChatHistory.length > 7) {
-                mayaChatHistory = [mayaChatHistory[0], ...mayaChatHistory.slice(-6)];
-            }
+            addMayaMessage('user', text);
+            mayaChatHistory.push({ role: 'user', content: text });
+
+            addTypingIndicator();
 
             try {
-                var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                var messages = [{ role: 'system', content: MAYA_SYSTEM_PROMPT }].concat(mayaChatHistory.slice(-10));
+
+                var response = await fetch(API_BASE_URL + '/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + GROQ_API_KEY
+                        'Authorization': 'Bearer ' + API_KEY
                     },
                     body: JSON.stringify({
-                        model: 'llama-3.3-70b-versatile',
-                        messages: mayaChatHistory,
-                        temperature: 0.4, 
-                        max_tokens: 800
+                        model: API_MODEL,
+                        messages: messages,
+                        temperature: 0.4,
+                        max_tokens: 1024,
+                        top_p: 0.9
                     })
                 });
 
-                removeMayaTypingIndicator();
+                removeTypingIndicator();
 
                 if (!response.ok) {
-                    var errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                    var errData = await response.json().catch(function() { return {}; });
+                    throw new Error(errData.error?.message || 'API request failed (Status ' + response.status + ')');
                 }
 
                 var data = await response.json();
-                var aiReply = data.choices[0].message.content;
+                var botMessage = data.choices && data.choices[0] && data.choices[0].message
+                    ? data.choices[0].message.content
+                    : 'I couldn\'t process that. Please try again.';
 
-                mayaChatHistory.push({ role: 'assistant', content: aiReply });
-                addMayaMessage('assistant', formatMayaResponse(aiReply));
+                addMayaMessage('bot', botMessage);
+                mayaChatHistory.push({ role: 'assistant', content: botMessage });
 
-            } catch (error) {
-                removeMayaTypingIndicator();
-                console.error('Maya AI Error:', error);
-                addMayaError('Connection error: ' + error.message + '. Please try again in a moment.');
-            } finally {
-                setMayaProcessing(false);
+            } catch (err) {
+                removeTypingIndicator();
+                addMayaMessage('bot', 'Connection error: ' + err.message + '. Please check the API configuration and try again.');
             }
-        }
 
-        // Initialize chat on load
-        window.addEventListener('load', function() {
-            clearMayaChat();
-        });
+            mayaIsLoading = false;
+            document.getElementById('maya-send-btn').disabled = false;
+            document.getElementById('maya-input').focus();
+        }
     </script>
 </body>
 </html>
