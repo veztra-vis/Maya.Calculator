@@ -464,415 +464,426 @@
         <span class="text-xs font-medium" id="toast-message">Value Copied</span>
     </div>
 
-    <script>
-        // ============================================================
-        // API CONFIGURATION — UPDATE THESE WHEN DEPLOYING TO RENDER
-        // ============================================================
-        // Set API_BASE_URL to your Render backend URL (e.g. "https://maya-api.onrender.com")
-        // The backend should proxy requests to Groq and add the API key server-side.
-        // If using direct Groq calls, set API_BASE_URL to "https://api.groq.com/openai/v1"
-        // and set API_KEY to your Groq API key.
-        var API_BASE_URL = 'https://maya-api.onrender.com';
-        var API_KEY = 'RENDER_API_KEY_HERE'; // Replace with your Render API key
-        var API_MODEL = 'llama-3.3-70b-versatile';
-        // ============================================================
+   <script>
+    // ============================================================
+    // API CONFIGURATION — UPDATE THESE FOR YOUR RENDER BACKEND
+    // ============================================================
+    //
+    // OPTION 1: Using a Render proxy backend
+    //   Set API_BASE_URL to your Render URL (no trailing slash)
+    //   Set API_ENDPOINT to the route your backend serves
+    //   Set API_KEY to the auth key your Render backend expects
+    //
+    // OPTION 2: Calling Groq directly (NOT recommended for production)
+    //   Set API_BASE_URL to "https://api.groq.com/openai/v1"
+    //   Set API_ENDPOINT to "/chat/completions"
+    //   Set API_KEY to your Groq API key
+    //
+    // ============================================================
+    var API_BASE_URL  = 'https://maya-backend-dgb8.onrender.com'; // Your Render URL — no trailing slash
+    var API_ENDPOINT  = '/api/chat';                                // The route your Render backend listens on
+    var API_KEY       = 'maya-secret-2025';                         // Auth key your Render backend expects
+    var API_MODEL     = 'llama-3.3-70b-versatile';                 // Groq model to use
+    // ============================================================
 
-        // --- UTILS ---
-        var formatCurrency = function(num) {
-            return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-        };
-        var parseCurrency = function(str) {
-            if(!str) return 0;
-            return parseFloat(str.replace(/[^0-9.-]+/g, "")) || 0;
-        };
-        var setupCurrencyInput = function(id) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            el.addEventListener('blur', function() {
-                var val = parseCurrency(el.value);
-                if(val > 0) el.value = formatCurrency(val);
-                else el.value = "";
-            });
-            el.addEventListener('focus', function() {
-                var val = parseCurrency(el.value);
-                if(val > 0) el.value = val;
-            });
-            el.addEventListener('input', function() { el.dispatchEvent(new Event('calculate')); });
-        };
-        function showToast(msg) {
-            var toast = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = msg || "Value Copied";
-            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
-            setTimeout(function() { toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); }, 2000);
-        }
-        window.copyToClipboard = function(elementId) {
-            var text = document.getElementById(elementId).innerText || document.getElementById(elementId).value;
-            navigator.clipboard.writeText(text).then(function() { showToast("Value Copied"); });
-        };
-
-        // --- CLOCK ---
-        function updateClock() {
-            var now = new Date();
-            document.getElementById('live-date-time').textContent = now.toLocaleString('en-US', { 
-                month: 'short', day: 'numeric', year: 'numeric', 
-                hour: '2-digit', minute: '2-digit', second: '2-digit' 
-            });
-        }
-        setInterval(updateClock, 1000); 
-        updateClock();
-
-        // --- LOADER ---
-        function hideLoader() {
-            var el = document.getElementById('loader');
-            if (el) el.classList.add('hidden-loader');
-        }
-        window.addEventListener('load', function() { setTimeout(hideLoader, 1200); });
-        setTimeout(hideLoader, 5000);
-
-        // --- MILES CALCULATOR ---
-        var spendInput = document.getElementById('spend-input');
-        var multSelect = document.getElementById('multiplier-select');
-        var customMult = document.getElementById('custom-multiplier');
-        var milesInput = document.getElementById('miles-input');
-        setupCurrencyInput('spend-input');
-        function calculateMiles() {
-            var val = parseCurrency(spendInput.value);
-            var isCustom = multSelect.value === 'custom';
-            var mult = isCustom ? (parseFloat(customMult.value) || 0) : parseFloat(multSelect.value);
-            var miles = (val / 40) * mult;
-            milesInput.value = formatCurrency(miles);
-            document.getElementById('cash-value').textContent = formatCurrency(miles * 0.16);
-            document.getElementById('est-spend').textContent = formatCurrency(val);
-        }
-        spendInput.addEventListener('calculate', calculateMiles);
-        spendInput.addEventListener('input', calculateMiles);
-        customMult.addEventListener('input', calculateMiles);
-        multSelect.addEventListener('change', function() {
-            if(multSelect.value === 'custom') { customMult.classList.remove('hidden'); customMult.focus(); }
-            else { customMult.classList.add('hidden'); }
-            calculateMiles();
+    // --- UTILS ---
+    var formatCurrency = function(num) {
+        return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    };
+    var parseCurrency = function(str) {
+        if(!str) return 0;
+        return parseFloat(str.replace(/[^0-9.-]+/g, "")) || 0;
+    };
+    var setupCurrencyInput = function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('blur', function() {
+            var val = parseCurrency(el.value);
+            if(val > 0) el.value = formatCurrency(val);
+            else el.value = "";
         });
-
-        // --- FINANCE CALCULATOR ---
-        setupCurrencyInput('loan-credit');
-        setupCurrencyInput('partial-payment');
-        function calcFinance() {
-            var loan = parseCurrency(document.getElementById('loan-credit').value);
-            var partial = parseCurrency(document.getElementById('partial-payment').value);
-            var term = parseFloat(document.getElementById('loan-term').value) || 30;
-            var held = parseFloat(document.getElementById('days-held').value) || 20;
-            var interest = (loan * 0.03) / term * held;
-            var remainingPrincipal = loan - partial;
-            var totalDue = remainingPrincipal + interest;
-            document.getElementById('fb-principal').textContent = '₱' + formatCurrency(remainingPrincipal);
-            document.getElementById('fb-interest').textContent = '₱' + formatCurrency(interest);
-            document.getElementById('finance-charge-result').textContent = formatCurrency(totalDue);
-        }
-        document.getElementById('loan-credit').addEventListener('calculate', calcFinance);
-        document.getElementById('loan-credit').addEventListener('input', calcFinance);
-        document.getElementById('partial-payment').addEventListener('calculate', calcFinance);
-        document.getElementById('partial-payment').addEventListener('input', calcFinance);
-        document.getElementById('loan-term').addEventListener('input', calcFinance);
-        document.getElementById('days-held').addEventListener('input', calcFinance);
-
-        // --- LANTERN CALCULATOR ---
-        setupCurrencyInput('landers-spend');
-        setupCurrencyInput('total-card-spend');
-        var lSpend = document.getElementById('landers-spend');
-        var lTotal = document.getElementById('total-card-spend');
-        var lCat = document.getElementById('landers-category');
-        var lCustomInput = document.getElementById('landers-custom-rate');
-        var lCustomGroup = document.getElementById('landers-custom-group');
-        function calcLantern() {
-            var A = parseCurrency(lSpend.value);
-            var C = parseCurrency(lTotal.value);
-            var cat = lCat.value;
-            var points = 0;
-            var breakdownHTML = "";
-            var T1 = 20000;
-            var T2 = 50000;
-            if (cat === 'landers') {
-                var spaceT1 = Math.max(0, T1 - C);
-                var portionT1 = Math.min(A, spaceT1);
-                var ptsT1 = portionT1 * 0.03;
-                points += ptsT1;
-                if (portionT1 > 0) breakdownHTML += '<span class="text-emerald-400">' + formatCurrency(portionT1) + ' @ 3%</span> = ' + ptsT1.toFixed(2) + ' pts<br>';
-                var spaceT2 = Math.max(0, T2 - C);
-                var portionT2 = Math.min(A, spaceT2);
-                var ptsT2 = portionT2 * 0.04;
-                points += ptsT2;
-                if (portionT2 > 0) breakdownHTML += '<span class="text-yellow-400">' + formatCurrency(portionT2) + ' @ 4%</span> = ' + ptsT2.toFixed(2) + ' pts<br>';
-                var amountInT3 = Math.min(C + A, T2) - Math.max(C, T2);
-                var ptsT3 = amountInT3 * 0.05;
-                points += ptsT3;
-                if (amountInT3 > 0) breakdownHTML += '<span class="text-purple-400">' + formatCurrency(amountInT3) + ' @ 5%</span> = ' + ptsT3.toFixed(2) + ' pts<br>';
-                if (breakdownHTML === "") breakdownHTML = "No points earned (0 amount).";
-            } else if (cat === 'dining') {
-                points = A * 0.02;
-                breakdownHTML = 'Flat Rate 2% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
-            } else if (cat === 'other') {
-                points = A * 0.01;
-                breakdownHTML = 'Flat Rate 1% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
-            } else if (cat === 'excluded') {
-                points = 0;
-                breakdownHTML = 'Excluded Category (0%)';
-            } else if (cat === 'custom') {
-                var customVal = parseFloat(lCustomInput.value) || 0;
-                points = A * (customVal / 100);
-                breakdownHTML = 'Custom Rate ' + customVal + '% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
-            }
-            var vouchers = Math.floor(points / 500);
-            document.getElementById('landers-result').textContent = points.toFixed(2);
-            document.getElementById('voucher-result').textContent = vouchers.toLocaleString();
-            document.getElementById('tier-breakdown').innerHTML = breakdownHTML;
-        }
-        lSpend.addEventListener('calculate', calcLantern);
-        lSpend.addEventListener('input', calcLantern);
-        lTotal.addEventListener('calculate', calcLantern);
-        lCat.addEventListener('calculate', calcLantern);
-        lCustomInput.addEventListener('calculate', calcLantern);
-        lCustomInput.addEventListener('input', calcLantern);
-        lCat.addEventListener('change', function() {
-            if(lCat.value === 'custom') { lCustomGroup.classList.remove('hidden'); lCustomInput.focus(); }
-            else { lCustomGroup.classList.add('hidden'); }
-            calcLantern();
+        el.addEventListener('focus', function() {
+            var val = parseCurrency(el.value);
+            if(val > 0) el.value = val;
         });
+        el.addEventListener('input', function() { el.dispatchEvent(new Event('calculate')); });
+    };
+    function showToast(msg) {
+        var toast = document.getElementById('toast');
+        document.getElementById('toast-message').innerText = msg || "Value Copied";
+        toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+        setTimeout(function() { toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); }, 2000);
+    }
+    window.copyToClipboard = function(elementId) {
+        var text = document.getElementById(elementId).innerText || document.getElementById(elementId).value;
+        navigator.clipboard.writeText(text).then(function() { showToast("Value Copied"); });
+    };
 
-        // --- MINI PAYMENTS (EMI) CALCULATOR ---
-        setupCurrencyInput('emi-principal');
-        var emiPrincipal = document.getElementById('emi-principal');
-        var emiRate = document.getElementById('emi-rate');
-        var emiMonths = document.getElementById('emi-months');
-        var emiStartDate = document.getElementById('emi-start-date');
-        var emiDaysYear = document.getElementById('emi-days-year');
+    // --- CLOCK ---
+    function updateClock() {
+        var now = new Date();
+        document.getElementById('live-date-time').textContent = now.toLocaleString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-        function calcEMI() {
-            var P = parseCurrency(emiPrincipal.value);
-            var monthlyEIR = (parseFloat(emiRate.value) || 0) / 100;
-            var n = parseInt(emiMonths.value) || 0;
-            var daysYear = parseInt(emiDaysYear.value) || 365;
-            
-            var nominalRate = monthlyEIR * 12;
-            var dailyRate = nominalRate / daysYear;
-            
-            document.getElementById('emi-nominal-rate').textContent = (nominalRate * 100).toFixed(4);
-            document.getElementById('emi-daily-rate').textContent = dailyRate.toFixed(9);
-            
-            var emi = 0;
-            if (P > 0 && n > 0) {
-                if (monthlyEIR === 0) {
-                    emi = P / n;
-                } else {
-                    emi = P * monthlyEIR * Math.pow(1 + monthlyEIR, n) / (Math.pow(1 + monthlyEIR, n) - 1);
-                }
-            }
-            document.getElementById('emi-fixed-amount').textContent = formatCurrency(emi);
-            
-            var tbody = document.getElementById('emi-table-body');
-            tbody.innerHTML = '';
-            
-            if (P === 0 || n === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';
-                document.getElementById('emi-total-interest').textContent = '0.00';
-                return;
-            }
-            
-            var currentDate = new Date(emiStartDate.value);
-            var remainingPrincipal = P;
-            var totalInterest = 0;
-            
-            for (var i = 1; i <= n; i++) {
-                var prevDate = new Date(currentDate);
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                
-                var days = Math.round((currentDate - prevDate) / (1000 * 60 * 60 * 24));
-                
-                var interestAmt = remainingPrincipal * dailyRate * days;
-                var principalPaid = 0;
-                var installmentAmt = 0;
-                
-                if (i === n) {
-                    principalPaid = remainingPrincipal;
-                    installmentAmt = principalPaid + interestAmt;
-                    remainingPrincipal = 0;
-                } else {
-                    principalPaid = emi - interestAmt;
-                    installmentAmt = emi;
-                    remainingPrincipal -= principalPaid;
-                }
-                
-                totalInterest += interestAmt;
-                
-                var dueDateStr = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                
-                var tr = document.createElement('tr');
-                tr.className = 'border-t border-zinc-800/50 hover:bg-zinc-900/50';
-                tr.innerHTML = '<td class="px-3 py-3 text-center text-zinc-500">' + i + '</td>' +
-                    '<td class="px-3 py-3 text-zinc-400">' + dueDateStr + '</td>' +
-                    '<td class="px-3 py-3 text-right text-zinc-400">' + days + '</td>' +
-                    '<td class="px-3 py-3 text-right text-zinc-300">₱' + formatCurrency(remainingPrincipal + principalPaid) + '</td>' +
-                    '<td class="px-3 py-3 text-right text-red-400">₱' + formatCurrency(interestAmt) + '</td>' +
-                    '<td class="px-3 py-3 text-right text-emerald-400">₱' + formatCurrency(principalPaid) + '</td>' +
-                    '<td class="px-3 py-3 text-right text-amber-400 font-bold">₱' + formatCurrency(installmentAmt) + '</td>' +
-                    '<td class="px-3 py-3 text-right text-zinc-200">₱' + formatCurrency(Math.max(0, remainingPrincipal)) + '</td>';
-                tbody.appendChild(tr);
-            }
-            
-            document.getElementById('emi-total-interest').textContent = formatCurrency(totalInterest);
+    // --- LOADER ---
+    function hideLoader() {
+        var el = document.getElementById('loader');
+        if (el) el.classList.add('hidden-loader');
+    }
+    window.addEventListener('load', function() { setTimeout(hideLoader, 1200); });
+    setTimeout(hideLoader, 5000);
+
+    // --- MILES CALCULATOR ---
+    var spendInput = document.getElementById('spend-input');
+    var multSelect = document.getElementById('multiplier-select');
+    var customMult = document.getElementById('custom-multiplier');
+    var milesInput = document.getElementById('miles-input');
+    setupCurrencyInput('spend-input');
+    function calculateMiles() {
+        var val = parseCurrency(spendInput.value);
+        var isCustom = multSelect.value === 'custom';
+        var mult = isCustom ? (parseFloat(customMult.value) || 0) : parseFloat(multSelect.value);
+        var miles = (val / 40) * mult;
+        milesInput.value = formatCurrency(miles);
+        document.getElementById('cash-value').textContent = formatCurrency(miles * 0.16);
+        document.getElementById('est-spend').textContent = formatCurrency(val);
+    }
+    spendInput.addEventListener('calculate', calculateMiles);
+    spendInput.addEventListener('input', calculateMiles);
+    customMult.addEventListener('input', calculateMiles);
+    multSelect.addEventListener('change', function() {
+        if(multSelect.value === 'custom') { customMult.classList.remove('hidden'); customMult.focus(); }
+        else { customMult.classList.add('hidden'); }
+        calculateMiles();
+    });
+
+    // --- FINANCE CALCULATOR ---
+    setupCurrencyInput('loan-credit');
+    setupCurrencyInput('partial-payment');
+    function calcFinance() {
+        var loan = parseCurrency(document.getElementById('loan-credit').value);
+        var partial = parseCurrency(document.getElementById('partial-payment').value);
+        var term = parseFloat(document.getElementById('loan-term').value) || 30;
+        var held = parseFloat(document.getElementById('days-held').value) || 20;
+        var interest = (loan * 0.03) / term * held;
+        var remainingPrincipal = loan - partial;
+        var totalDue = remainingPrincipal + interest;
+        document.getElementById('fb-principal').textContent = '₱' + formatCurrency(remainingPrincipal);
+        document.getElementById('fb-interest').textContent = '₱' + formatCurrency(interest);
+        document.getElementById('finance-charge-result').textContent = formatCurrency(totalDue);
+    }
+    document.getElementById('loan-credit').addEventListener('calculate', calcFinance);
+    document.getElementById('loan-credit').addEventListener('input', calcFinance);
+    document.getElementById('partial-payment').addEventListener('calculate', calcFinance);
+    document.getElementById('partial-payment').addEventListener('input', calcFinance);
+    document.getElementById('loan-term').addEventListener('input', calcFinance);
+    document.getElementById('days-held').addEventListener('input', calcFinance);
+
+    // --- LANTERN CALCULATOR ---
+    setupCurrencyInput('landers-spend');
+    setupCurrencyInput('total-card-spend');
+    var lSpend = document.getElementById('landers-spend');
+    var lTotal = document.getElementById('total-card-spend');
+    var lCat = document.getElementById('landers-category');
+    var lCustomInput = document.getElementById('landers-custom-rate');
+    var lCustomGroup = document.getElementById('landers-custom-group');
+    function calcLantern() {
+        var A = parseCurrency(lSpend.value);
+        var C = parseCurrency(lTotal.value);
+        var cat = lCat.value;
+        var points = 0;
+        var breakdownHTML = "";
+        var T1 = 20000;
+        var T2 = 50000;
+        if (cat === 'landers') {
+            var spaceT1 = Math.max(0, T1 - C);
+            var portionT1 = Math.min(A, spaceT1);
+            var ptsT1 = portionT1 * 0.03;
+            points += ptsT1;
+            if (portionT1 > 0) breakdownHTML += '<span class="text-emerald-400">' + formatCurrency(portionT1) + ' @ 3%</span> = ' + ptsT1.toFixed(2) + ' pts<br>';
+            var spaceT2 = Math.max(0, T2 - C);
+            var portionT2 = Math.min(A, spaceT2);
+            var ptsT2 = portionT2 * 0.04;
+            points += ptsT2;
+            if (portionT2 > 0) breakdownHTML += '<span class="text-yellow-400">' + formatCurrency(portionT2) + ' @ 4%</span> = ' + ptsT2.toFixed(2) + ' pts<br>';
+            var amountInT3 = Math.min(C + A, T2) - Math.max(C, T2);
+            var ptsT3 = amountInT3 * 0.05;
+            points += ptsT3;
+            if (amountInT3 > 0) breakdownHTML += '<span class="text-purple-400">' + formatCurrency(amountInT3) + ' @ 5%</span> = ' + ptsT3.toFixed(2) + ' pts<br>';
+            if (breakdownHTML === "") breakdownHTML = "No points earned (0 amount).";
+        } else if (cat === 'dining') {
+            points = A * 0.02;
+            breakdownHTML = 'Flat Rate 2% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+        } else if (cat === 'other') {
+            points = A * 0.01;
+            breakdownHTML = 'Flat Rate 1% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+        } else if (cat === 'excluded') {
+            points = 0;
+            breakdownHTML = 'Excluded Category (0%)';
+        } else if (cat === 'custom') {
+            var customVal = parseFloat(lCustomInput.value) || 0;
+            points = A * (customVal / 100);
+            breakdownHTML = 'Custom Rate ' + customVal + '% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
         }
+        var vouchers = Math.floor(points / 500);
+        document.getElementById('landers-result').textContent = points.toFixed(2);
+        document.getElementById('voucher-result').textContent = vouchers.toLocaleString();
+        document.getElementById('tier-breakdown').innerHTML = breakdownHTML;
+    }
+    lSpend.addEventListener('calculate', calcLantern);
+    lSpend.addEventListener('input', calcLantern);
+    lTotal.addEventListener('calculate', calcLantern);
+    lCat.addEventListener('calculate', calcLantern);
+    lCustomInput.addEventListener('calculate', calcLantern);
+    lCustomInput.addEventListener('input', calcLantern);
+    lCat.addEventListener('change', function() {
+        if(lCat.value === 'custom') { lCustomGroup.classList.remove('hidden'); lCustomInput.focus(); }
+        else { lCustomGroup.classList.add('hidden'); }
+        calcLantern();
+    });
 
-        emiPrincipal.addEventListener('calculate', calcEMI);
-        emiPrincipal.addEventListener('input', calcEMI);
-        emiRate.addEventListener('input', calcEMI);
-        emiMonths.addEventListener('input', calcEMI);
-        emiStartDate.addEventListener('change', calcEMI);
-        emiDaysYear.addEventListener('input', calcEMI);
-        calcEMI();
+    // --- MINI PAYMENTS (EMI) CALCULATOR ---
+    setupCurrencyInput('emi-principal');
+    var emiPrincipal = document.getElementById('emi-principal');
+    var emiRate = document.getElementById('emi-rate');
+    var emiMonths = document.getElementById('emi-months');
+    var emiStartDate = document.getElementById('emi-start-date');
+    var emiDaysYear = document.getElementById('emi-days-year');
 
-        // --- MAYA AI ASSISTANT ---
-        var mayaChatHistory = [];
-        var mayaIsLoading = false;
+    function calcEMI() {
+        var P = parseCurrency(emiPrincipal.value);
+        var monthlyEIR = (parseFloat(emiRate.value) || 0) / 100;
+        var n = parseInt(emiMonths.value) || 0;
+        var daysYear = parseInt(emiDaysYear.value) || 365;
 
-        var MAYA_SYSTEM_PROMPT = 'You are Maya.ph Internal Agent AI, an expert assistant for Maya Bank (formerly PayMaya) customer service representatives. You specialize in:\n\n' +
-            '- Maya Black Credit Card (MBCC): Features, benefits, annual fees, credit limits, cashback rules\n' +
-            '- Maya Landers Credit Card (LCECC): Landers partnership benefits, cashback tiers (3%/4%/5%), voucher system\n' +
-            '- Mini Payments: EMI conversion, eligibility (minimum ₱3,000 single receipt), available terms (3/6/12 months), interest rates\n' +
-            '- Finance Charges: 3% monthly interest, how prorated interest works for early closure\n' +
-            '- Maya Miles: Earn rate (1 mile per ₱40 spend), multiplier tiers, redemption value (₱0.16 per mile)\n' +
-            '- After Sales procedures: Card closure, dispute filing, credit limit adjustments, statement requests\n' +
-            '- Google Pay / Apple Pay: Linking, token management, lost device procedures\n' +
-            '- Landers Cashback Everywhere promo: Mechanics, qualifying spends, cap limits\n\n' +
-            'Rules:\n' +
-            '- Be concise, professional, and accurate\n' +
-            '- If unsure, say you need to verify rather than guessing\n' +
-            '- Always clarify that cashback and rewards are subject to terms and conditions\n' +
-            '- You were created by the Maya Engineering Team: Ancel Claudio, Marcux Dimaapi, and Marlon Ubaña\n' +
-            '- When discussing rates or fees, always specify the currency as PHP (₱)\n' +
-            '- Format responses with clear structure using bullet points when listing multiple items';
+        var nominalRate = monthlyEIR * 12;
+        var dailyRate = nominalRate / daysYear;
 
-        function toggleAIWindow() {
-            var win = document.getElementById('ai-window');
-            win.classList.toggle('hidden');
-            if (!win.classList.contains('hidden')) {
-                document.getElementById('maya-input').focus();
-                if (mayaChatHistory.length === 0) {
-                    addMayaMessage('bot', 'Hello! I\'m the Maya Internal Agent AI. I can help you with product information, After Sales procedures, and credit card queries. How can I assist you today?');
-                }
-            }
-        }
+        document.getElementById('emi-nominal-rate').textContent = (nominalRate * 100).toFixed(4);
+        document.getElementById('emi-daily-rate').textContent = dailyRate.toFixed(9);
 
-        function clearMayaChat() {
-            mayaChatHistory = [];
-            document.getElementById('maya-chat').innerHTML = '';
-            addMayaMessage('bot', 'Chat cleared. How can I help you?');
-        }
-
-        function addMayaMessage(role, content) {
-            var chatEl = document.getElementById('maya-chat');
-            var wrapper = document.createElement('div');
-            wrapper.className = 'flex gap-2 ' + (role === 'user' ? 'justify-end' : 'justify-start') + ' animate-fade-in';
-
-            var bubble = document.createElement('div');
-            bubble.className = role === 'user'
-                ? 'max-w-[85%] bg-violet-600/20 border border-violet-500/30 rounded-xl rounded-br-sm px-3 py-2 text-sm text-zinc-200'
-                : 'max-w-[85%] bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-3 py-2 text-sm text-zinc-200';
-
-            if (role === 'bot') {
-                // Simple markdown-ish rendering
-                var html = content
-                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
-                    .replace(/\n/g, '<br>');
-                bubble.innerHTML = '<div class="leading-relaxed">' + html + '</div>';
+        var emi = 0;
+        if (P > 0 && n > 0) {
+            if (monthlyEIR === 0) {
+                emi = P / n;
             } else {
-                bubble.textContent = content;
+                emi = P * monthlyEIR * Math.pow(1 + monthlyEIR, n) / (Math.pow(1 + monthlyEIR, n) - 1);
+            }
+        }
+        document.getElementById('emi-fixed-amount').textContent = formatCurrency(emi);
+
+        var tbody = document.getElementById('emi-table-body');
+        tbody.innerHTML = '';
+
+        if (P === 0 || n === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';
+            document.getElementById('emi-total-interest').textContent = '0.00';
+            return;
+        }
+
+        var currentDate = new Date(emiStartDate.value);
+        var remainingPrincipal = P;
+        var totalInterest = 0;
+
+        for (var i = 1; i <= n; i++) {
+            var prevDate = new Date(currentDate);
+            currentDate.setMonth(currentDate.getMonth() + 1);
+
+            var days = Math.round((currentDate - prevDate) / (1000 * 60 * 60 * 24));
+
+            var interestAmt = remainingPrincipal * dailyRate * days;
+            var principalPaid = 0;
+            var installmentAmt = 0;
+
+            if (i === n) {
+                principalPaid = remainingPrincipal;
+                installmentAmt = principalPaid + interestAmt;
+                remainingPrincipal = 0;
+            } else {
+                principalPaid = emi - interestAmt;
+                installmentAmt = emi;
+                remainingPrincipal -= principalPaid;
             }
 
-            wrapper.appendChild(bubble);
-            chatEl.appendChild(wrapper);
-            chatEl.scrollTop = chatEl.scrollHeight;
+            totalInterest += interestAmt;
+
+            var dueDateStr = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+            var tr = document.createElement('tr');
+            tr.className = 'border-t border-zinc-800/50 hover:bg-zinc-900/50';
+            tr.innerHTML = '<td class="px-3 py-3 text-center text-zinc-500">' + i + '</td>' +
+                '<td class="px-3 py-3 text-zinc-400">' + dueDateStr + '</td>' +
+                '<td class="px-3 py-3 text-right text-zinc-400">' + days + '</td>' +
+                '<td class="px-3 py-3 text-right text-zinc-300">₱' + formatCurrency(remainingPrincipal + principalPaid) + '</td>' +
+                '<td class="px-3 py-3 text-right text-red-400">₱' + formatCurrency(interestAmt) + '</td>' +
+                '<td class="px-3 py-3 text-right text-emerald-400">₱' + formatCurrency(principalPaid) + '</td>' +
+                '<td class="px-3 py-3 text-right text-amber-400 font-bold">₱' + formatCurrency(installmentAmt) + '</td>' +
+                '<td class="px-3 py-3 text-right text-zinc-200">₱' + formatCurrency(Math.max(0, remainingPrincipal)) + '</td>';
+            tbody.appendChild(tr);
         }
 
-        function addTypingIndicator() {
-            var chatEl = document.getElementById('maya-chat');
-            var wrapper = document.createElement('div');
-            wrapper.id = 'maya-typing';
-            wrapper.className = 'flex gap-2 justify-start animate-fade-in';
-            wrapper.innerHTML = '<div class="bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">' +
-                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
-                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
-                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
-                '</div>';
-            chatEl.appendChild(wrapper);
-            chatEl.scrollTop = chatEl.scrollHeight;
-        }
+        document.getElementById('emi-total-interest').textContent = formatCurrency(totalInterest);
+    }
 
-        function removeTypingIndicator() {
-            var el = document.getElementById('maya-typing');
-            if (el) el.remove();
-        }
+    emiPrincipal.addEventListener('calculate', calcEMI);
+    emiPrincipal.addEventListener('input', calcEMI);
+    emiRate.addEventListener('input', calcEMI);
+    emiMonths.addEventListener('input', calcEMI);
+    emiStartDate.addEventListener('change', calcEMI);
+    emiDaysYear.addEventListener('input', calcEMI);
+    calcEMI();
 
-        function sendMayaQuick(text) {
-            document.getElementById('maya-input').value = text;
-            sendMayaMessage();
-        }
+    // --- MAYA AI ASSISTANT ---
+    var mayaChatHistory = [];
+    var mayaIsLoading = false;
 
-        async function sendMayaMessage() {
-            var input = document.getElementById('maya-input');
-            var text = input.value.trim();
-            if (!text || mayaIsLoading) return;
+    var MAYA_SYSTEM_PROMPT = 'You are Maya.ph Internal Agent AI, an expert assistant for Maya Bank (formerly PayMaya) customer service representatives. You specialize in:\n\n' +
+        '- Maya Black Credit Card (MBCC): Features, benefits, annual fees, credit limits, cashback rules\n' +
+        '- Maya Landers Credit Card (LCECC): Landers partnership benefits, cashback tiers (3%/4%/5%), voucher system\n' +
+        '- Mini Payments: EMI conversion, eligibility (minimum ₱3,000 single receipt), available terms (3/6/12 months), interest rates\n' +
+        '- Finance Charges: 3% monthly interest, how prorated interest works for early closure\n' +
+        '- Maya Miles: Earn rate (1 mile per ₱40 spend), multiplier tiers, redemption value (₱0.16 per mile)\n' +
+        '- After Sales procedures: Card closure, dispute filing, credit limit adjustments, statement requests\n' +
+        '- Google Pay / Apple Pay: Linking, token management, lost device procedures\n' +
+        '- Landers Cashback Everywhere promo: Mechanics, qualifying spends, cap limits\n\n' +
+        'Rules:\n' +
+        '- Be concise, professional, and accurate\n' +
+        '- If unsure, say you need to verify rather than guessing\n' +
+        '- Always clarify that cashback and rewards are subject to terms and conditions\n' +
+        '- You were created by the Maya Engineering Team: Ancel Claudio, Marcux Dimaapi, and Marlon Ubaña\n' +
+        '- When discussing rates or fees, always specify the currency as PHP (₱)\n' +
+        '- Format responses with clear structure using bullet points when listing multiple items';
 
-            mayaIsLoading = true;
-            input.value = '';
-            document.getElementById('maya-send-btn').disabled = true;
-
-            addMayaMessage('user', text);
-            mayaChatHistory.push({ role: 'user', content: text });
-
-            addTypingIndicator();
-
-            try {
-                var messages = [{ role: 'system', content: MAYA_SYSTEM_PROMPT }].concat(mayaChatHistory.slice(-10));
-
-                var response = await fetch(API_BASE_URL + '/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + API_KEY
-                    },
-                    body: JSON.stringify({
-                        model: API_MODEL,
-                        messages: messages,
-                        temperature: 0.4,
-                        max_tokens: 1024,
-                        top_p: 0.9
-                    })
-                });
-
-                removeTypingIndicator();
-
-                if (!response.ok) {
-                    var errData = await response.json().catch(function() { return {}; });
-                    throw new Error(errData.error?.message || 'API request failed (Status ' + response.status + ')');
-                }
-
-                var data = await response.json();
-                var botMessage = data.choices && data.choices[0] && data.choices[0].message
-                    ? data.choices[0].message.content
-                    : 'I couldn\'t process that. Please try again.';
-
-                addMayaMessage('bot', botMessage);
-                mayaChatHistory.push({ role: 'assistant', content: botMessage });
-
-            } catch (err) {
-                removeTypingIndicator();
-                addMayaMessage('bot', 'Connection error: ' + err.message + '. Please check the API configuration and try again.');
-            }
-
-            mayaIsLoading = false;
-            document.getElementById('maya-send-btn').disabled = false;
+    function toggleAIWindow() {
+        var win = document.getElementById('ai-window');
+        win.classList.toggle('hidden');
+        if (!win.classList.contains('hidden')) {
             document.getElementById('maya-input').focus();
+            if (mayaChatHistory.length === 0) {
+                addMayaMessage('bot', 'Hello! I\'m the Maya Internal Agent AI. I can help you with product information, After Sales procedures, and credit card queries. How can I assist you today?');
+            }
         }
-    </script>
-</body>
-</html>
+    }
+
+    function clearMayaChat() {
+        mayaChatHistory = [];
+        document.getElementById('maya-chat').innerHTML = '';
+        addMayaMessage('bot', 'Chat cleared. How can I help you?');
+    }
+
+    function addMayaMessage(role, content) {
+        var chatEl = document.getElementById('maya-chat');
+        var wrapper = document.createElement('div');
+        wrapper.className = 'flex gap-2 ' + (role === 'user' ? 'justify-end' : 'justify-start') + ' animate-fade-in';
+
+        var bubble = document.createElement('div');
+        bubble.className = role === 'user'
+            ? 'max-w-[85%] bg-violet-600/20 border border-violet-500/30 rounded-xl rounded-br-sm px-3 py-2 text-sm text-zinc-200'
+            : 'max-w-[85%] bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-3 py-2 text-sm text-zinc-200';
+
+        if (role === 'bot') {
+            var html = content
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+                .replace(/\n/g, '<br>');
+            bubble.innerHTML = '<div class="leading-relaxed">' + html + '</div>';
+        } else {
+            bubble.textContent = content;
+        }
+
+        wrapper.appendChild(bubble);
+        chatEl.appendChild(wrapper);
+        chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+        var chatEl = document.getElementById('maya-chat');
+        var wrapper = document.createElement('div');
+        wrapper.id = 'maya-typing';
+        wrapper.className = 'flex gap-2 justify-start animate-fade-in';
+        wrapper.innerHTML = '<div class="bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">' +
+            '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+            '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+            '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+            '</div>';
+        chatEl.appendChild(wrapper);
+        chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        var el = document.getElementById('maya-typing');
+        if (el) el.remove();
+    }
+
+    function sendMayaQuick(text) {
+        document.getElementById('maya-input').value = text;
+        sendMayaMessage();
+    }
+
+    async function sendMayaMessage() {
+        var input = document.getElementById('maya-input');
+        var text = input.value.trim();
+        if (!text || mayaIsLoading) return;
+
+        mayaIsLoading = true;
+        input.value = '';
+        document.getElementById('maya-send-btn').disabled = true;
+
+        addMayaMessage('user', text);
+        mayaChatHistory.push({ role: 'user', content: text });
+
+        addTypingIndicator();
+
+        try {
+            var messages = [{ role: 'system', content: MAYA_SYSTEM_PROMPT }].concat(mayaChatHistory.slice(-10));
+
+            // Build the full request URL from separate base + endpoint
+            var requestURL = API_BASE_URL.replace(/\/+$/, '') + API_ENDPOINT;
+
+            var response = await fetch(requestURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + API_KEY
+                },
+                body: JSON.stringify({
+                    model: API_MODEL,
+                    messages: messages,
+                    temperature: 0.4,
+                    max_tokens: 1024,
+                    top_p: 0.9
+                })
+            });
+
+            removeTypingIndicator();
+
+            if (!response.ok) {
+                var errBody = await response.text().catch(function() { return ''; });
+                var errMsg = 'Status ' + response.status;
+                try { errMsg = JSON.parse(errBody).error?.message || errMsg; } catch(e) {}
+                throw new Error(errMsg + ' — URL called: ' + requestURL);
+            }
+
+            var data = await response.json();
+            var botMessage = data.choices && data.choices[0] && data.choices[0].message
+                ? data.choices[0].message.content
+                : 'I couldn\'t process that. Please try again.';
+
+            addMayaMessage('bot', botMessage);
+            mayaChatHistory.push({ role: 'assistant', content: botMessage });
+
+        } catch (err) {
+            removeTypingIndicator();
+            addMayaMessage('bot', 'Connection error: ' + err.message);
+        }
+
+        mayaIsLoading = false;
+        document.getElementById('maya-send-btn').disabled = false;
+        document.getElementById('maya-input').focus();
+    }
+</script>
