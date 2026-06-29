@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maya | Utility Terminal</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        zinc: {
+                            850: '#18181b',
+                            950: '#09090b',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at 50% 50%, #18181b 0%, #09090b 100%);
+            background-attachment: fixed;
+        }
+        .ambient-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        .loader-overlay { transition: opacity 0.6s ease-out, visibility 0.6s; }
+        .hidden-loader { opacity: 0; visibility: hidden; pointer-events: none; }
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        .loader-logo { animation: logoPulse 1.8s ease-in-out infinite; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(39, 39, 42, 1);
+        }
+        .data-font { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        .typing-dot { animation: typingBounce 1.4s infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        #maya-chat::-webkit-scrollbar { width: 4px; }
+        #maya-chat::-webkit-scrollbar-track { background: transparent; }
+        #maya-chat::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+        #maya-chat::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        .header-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; }
+        .footer-logo { width: 18px; height: 18px; object-fit: contain; opacity: 0.5; }
+        .chat-logo { width: 20px; height: 20px; object-fit: contain; }
+        .logo-fallback {
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px; color: #a78bfa;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.6;
+            cursor: pointer;
+        }
+        .ai-window-slide-up { 
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
+
+    <div id="loader" class="fixed inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center loader-overlay">
+        <div class="w-16 h-16 flex items-center justify-center loader-logo mb-6">
+            <div class="logo-fallback w-16 h-16 rounded-xl bg-violet-600/20 border border-violet-500/30">M</div>
+        </div>
+        <p class="text-zinc-500 text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Maya Link...</p>
+    </div>
+
+    <div class="ambient-glow"></div>
+
+    <header class="max-w-6xl mx-auto mb-10 border-b border-zinc-800 pb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
+        <div class="flex items-center gap-4">
+            <div class="header-logo flex items-center justify-center overflow-hidden bg-zinc-800/50">
+                <div class="logo-fallback w-10 h-10 rounded-[10px] bg-violet-600/20 border border-violet-500/30 text-sm">M</div>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v2.3.2</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
+            <span id="live-date-time" class="text-xs font-mono text-zinc-400">Syncing...</span>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
+        
+        <!-- MILES CALCULATOR -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Maya Miles</h2>
+                </div>
+                <span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span>
+            </div>
+            <div class="space-y-5 flex-grow">
+                <div class="group">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Customer Spend (PHP)</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                        <input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700">
+                    </div>
+                </div>
+                <div class="group">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Multiplier Rate</label>
+                    <div class="grid grid-cols-[1fr_auto] gap-2">
+                        <select id="multiplier-select" class="bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors">
+                            <option value="1">1x (Base)</option>
+                            <option value="2">2x (Preferred)</option>
+                            <option value="5">5x (Elite)</option>
+                            <option value="10">10x (Max)</option>
+                            <option value="custom">Custom Multiplier</option>
+                        </select>
+                    </div>
+                    <input type="number" id="custom-multiplier" placeholder="Enter Multiplier (e.g. 3)" class="hidden mt-2 w-full bg-zinc-950/50 border border-emerald-500/50 rounded-lg py-2 px-3 text-emerald-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 animate-fade-in">
+                </div>
+                <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/50 mt-2">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-600 mb-1">Miles Generated</label>
+                    <div class="flex items-baseline justify-between gap-4">
+                        <div class="relative w-full">
+                            <input type="text" id="miles-input" readonly class="w-full bg-transparent border-none text-3xl font-mono font-bold text-emerald-400 focus:outline-none cursor-default data-font" value="0.00">
+                            <button onclick="copyToClipboard('miles-input')" class="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors p-1" title="Copy">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 pt-5 border-t border-zinc-800 mt-4">
+                <div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Est. Cash Value</p>
+                    <p class="text-sm font-bold text-zinc-300 data-font">₱<span id="cash-value">0.00</span></p>
+                </div>
+                <div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Processed Spend</p>
+                    <p class="text-sm font-bold text-zinc-300 data-font">₱<span id="est-spend">0.00</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINANCE CHARGE CALCULATOR -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-red-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Finance Charge</h2>
+                </div>
+                <span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span>
+            </div>
+            <div class="space-y-5 flex-grow">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label>
+                        <input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label>
+                        <input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-zinc-400">
+                        <span>Remaining Principal</span>
+                        <span class="font-mono text-zinc-200" id="fb-principal">₱0.00</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-zinc-400">
+                        <span>Interest Accrued (3%)</span>
+                        <span class="font-mono text-zinc-200" id="fb-interest">₱0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4">
+                <label class="block text-[10px] uppercase tracking-wider text-red-500/80 mb-1">Total Payable Amount</label>
+                <div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('finance-charge-result')">
+                    <p class="text-3xl font-mono font-bold text-white group-hover:text-red-400 transition-colors data-font">₱<span id="finance-charge-result">0.00</span></p>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002 2v-1M8 5a2 2 0 002 2h2a2 2 0 012 2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- LANTERN REWARDS CALCULATOR -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
+            <div class="md:w-1/2 space-y-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-1.5 h-8 bg-blue-500 rounded-full"></span>
+                        <h2 class="text-lg font-bold text-white">Landers Rewards</h2>
+                    </div>
+                    <span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">
+                            Previous Accumulated (C)
+                            <span class="block text-[8px] normal-case tracking-normal text-zinc-600 mt-0.5">*Spend before this transaction</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                            <input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label>
+                    <select id="landers-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors">
+                        <option value="landers">Landers Superstore (Progressive)</option>
+                        <option value="dining">Dining (2%)</option>
+                        <option value="other">Other Retail (1%)</option>
+                        <option value="excluded">Excluded Categories (0%)</option>
+                        <option value="custom">Custom Percentage...</option>
+                    </select>
+                    <div id="landers-custom-group" class="hidden mt-3 animate-fade-in">
+                        <label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label>
+                        <div class="relative">
+                            <input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all">
+                                <span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span>
+                            </div>
+                        <p class="text-[9px] text-zinc-600 mt-1">*Overrides automatic tiering.</p>
+                    </div>
+                </div>
+                <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800">
+                    <p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p>
+                    <p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em]">Waiting for input...</p>
+                </div>
+            </div>
+            <div class="md:w-1/2 bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center border border border-dashed border-zinc-800 relative">
+                <p class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Points Earned</p>
+                <div class="flex items-end justify-between mb-4">
+                    <p class="text-4xl md:text-5xl font-mono font-bold text-blue-400 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')">
+                        <span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span>
+                    </p>
+                    <button onclick="copyToClipboard('landers-result')" class="mb-2 p-2 hover:bg-blue-500/20 rounded-lg transition-colors text-blue-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    </button>
+                </div>
+                <div class="w-full h-px bg-zinc-800 my-4"></div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase text-zinc-500">Vouchers Earned</p>
+                        <p class="text-[9px] text-zinc-600 mt-1">500 pts = 1 Voucher (₱500)</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-mono font-bold text-white" id="voucher-result">0</p>
+                        <span class="text-[10px] text-zinc-500 uppercase">Vouchers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MINI PAYMENTS CALCULATOR -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-amber-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2>
+                </div>
+                <span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                        <input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label>
+                    <input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label>
+                    <input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label>
+                    <input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label>
+                    <input type="date" id="emi-start-date" value="2026-01-02" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p>
+                    <p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p>
+                </div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p>
+                    <p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p>
+                </div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p>
+                    <p class="text-sm font-bold text-amber-400 data-font">₱<span id="emi-fixed-amount">0.00</span></p>
+                </div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800">
+                    <p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p>
+                    <p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto">
+                <table class="w-full text-left text-xs font-mono min-w-[800px]">
+                    <thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider">
+                        <tr>
+                            <th class="px-3 py-3 text-center">#</th>
+                            <th class="px-3 py-3">Due Date</th>
+                            <th class="px-3 py-3 text-right">Days</th>
+                            <th class="px-3 py-3 text-right">Principal Amt</th>
+                            <th class="px-3 py-3 text-right">Interest Amt</th>
+                            <th class="px-3 py-3 text-right">Principal Paid</th>
+                            <th class="px-3 py-3 text-right">Installment Amt</th>
+                            <th class="px-3 py-3 text-right">Remaining Prin</th>
+                        </tr>
+                    </thead>
+                    <tbody id="emi-table-body" class="text-zinc-300">
+                        <tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="max-w-6xl mx-auto mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-600 animate-fade-in" style="animation-delay: 0.4s;">
+        <div class="flex items-center gap-3">
+            <div class="px-2 py-1 rounded border border-zinc-800 bg-zinc-950/50">
+                <p class="text-[9px] font-mono uppercase text-emerald-500">System Normal</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <p class="text-[10px] uppercase tracking-widest">Maya Infrastructure</p>
+            </div>
+        </div>
+        <div class="text-center md:text-right">
+            <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p>
+            <p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p>
+        </div>
+    </footer>
+
+    <!-- Floating AI Action Button -->
+    <button id="ai-fab" onclick="toggleAIWindow()" class="fixed bottom-6 right-6 z-40 w-16 h-16 bg-violet-600 hover:bg-violet-500 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 animate-fade-in">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
+    <!-- Floating AI Window -->
+    <div id="ai-window" class="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] md:w-[400px] h-[600px] max-h-[70vh] glass-panel rounded-2xl shadow-2xl flex flex-col overflow-hidden hidden ai-window-slide-up">
+        <div class="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/90">
+            <div class="flex items-center gap-3">
+                <span class="w-1.5 h-8 bg-violet-500 rounded-full"></span>
+                <h2 class="text-lg font-bold text-white">Maya.ph AI</h2>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="clearMayaChat()" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 text-[10px] uppercase font-bold rounded transition-colors">Clear</button>
+                <button onclick="toggleAIWindow()" class="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 rounded transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2 p-3 bg-violet-500/5 border-b border-violet-500/10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-violet-400 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+            <p class="text-[10px] text-violet-300/80 leading-relaxed">Internal Agent AI: Powered by Llama 3.3 70B. Explains products (MBCC, LCECC) and handles After Sales procedures.</p>
+        </div>
+        
+        <div class="flex flex-wrap gap-2 p-3 border-b border-zinc-800">
+            <button onclick="sendMayaQuick('What is Maya Black CC and Maya Landers CC?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Product Info</button>
+            <button onclick="sendMayaQuick('How do I process a CC Closure with negative balance?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">CC Closure</button>
+            <button onclick="sendMayaQuick('What is the eligibility for Mini Payments?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Mini Payments</button>
+            <button onclick="sendMayaQuick('What to do if customer lost phone with Google Pay linked?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Google Pay</button>
+            <button onclick="sendMayaQuick('Explain the Landers Cashback Everywhere promo')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Cashback Promo</button>
+            <button onclick="sendMayaQuick('Who created you?')" class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Creators</button>
+        </div>
+
+        <div id="maya-chat" class="flex-grow overflow-y-auto space-y-3 p-3 pr-2 scroll-smooth"></div>
+        
+        <div class="p-3 border-t border-zinc-800 flex gap-2">
+            <input type="text" id="maya-input" placeholder="Ask internal questions..." autocomplete="off" class="flex-grow bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-4 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all" onkeydown="if(event.key==='Enter')sendMayaMessage()">
+            <button onclick="sendMayaMessage()" id="maya-send-btn" class="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg transition-colors flex items-center gap-2 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events-none z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+        <span class="text-xs font-medium" id="toast-message">Value Copied</span>
+    </div>
+
+    <script>
+        // ============================================================
+        // API CONFIGURATION
+        // Empty API_BASE_URL = same server (HTML + API on same Render service)
+        // ============================================================
+        var API_BASE_URL  = '';
+        var API_ENDPOINT  = '/api/chat';
+        var API_KEY       = 'maya-secret-2025';
+        var API_MODEL     = 'llama-3.3-70b-versatile';
+        // ============================================================
+
+        // --- UTILS ---
+        var formatCurrency = function(num) {
+            return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+        };
+        var parseCurrency = function(str) {
+            if(!str) return 0;
+            return parseFloat(str.replace(/[^0-9.-]+/g, "")) || 0;
+        };
+        var setupCurrencyInput = function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('blur', function() {
+                var val = parseCurrency(el.value);
+                if(val > 0) el.value = formatCurrency(val);
+                else el.value = "";
+            });
+            el.addEventListener('focus', function() {
+                var val = parseCurrency(el.value);
+                if(val > 0) el.value = val;
+            });
+            el.addEventListener('input', function() { el.dispatchEvent(new Event('calculate')); });
+        };
+        function showToast(msg) {
+            var toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg || "Value Copied";
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            setTimeout(function() { toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); }, 2000);
+        }
+        window.copyToClipboard = function(elementId) {
+            var text = document.getElementById(elementId).innerText || document.getElementById(elementId).value;
+            navigator.clipboard.writeText(text).then(function() { showToast("Value Copied"); });
+        };
+
+        // --- CLOCK ---
+        function updateClock() {
+            var now = new Date();
+            document.getElementById('live-date-time').textContent = now.toLocaleString('en-US', { 
+                month: 'short', day: 'numeric', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+        }
+        setInterval(updateClock, 1000); 
+        updateClock();
+
+        // --- LOADER ---
+        function hideLoader() {
+            var el = document.getElementById('loader');
+            if (el) el.classList.add('hidden-loader');
+        }
+        window.addEventListener('load', function() { setTimeout(hideLoader, 1200); });
+        setTimeout(hideLoader, 5000);
+
+        // --- MILES CALCULATOR ---
+        var spendInput = document.getElementById('spend-input');
+        var multSelect = document.getElementById('multiplier-select');
+        var customMult = document.getElementById('custom-multiplier');
+        var milesInput = document.getElementById('miles-input');
+        setupCurrencyInput('spend-input');
+        function calculateMiles() {
+            var val = parseCurrency(spendInput.value);
+            var isCustom = multSelect.value === 'custom';
+            var mult = isCustom ? (parseFloat(customMult.value) || 0) : parseFloat(multSelect.value);
+            var miles = (val / 40) * mult;
+            milesInput.value = formatCurrency(miles);
+            document.getElementById('cash-value').textContent = formatCurrency(miles * 0.16);
+            document.getElementById('est-spend').textContent = formatCurrency(val);
+        }
+        spendInput.addEventListener('calculate', calculateMiles);
+        spendInput.addEventListener('input', calculateMiles);
+        customMult.addEventListener('input', calculateMiles);
+        multSelect.addEventListener('change', function() {
+            if(multSelect.value === 'custom') { customMult.classList.remove('hidden'); customMult.focus(); }
+            else { customMult.classList.add('hidden'); }
+            calculateMiles();
+        });
+
+        // --- FINANCE CALCULATOR ---
+        setupCurrencyInput('loan-credit');
+        setupCurrencyInput('partial-payment');
+        function calcFinance() {
+            var loan = parseCurrency(document.getElementById('loan-credit').value);
+            var partial = parseCurrency(document.getElementById('partial-payment').value);
+            var term = parseFloat(document.getElementById('loan-term').value) || 30;
+            var held = parseFloat(document.getElementById('days-held').value) || 20;
+            var interest = (loan * 0.03) / term * held;
+            var remainingPrincipal = loan - partial;
+            var totalDue = remainingPrincipal + interest;
+            document.getElementById('fb-principal').textContent = '₱' + formatCurrency(remainingPrincipal);
+            document.getElementById('fb-interest').textContent = '₱' + formatCurrency(interest);
+            document.getElementById('finance-charge-result').textContent = formatCurrency(totalDue);
+        }
+        document.getElementById('loan-credit').addEventListener('calculate', calcFinance);
+        document.getElementById('loan-credit').addEventListener('input', calcFinance);
+        document.getElementById('partial-payment').addEventListener('calculate', calcFinance);
+        document.getElementById('partial-payment').addEventListener('input', calcFinance);
+        document.getElementById('loan-term').addEventListener('input', calcFinance);
+        document.getElementById('days-held').addEventListener('input', calcFinance);
+
+        // --- LANTERN CALCULATOR ---
+        setupCurrencyInput('landers-spend');
+        setupCurrencyInput('total-card-spend');
+        var lSpend = document.getElementById('landers-spend');
+        var lTotal = document.getElementById('total-card-spend');
+        var lCat = document.getElementById('landers-category');
+        var lCustomInput = document.getElementById('landers-custom-rate');
+        var lCustomGroup = document.getElementById('landers-custom-group');
+        function calcLantern() {
+            var A = parseCurrency(lSpend.value);
+            var C = parseCurrency(lTotal.value);
+            var cat = lCat.value;
+            var points = 0;
+            var breakdownHTML = "";
+            var T1 = 20000;
+            var T2 = 50000;
+            if (cat === 'landers') {
+                var spaceT1 = Math.max(0, T1 - C);
+                var portionT1 = Math.min(A, spaceT1);
+                var ptsT1 = portionT1 * 0.03;
+                points += ptsT1;
+                if (portionT1 > 0) breakdownHTML += '<span class="text-emerald-400">' + formatCurrency(portionT1) + ' @ 3%</span> = ' + ptsT1.toFixed(2) + ' pts<br>';
+                var spaceT2 = Math.max(0, T2 - C);
+                var portionT2 = Math.min(A, spaceT2);
+                var ptsT2 = portionT2 * 0.04;
+                points += ptsT2;
+                if (portionT2 > 0) breakdownHTML += '<span class="text-yellow-400">' + formatCurrency(portionT2) + ' @ 4%</span> = ' + ptsT2.toFixed(2) + ' pts<br>';
+                var amountInT3 = Math.min(C + A, T2) - Math.max(C, T2);
+                var ptsT3 = amountInT3 * 0.05;
+                points += ptsT3;
+                if (amountInT3 > 0) breakdownHTML += '<span class="text-purple-400">' + formatCurrency(amountInT3) + ' @ 5%</span> = ' + ptsT3.toFixed(2) + ' pts<br>';
+                if (breakdownHTML === "") breakdownHTML = "No points earned (0 amount).";
+            } else if (cat === 'dining') {
+                points = A * 0.02;
+                breakdownHTML = 'Flat Rate 2% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+            } else if (cat === 'other') {
+                points = A * 0.01;
+                breakdownHTML = 'Flat Rate 1% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+            } else if (cat === 'excluded') {
+                points = 0;
+                breakdownHTML = 'Excluded Category (0%)';
+            } else if (cat === 'custom') {
+                var customVal = parseFloat(lCustomInput.value) || 0;
+                points = A * (customVal / 100);
+                breakdownHTML = 'Custom Rate ' + customVal + '% on ' + formatCurrency(A) + ' <br> = ' + points.toFixed(2) + ' pts';
+            }
+            var vouchers = Math.floor(points / 500);
+            document.getElementById('landers-result').textContent = points.toFixed(2);
+            document.getElementById('voucher-result').textContent = vouchers.toLocaleString();
+            document.getElementById('tier-breakdown').innerHTML = breakdownHTML;
+        }
+        lSpend.addEventListener('calculate', calcLantern);
+        lSpend.addEventListener('input', calcLantern);
+        lTotal.addEventListener('calculate', calcLantern);
+        lCat.addEventListener('calculate', calcLantern);
+        lCustomInput.addEventListener('calculate', calcLantern);
+        lCustomInput.addEventListener('input', calcLantern);
+        lCat.addEventListener('change', function() {
+            if(lCat.value === 'custom') { lCustomGroup.classList.remove('hidden'); lCustomInput.focus(); }
+            else { lCustomGroup.classList.add('hidden'); }
+            calcLantern();
+        });
+
+        // --- MINI PAYMENTS (EMI) CALCULATOR ---
+        setupCurrencyInput('emi-principal');
+        var emiPrincipal = document.getElementById('emi-principal');
+        var emiRate = document.getElementById('emi-rate');
+        var emiMonths = document.getElementById('emi-months');
+        var emiStartDate = document.getElementById('emi-start-date');
+        var emiDaysYear = document.getElementById('emi-days-year');
+
+        function calcEMI() {
+            var P = parseCurrency(emiPrincipal.value);
+            var monthlyEIR = (parseFloat(emiRate.value) || 0) / 100;
+            var n = parseInt(emiMonths.value) || 0;
+            var daysYear = parseInt(emiDaysYear.value) || 365;
+            
+            var nominalRate = monthlyEIR * 12;
+            var dailyRate = nominalRate / daysYear;
+            
+            document.getElementById('emi-nominal-rate').textContent = (nominalRate * 100).toFixed(4);
+            document.getElementById('emi-daily-rate').textContent = dailyRate.toFixed(9);
+            
+            var emi = 0;
+            if (P > 0 && n > 0) {
+                if (monthlyEIR === 0) { emi = P / n; }
+                else { emi = P * monthlyEIR * Math.pow(1 + monthlyEIR, n) / (Math.pow(1 + monthlyEIR, n) - 1); }
+            }
+            document.getElementById('emi-fixed-amount').textContent = formatCurrency(emi);
+            
+            var tbody = document.getElementById('emi-table-body');
+            tbody.innerHTML = '';
+            
+            if (P === 0 || n === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';
+                document.getElementById('emi-total-interest').textContent = '0.00';
+                return;
+            }
+            
+            var currentDate = new Date(emiStartDate.value);
+            var remainingPrincipal = P;
+            var totalInterest = 0;
+            
+            for (var i = 1; i <= n; i++) {
+                var prevDate = new Date(currentDate);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                var days = Math.round((currentDate - prevDate) / (1000 * 60 * 60 * 24));
+                var interestAmt = remainingPrincipal * dailyRate * days;
+                var principalPaid = 0;
+                var installmentAmt = 0;
+                if (i === n) {
+                    principalPaid = remainingPrincipal;
+                    installmentAmt = principalPaid + interestAmt;
+                    remainingPrincipal = 0;
+                } else {
+                    principalPaid = emi - interestAmt;
+                    installmentAmt = emi;
+                    remainingPrincipal -= principalPaid;
+                }
+                totalInterest += interestAmt;
+                var dueDateStr = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                var tr = document.createElement('tr');
+                tr.className = 'border-t border-zinc-800/50 hover:bg-zinc-900/50';
+                tr.innerHTML = '<td class="px-3 py-3 text-center text-zinc-500">' + i + '</td>' +
+                    '<td class="px-3 py-3 text-zinc-400">' + dueDateStr + '</td>' +
+                    '<td class="px-3 py-3 text-right text-zinc-400">' + days + '</td>' +
+                    '<td class="px-3 py-3 text-right text-zinc-300">₱' + formatCurrency(remainingPrincipal + principalPaid) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-red-400">₱' + formatCurrency(interestAmt) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-emerald-400">₱' + formatCurrency(principalPaid) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-amber-400 font-bold">₱' + formatCurrency(installmentAmt) + '</td>' +
+                    '<td class="px-3 py-3 text-right text-zinc-200">₱' + formatCurrency(Math.max(0, remainingPrincipal)) + '</td>';
+                tbody.appendChild(tr);
+            }
+            document.getElementById('emi-total-interest').textContent = formatCurrency(totalInterest);
+        }
+        emiPrincipal.addEventListener('calculate', calcEMI);
+        emiPrincipal.addEventListener('input', calcEMI);
+        emiRate.addEventListener('input', calcEMI);
+        emiMonths.addEventListener('input', calcEMI);
+        emiStartDate.addEventListener('change', calcEMI);
+        emiDaysYear.addEventListener('input', calcEMI);
+        calcEMI();
+
+        // --- MAYA AI ASSISTANT ---
+        var mayaChatHistory = [];
+        var mayaIsLoading = false;
+
+        var MAYA_SYSTEM_PROMPT = 'You are Maya.ph Internal Agent AI, an expert assistant for Maya Bank (formerly PayMaya) customer service representatives. You specialize in:\n\n' +
+            '- Maya Black Credit Card (MBCC): Features, benefits, annual fees, credit limits, cashback rules\n' +
+            '- Maya Landers Credit Card (LCECC): Landers partnership benefits, cashback tiers (3%/4%/5%), voucher system\n' +
+            '- Mini Payments: EMI conversion, eligibility (minimum 3,000 PHP single receipt), available terms (3/6/12 months), interest rates\n' +
+            '- Finance Charges: 3% monthly interest, how prorated interest works for early closure\n' +
+            '- Maya Miles: Earn rate (1 mile per 40 PHP spend), multiplier tiers, redemption value (0.16 PHP per mile)\n' +
+            '- After Sales procedures: Card closure, dispute filing, credit limit adjustments, statement requests\n' +
+            '- Google Pay / Apple Pay: Linking, token management, lost device procedures\n' +
+            '- Landers Cashback Everywhere promo: Mechanics, qualifying spends, cap limits\n\n' +
+            'Rules:\n' +
+            '- Be concise, professional, and accurate\n' +
+            '- If unsure, say you need to verify rather than guessing\n' +
+            '- Always clarify that cashback and rewards are subject to terms and conditions\n' +
+            '- You were created by the Maya Engineering Team: Ancel Claudio, Marcux Dimaapi, and Marlon Ubana\n' +
+            '- When discussing rates or fees, always specify the currency as PHP\n' +
+            '- Format responses with clear structure using bullet points when listing multiple items';
+
+        function toggleAIWindow() {
+            var win = document.getElementById('ai-window');
+            win.classList.toggle('hidden');
+            if (!win.classList.contains('hidden')) {
+                document.getElementById('maya-input').focus();
+                if (mayaChatHistory.length === 0) {
+                    addMayaMessage('bot', 'Hello! I\'m the Maya Internal Agent AI. I can help you with product information, After Sales procedures, and credit card queries. How can I assist you today?');
+                }
+            }
+        }
+
+        function clearMayaChat() {
+            mayaChatHistory = [];
+            document.getElementById('maya-chat').innerHTML = '';
+            addMayaMessage('bot', 'Chat cleared. How can I help you?');
+        }
+
+        function addMayaMessage(role, content) {
+            var chatEl = document.getElementById('maya-chat');
+            var wrapper = document.createElement('div');
+            wrapper.className = 'flex gap-2 ' + (role === 'user' ? 'justify-end' : 'justify-start') + ' animate-fade-in';
+            var bubble = document.createElement('div');
+            bubble.className = role === 'user'
+                ? 'max-w-[85%] bg-violet-600/20 border border-violet-500/30 rounded-xl rounded-br-sm px-3 py-2 text-sm text-zinc-200'
+                : 'max-w-[85%] bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-3 py-2 text-sm text-zinc-200';
+            if (role === 'bot') {
+                var html = content
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+                    .replace(/\n/g, '<br>');
+                bubble.innerHTML = '<div class="leading-relaxed">' + html + '</div>';
+            } else {
+                bubble.textContent = content;
+            }
+            wrapper.appendChild(bubble);
+            chatEl.appendChild(wrapper);
+            chatEl.scrollTop = chatEl.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            var chatEl = document.getElementById('maya-chat');
+            var wrapper = document.createElement('div');
+            wrapper.id = 'maya-typing';
+            wrapper.className = 'flex gap-2 justify-start animate-fade-in';
+            wrapper.innerHTML = '<div class="bg-zinc-800/80 border border-zinc-700/50 rounded-xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">' +
+                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>' +
+                '<span class="typing-dot w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span></div>';
+            chatEl.appendChild(wrapper);
+            chatEl.scrollTop = chatEl.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            var el = document.getElementById('maya-typing');
+            if (el) el.remove();
+        }
+
+        function sendMayaQuick(text) {
+            document.getElementById('maya-input').value = text;
+            sendMayaMessage();
+        }
+
+        async function sendMayaMessage() {
+            var input = document.getElementById('maya-input');
+            var text = input.value.trim();
+            if (!text || mayaIsLoading) return;
+
+            mayaIsLoading = true;
+            input.value = '';
+            document.getElementById('maya-send-btn').disabled = true;
+
+            addMayaMessage('user', text);
+            mayaChatHistory.push({ role: 'user', content: text });
+            addTypingIndicator();
+
+            var requestURL = API_BASE_URL.replace(/\/+$/, '') + API_ENDPOINT;
+            var messages = [{ role: 'system', content: MAYA_SYSTEM_PROMPT }].concat(mayaChatHistory.slice(-10));
+            var requestBody = JSON.stringify({
+                model: API_MODEL,
+                messages: messages,
+                temperature: 0.4,
+                max_tokens: 1024,
+                top_p: 0.9
+            });
+            var requestHeaders = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + API_KEY
+            };
+
+            try {
+                var response = await fetch(requestURL, {
+                    method: 'POST',
+                    headers: requestHeaders,
+                    body: requestBody
+                });
+
+                // Handle Render cold start
+                if (response.status === 502 || response.status === 503) {
+                    removeTypingIndicator();
+                    addMayaMessage('bot', 'Server is waking up... retrying in 5 seconds.');
+                    addTypingIndicator();
+                    await new Promise(function(r) { setTimeout(r, 5000); });
+                    response = await fetch(requestURL, {
+                        method: 'POST',
+                        headers: requestHeaders,
+                        body: requestBody
+                    });
+                }
+
+                removeTypingIndicator();
+
+                if (!response.ok) {
+                    var errBody = await response.text().catch(function() { return ''; });
+                    var errMsg = 'Status ' + response.status;
+                    try { errMsg = JSON.parse(errBody).error?.message || errMsg; } catch(e) {}
+                    throw new Error(errMsg);
+                }
+
+                var data = await response.json();
+                var botMessage = data.choices && data.choices[0] && data.choices[0].message
+                    ? data.choices[0].message.content
+                    : 'I couldn\'t process that. Please try again.';
+
+                addMayaMessage('bot', botMessage);
+                mayaChatHistory.push({ role: 'assistant', content: botMessage });
+
+            } catch (err) {
+                removeTypingIndicator();
+                if (err.message === 'Failed to fetch') {
+                    addMayaMessage('bot', 'Cannot reach the server. Possible causes:\n1. Server is waking up from sleep (wait 30s and retry)\n2. The app was deployed as a Static Site instead of Web Service\n3. The /api/chat route does not exist on the server\n\nVisit /api/health in your browser to check if the server is running.');
+                } else {
+                    addMayaMessage('bot', 'Error: ' + err.message);
+                }
+            }
+
+            mayaIsLoading = false;
+            document.getElementById('maya-send-btn').disabled = false;
+            document.getElementById('maya-input').focus();
+        }
+    </script>
+</body>
+</html>
