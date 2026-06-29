@@ -10,9 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from /public
-app.use(express.static(path.join(__dirname, 'public')));
-
 // ============================================================
 // AUTH — all inline, no separate file needed
 // ============================================================
@@ -79,7 +76,7 @@ function authMiddleware(req, res, next) {
     next();
 }
 
-// Serve login at root
+// Serve login at root — THIS MUST COME BEFORE express.static
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
@@ -289,6 +286,11 @@ app.get('/api/health', function(req, res) {
         authKeySet: !!process.env.RENDER_AUTH_KEY
     });
 });
+
+// ============================================================
+// STATIC FILES — LAST SO ROUTES TAKE PRIORITY
+// ============================================================
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ============================================================
 // START SERVER
