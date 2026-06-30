@@ -1,9 +1,9 @@
-FROM node:18-slim
+FROM node:20-slim
 
 WORKDIR /app
 
 COPY package.json ./
-RUN npm install --production
+RUN npm install --omit=dev
 
 COPY server.js ./
 COPY public ./public
