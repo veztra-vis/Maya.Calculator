@@ -1,19 +1,13 @@
-# Use Node.js
-FROM node:18-alpine
+FROM node:18-slim
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
 COPY package.json ./
-RUN npm install
+RUN npm install --production
 
-# Copy the rest of the files
 COPY server.js ./
 COPY public ./public
 
-# Expose the port Render uses
 EXPOSE 10000
 
-# Start the server
 CMD ["node", "server.js"]
