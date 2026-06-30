@@ -14,41 +14,102 @@ app.use(express.json());
 // MONGODB SETUP
 // ============================================================
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const DB_NAME = 'maya-terminal';
+const DB_NAME = 'maya-app';
 let mongoClient = null;
+let dbConnectionPromise = null;
 
-// Detect if using Atlas (mongodb+srv) to apply TLS settings
-function getMongoOptions() {
-    if (MONGO_URI.startsWith('mongodb+srv://')) {
-        return {
-            tls: true,
-            tlsAllowInvalidCertificates: false,
-            serverSelectionTimeoutMS: 10000,
-            connectTimeoutMS: 10000,
-            maxPoolSize: 10,
-            retryWrites: true,
-            w: 'majority'
-        };
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function connectWithRetry(maxRetries) {
+    var isAtlas = MONGO_URI.startsWith('mongodb+srv://');
+
+    // Strip conflicting TLS params from URI so driver options take over cleanly
+    var cleanUri = MONGO_URI.replace(/[?&](tls|ssl|tlsAllowInvalidCertificates|tlsCAFile)=[^&]*/gi, '');
+    // If we stripped params but left a dangling ? or &, fix it
+    cleanUri = cleanUri.replace(/\?&/, '?').replace(/[?&]$/, '');
+
+    var attempts = [];
+
+    // Strategy 1: Standard TLS with cert validation
+    if (isAtlas) {
+        attempts.push({
+            name: 'TLS strict',
+            options: {
+                tls: true,
+                tlsAllowInvalidCertificates: false,
+                serverSelectionTimeoutMS: 8000,
+                connectTimeoutMS: 8000,
+                maxPoolSize: 10,
+                retryWrites: false,
+                directConnection: false
+            }
+        });
     }
-    // Local development - no TLS needed
-    return {
-        serverSelectionTimeoutMS: 5000,
-        connectTimeoutMS: 5000
-    };
+
+    // Strategy 2: TLS with relaxed cert validation (common Render fix)
+    if (isAtlas) {
+        attempts.push({
+            name: 'TLS relaxed',
+            options: {
+                tls: true,
+                tlsAllowInvalidCertificates: true,
+                serverSelectionTimeoutMS: 8000,
+                connectTimeoutMS: 8000,
+                maxPoolSize: 10,
+                retryWrites: false,
+                directConnection: false
+            }
+        });
+    }
+
+    // Strategy 3: No TLS (local fallback)
+    if (!isAtlas) {
+        attempts.push({
+            name: 'No TLS (local)',
+            options: {
+                serverSelectionTimeoutMS: 5000,
+                connectTimeoutMS: 5000
+            }
+        });
+    }
+
+    for (var a = 0; a < attempts.length; a++) {
+        var strategy = attempts[a];
+        for (var r = 0; r < maxRetries; r++) {
+            try {
+                console.log('MongoDB attempt [' + strategy.name + '] retry ' + (r + 1) + '/' + maxRetries);
+                var client = new MongoClient(cleanUri, strategy.options);
+                await client.connect();
+                // Verify it actually works
+                await client.db(DB_NAME).command({ ping: 1 });
+                console.log('MongoDB connected via [' + strategy.name + ']');
+                return client;
+            } catch (e) {
+                console.log('  Failed: ' + e.message.slice(0, 100));
+                try { await client.close(); } catch (_) {}
+                if (r < maxRetries - 1) {
+                    await sleep(3000 * (r + 1)); // Backoff: 3s, 6s, 9s...
+                }
+            }
+        }
+    }
+
+    throw new Error('All connection strategies failed after ' + maxRetries + ' retries each');
 }
 
 async function getDb() {
     if (!mongoClient) {
-        const options = getMongoOptions();
-        console.log('Connecting to MongoDB...');
-        mongoClient = new MongoClient(MONGO_URI, options);
-        await mongoClient.connect();
-        console.log('MongoDB connected successfully');
+        if (!dbConnectionPromise) {
+            dbConnectionPromise = connectWithRetry(3);
+        }
+        mongoClient = await dbConnectionPromise;
     }
     return mongoClient.db(DB_NAME);
 }
 
-// Graceful shutdown handler
+// Graceful shutdown
 process.on('SIGINT', async () => {
     if (mongoClient) {
         await mongoClient.close();
@@ -83,6 +144,8 @@ async function seedAdmin() {
         console.error('1. MONGODB_URI env var is set correctly');
         console.error('2. IP is whitelisted in Atlas (use 0.0.0.0/0 for Render)');
         console.error('3. Database user credentials in URI are correct');
+        console.error('4. Atlas free tier cluster may need manual wake-up');
+        console.error('   Go to Atlas dashboard and click "Connect" to wake it');
         console.error('=====================================');
         process.exit(1);
     }
@@ -157,15 +220,12 @@ app.post('/api/auth/login', async function(req, res) {
     if (!employeeId || !password) {
         return res.status(400).json({ error: 'Employee ID and password are required' });
     }
-    
     try {
         const db = await getDb();
         var user = await db.collection('users').findOne({ employeeId: employeeId });
-        
         if (!user || user.password !== password) {
             return res.status(401).json({ error: 'Invalid Employee ID or Password' });
         }
-        
         var token = generateToken(user);
         res.json({
             token: token,
@@ -191,7 +251,6 @@ app.get('/api/auth/users', authMiddleware, async function(req, res) {
     if (getRoleLevel(req.user.role) < 3) {
         return res.status(403).json({ error: 'Not authorized to view accounts' });
     }
-    
     try {
         const db = await getDb();
         const users = await db.collection('users').find({}).toArray();
@@ -215,16 +274,13 @@ app.get('/api/auth/users', authMiddleware, async function(req, res) {
 app.post('/api/auth/users', authMiddleware, async function(req, res) {
     var creatorRole = req.user.role;
     var creatorLevel = getRoleLevel(creatorRole);
-    
     if (creatorLevel < 3) {
         return res.status(403).json({ error: 'Not authorized to create accounts' });
     }
-    
     var fullName = req.body.fullName;
     var employeeId = (req.body.employeeId || '').toLowerCase();
     var password = req.body.password;
     var role = req.body.role;
-    
     if (!fullName || !employeeId || !password || !role) {
         return res.status(400).json({ error: 'All fields are required' });
     }
@@ -234,14 +290,12 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
     if (getRoleLevel(role) >= creatorLevel) {
         return res.status(403).json({ error: 'Cannot create an account with equal or higher privileges than your own' });
     }
-
     try {
         const db = await getDb();
         var existing = await db.collection('users').findOne({ employeeId: employeeId });
         if (existing) {
             return res.status(409).json({ error: 'Employee ID already exists' });
         }
-
         var newUser = {
             id: 'USR' + Date.now().toString().slice(-6),
             employeeId: employeeId,
@@ -250,7 +304,6 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
             role: role,
             createdAt: new Date().toISOString()
         };
-        
         await db.collection('users').insertOne(newUser);
         res.status(201).json({
             message: 'Account created for ' + fullName,
@@ -266,27 +319,22 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
 app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, res) {
     var creatorRole = req.user.role;
     var creatorLevel = getRoleLevel(creatorRole);
-    
     if (creatorLevel < 3) {
         return res.status(403).json({ error: 'Not authorized to delete accounts' });
     }
-    
     var targetId = req.params.employeeId.toLowerCase();
     if (targetId === req.user.id) {
         return res.status(400).json({ error: 'Cannot delete your own account' });
     }
-    
     try {
         const db = await getDb();
         var targetUser = await db.collection('users').findOne({ employeeId: targetId });
-
         if (!targetUser) {
             return res.status(404).json({ error: 'User not found' });
         }
         if (getRoleLevel(targetUser.role) >= creatorLevel) {
             return res.status(403).json({ error: 'Cannot delete an account with equal or higher privileges than your own' });
         }
-
         await db.collection('users').deleteOne({ employeeId: targetId });
         res.json({ message: 'Account "' + targetId + '" deleted' });
     } catch (e) {
@@ -301,7 +349,6 @@ app.post('/api/auth/check-user', async function(req, res) {
     if (!employeeId) {
         return res.status(400).json({ error: 'Employee ID is required' });
     }
-    
     try {
         const db = await getDb();
         var user = await db.collection('users').findOne({ employeeId: employeeId });
@@ -325,14 +372,12 @@ app.post('/api/auth/reset-password', async function(req, res) {
     if (newPassword.length < 6) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
-    
     try {
         const db = await getDb();
         var result = await db.collection('users').updateOne(
             { employeeId: employeeId },
             { $set: { password: newPassword } }
         );
-        
         if (result.matchedCount === 0) {
             return res.status(404).json({ error: 'No account found with that Employee ID' });
         }
@@ -349,7 +394,6 @@ app.post('/api/auth/reset-password', async function(req, res) {
 app.post('/api/chat', async function(req, res) {
     var authHeader = req.headers.authorization || '';
     var token = authHeader.replace('Bearer ', '').trim();
-
     if (token !== process.env.RENDER_AUTH_KEY) {
         return res.status(401).json({ error: { message: 'Please contact support.' } });
     }
