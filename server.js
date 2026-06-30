@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
-const fs = require('fs');
 const crypto = require('crypto');
+const { MongoClient } = require('mongodb'); // Added MongoDB
 
 const app = express();
 
@@ -11,30 +11,38 @@ app.use(cors());
 app.use(express.json());
 
 // ============================================================
-// AUTH — all inline, no separate file needed
+// MONGODB SETUP (Replaces users.json so data never deletes)
 // ============================================================
-const USERS_FILE = path.join(__dirname, 'users.json');
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const DB_NAME = 'maya-app';
+let mongoClient = null;
 
-function readUsers() {
+async function getDb() {
+    if (!mongoClient) {
+        mongoClient = new MongoClient(MONGO_URI);
+        await mongoClient.connect();
+    }
+    return mongoClient.db(DB_NAME);
+}
+
+// Seed default admin on first run
+async function seedAdmin() {
     try {
-        if (!fs.existsSync(USERS_FILE)) {
-            var seed = [{
+        const db = await getDb();
+        const users = db.collection('users');
+        const existing = await users.countDocuments();
+        if (existing === 0) {
+            await users.insertOne({
                 id: 'USR001',
                 employeeId: 'ancel',
                 fullName: 'Ancel Claudio',
                 password: 'maya2026',
                 role: 'ADMIN',
                 createdAt: new Date().toISOString()
-            }];
-            fs.writeFileSync(USERS_FILE, JSON.stringify(seed, null, 2));
-            return seed;
+            });
+            console.log('Seed admin created in MongoDB');
         }
-        return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8'));
-    } catch (e) { return []; }
-}
-
-function writeUsers(users) {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+    } catch (e) { console.error('MongoDB connection error:', e.message); }
 }
 
 // ROLE HIERARCHY MAP
@@ -101,22 +109,20 @@ app.get('/app', function(req, res) {
 });
 
 // LOGIN
-app.post('/api/auth/login', function(req, res) {
+app.post('/api/auth/login', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     var password = req.body.password;
     if (!employeeId || !password) {
         return res.status(400).json({ error: 'Employee ID and password are required' });
     }
-    var users = readUsers();
-    var user = null;
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].employeeId === employeeId && users[i].password === password) {
-            user = users[i]; break;
-        }
-    }
-    if (!user) {
+    
+    const db = await getDb();
+    var user = await db.collection('users').findOne({ employeeId: employeeId });
+    
+    if (!user || user.password !== password) {
         return res.status(401).json({ error: 'Invalid Employee ID or Password' });
     }
+    
     var token = generateToken(user);
     res.json({
         token: token,
@@ -134,27 +140,28 @@ app.get('/api/auth/verify', authMiddleware, function(req, res) {
 });
 
 // GET ALL USERS
-app.get('/api/auth/users', authMiddleware, function(req, res) {
+app.get('/api/auth/users', authMiddleware, async function(req, res) {
     // Only roles Team Leader and above can view the user list
     if (getRoleLevel(req.user.role) < 3) {
         return res.status(403).json({ error: 'Not authorized to view accounts' });
     }
-    var users = readUsers();
-    var safe = [];
-    for (var i = 0; i < users.length; i++) {
-        safe.push({
-            id: users[i].id,
-            employeeId: users[i].employeeId,
-            fullName: users[i].fullName,
-            role: users[i].role,
-            createdAt: users[i].createdAt
-        });
-    }
+    
+    const db = await getDb();
+    const users = await db.collection('users').find({}).toArray();
+    var safe = users.map(function(u) {
+        return {
+            id: u.id,
+            employeeId: u.employeeId,
+            fullName: u.fullName,
+            role: u.role,
+            createdAt: u.createdAt
+        };
+    });
     res.json(safe);
 });
 
 // CREATE USER
-app.post('/api/auth/users', authMiddleware, function(req, res) {
+app.post('/api/auth/users', authMiddleware, async function(req, res) {
     var creatorRole = req.user.role;
     var creatorLevel = getRoleLevel(creatorRole);
     
@@ -164,7 +171,7 @@ app.post('/api/auth/users', authMiddleware, function(req, res) {
     }
     
     var fullName = req.body.fullName;
-    var employeeId = req.body.employeeId;
+    var employeeId = (req.body.employeeId || '').toLowerCase();
     var password = req.body.password;
     var role = req.body.role;
     
@@ -180,22 +187,22 @@ app.post('/api/auth/users', authMiddleware, function(req, res) {
         return res.status(403).json({ error: 'Cannot create an account with equal or higher privileges than your own' });
     }
 
-    var users = readUsers();
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].employeeId === employeeId.toLowerCase()) {
-            return res.status(409).json({ error: 'Employee ID already exists' });
-        }
+    const db = await getDb();
+    var existing = await db.collection('users').findOne({ employeeId: employeeId });
+    if (existing) {
+        return res.status(409).json({ error: 'Employee ID already exists' });
     }
+
     var newUser = {
-        id: 'USR' + String(users.length + 1).padStart(3, '0'),
-        employeeId: employeeId.toLowerCase(),
+        id: 'USR' + Date.now().toString().slice(-6),
+        employeeId: employeeId,
         fullName: fullName,
         password: password,
         role: role,
         createdAt: new Date().toISOString()
     };
-    users.push(newUser);
-    writeUsers(users);
+    
+    await db.collection('users').insertOne(newUser);
     res.status(201).json({
         message: 'Account created for ' + fullName,
         user: { id: newUser.id, employeeId: newUser.employeeId, fullName: newUser.fullName, role: newUser.role, createdAt: newUser.createdAt }
@@ -203,7 +210,7 @@ app.post('/api/auth/users', authMiddleware, function(req, res) {
 });
 
 // DELETE USER
-app.delete('/api/auth/users/:employeeId', authMiddleware, function(req, res) {
+app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, res) {
     var creatorRole = req.user.role;
     var creatorLevel = getRoleLevel(creatorRole);
     
@@ -217,14 +224,8 @@ app.delete('/api/auth/users/:employeeId', authMiddleware, function(req, res) {
         return res.status(400).json({ error: 'Cannot delete your own account' });
     }
     
-    var users = readUsers();
-    var targetUser = null;
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].employeeId === targetId) {
-            targetUser = users[i];
-            break;
-        }
-    }
+    const db = await getDb();
+    var targetUser = await db.collection('users').findOne({ employeeId: targetId });
 
     if (!targetUser) {
         return res.status(404).json({ error: 'User not found' });
@@ -235,19 +236,19 @@ app.delete('/api/auth/users/:employeeId', authMiddleware, function(req, res) {
         return res.status(403).json({ error: 'Cannot delete an account with equal or higher privileges than your own' });
     }
 
-    var newUsers = users.filter(function(u) { return u.employeeId !== targetId; });
-    writeUsers(newUsers);
+    await db.collection('users').deleteOne({ employeeId: targetId });
     res.json({ message: 'Account "' + targetId + '" deleted' });
 });
 
 // CHECK USER EXISTS
-app.post('/api/auth/check-user', function(req, res) {
+app.post('/api/auth/check-user', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     if (!employeeId) {
         return res.status(400).json({ error: 'Employee ID is required' });
     }
-    var users = readUsers();
-    var user = users.find(function(u) { return u.employeeId === employeeId; });
+    
+    const db = await getDb();
+    var user = await db.collection('users').findOne({ employeeId: employeeId });
     if (!user) {
         return res.status(404).json({ error: 'No account found with that Employee ID' });
     }
@@ -255,7 +256,7 @@ app.post('/api/auth/check-user', function(req, res) {
 });
 
 // RESET PASSWORD
-app.post('/api/auth/reset-password', function(req, res) {
+app.post('/api/auth/reset-password', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     var newPassword = req.body.newPassword;
     if (!employeeId || !newPassword) {
@@ -264,13 +265,16 @@ app.post('/api/auth/reset-password', function(req, res) {
     if (newPassword.length < 6) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
-    var users = readUsers();
-    var user = users.find(function(u) { return u.employeeId === employeeId; });
-    if (!user) {
+    
+    const db = await getDb();
+    var result = await db.collection('users').updateOne(
+        { employeeId: employeeId },
+        { $set: { password: newPassword } }
+    );
+    
+    if (result.matchedCount === 0) {
         return res.status(404).json({ error: 'No account found with that Employee ID' });
     }
-    user.password = newPassword;
-    writeUsers(users);
     res.json({ message: 'Password updated successfully' });
 });
 
@@ -323,4 +327,5 @@ app.listen(PORT, function() {
     console.log('===================================');
     console.log('Maya app running on port ' + PORT);
     console.log('===================================');
+    seedAdmin(); // Initialize DB connection and seed admin on startup
 });
