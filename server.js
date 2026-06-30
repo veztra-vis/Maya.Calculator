@@ -3,7 +3,7 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
 const crypto = require('crypto');
-const { MongoClient } = require('mongodb'); // Added MongoDB
+const { MongoClient } = require('mongodb');
 
 const app = express();
 
@@ -11,19 +11,51 @@ app.use(cors());
 app.use(express.json());
 
 // ============================================================
-// MONGODB SETUP (Replaces users.json so data never deletes)
+// MONGODB SETUP
 // ============================================================
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const DB_NAME = 'maya-app';
+const DB_NAME = 'maya-terminal';
 let mongoClient = null;
+
+// Detect if using Atlas (mongodb+srv) to apply TLS settings
+function getMongoOptions() {
+    if (MONGO_URI.startsWith('mongodb+srv://')) {
+        return {
+            tls: true,
+            tlsAllowInvalidCertificates: false,
+            serverSelectionTimeoutMS: 10000,
+            connectTimeoutMS: 10000,
+            maxPoolSize: 10,
+            retryWrites: true,
+            w: 'majority'
+        };
+    }
+    // Local development - no TLS needed
+    return {
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 5000
+    };
+}
 
 async function getDb() {
     if (!mongoClient) {
-        mongoClient = new MongoClient(MONGO_URI);
+        const options = getMongoOptions();
+        console.log('Connecting to MongoDB...');
+        mongoClient = new MongoClient(MONGO_URI, options);
         await mongoClient.connect();
+        console.log('MongoDB connected successfully');
     }
     return mongoClient.db(DB_NAME);
 }
+
+// Graceful shutdown handler
+process.on('SIGINT', async () => {
+    if (mongoClient) {
+        await mongoClient.close();
+        console.log('MongoDB connection closed');
+    }
+    process.exit(0);
+});
 
 // Seed default admin on first run
 async function seedAdmin() {
@@ -42,11 +74,21 @@ async function seedAdmin() {
             });
             console.log('Seed admin created in MongoDB');
         }
-    } catch (e) { console.error('MongoDB connection error:', e.message); }
+    } catch (e) {
+        console.error('=====================================');
+        console.error('MongoDB connection failed on startup');
+        console.error('Error:', e.message);
+        console.error('=====================================');
+        console.error('Check these in Render:');
+        console.error('1. MONGODB_URI env var is set correctly');
+        console.error('2. IP is whitelisted in Atlas (use 0.0.0.0/0 for Render)');
+        console.error('3. Database user credentials in URI are correct');
+        console.error('=====================================');
+        process.exit(1);
+    }
 }
 
 // ROLE HIERARCHY MAP
-// Higher number = more power. 0 = No access.
 function getRoleLevel(role) {
     var levels = {
         'ADMIN': 6,
@@ -116,22 +158,27 @@ app.post('/api/auth/login', async function(req, res) {
         return res.status(400).json({ error: 'Employee ID and password are required' });
     }
     
-    const db = await getDb();
-    var user = await db.collection('users').findOne({ employeeId: employeeId });
-    
-    if (!user || user.password !== password) {
-        return res.status(401).json({ error: 'Invalid Employee ID or Password' });
-    }
-    
-    var token = generateToken(user);
-    res.json({
-        token: token,
-        user: {
-            employeeId: user.employeeId,
-            fullName: user.fullName,
-            role: user.role
+    try {
+        const db = await getDb();
+        var user = await db.collection('users').findOne({ employeeId: employeeId });
+        
+        if (!user || user.password !== password) {
+            return res.status(401).json({ error: 'Invalid Employee ID or Password' });
         }
-    });
+        
+        var token = generateToken(user);
+        res.json({
+            token: token,
+            user: {
+                employeeId: user.employeeId,
+                fullName: user.fullName,
+                role: user.role
+            }
+        });
+    } catch (e) {
+        console.error('Login error:', e.message);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 
 // VERIFY TOKEN
@@ -141,23 +188,27 @@ app.get('/api/auth/verify', authMiddleware, function(req, res) {
 
 // GET ALL USERS
 app.get('/api/auth/users', authMiddleware, async function(req, res) {
-    // Only roles Team Leader and above can view the user list
     if (getRoleLevel(req.user.role) < 3) {
         return res.status(403).json({ error: 'Not authorized to view accounts' });
     }
     
-    const db = await getDb();
-    const users = await db.collection('users').find({}).toArray();
-    var safe = users.map(function(u) {
-        return {
-            id: u.id,
-            employeeId: u.employeeId,
-            fullName: u.fullName,
-            role: u.role,
-            createdAt: u.createdAt
-        };
-    });
-    res.json(safe);
+    try {
+        const db = await getDb();
+        const users = await db.collection('users').find({}).toArray();
+        var safe = users.map(function(u) {
+            return {
+                id: u.id,
+                employeeId: u.employeeId,
+                fullName: u.fullName,
+                role: u.role,
+                createdAt: u.createdAt
+            };
+        });
+        res.json(safe);
+    } catch (e) {
+        console.error('Get users error:', e.message);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 
 // CREATE USER
@@ -165,7 +216,6 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
     var creatorRole = req.user.role;
     var creatorLevel = getRoleLevel(creatorRole);
     
-    // Only Team Leader (3) and above can create accounts
     if (creatorLevel < 3) {
         return res.status(403).json({ error: 'Not authorized to create accounts' });
     }
@@ -181,32 +231,35 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
     if (password.length < 6) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
-
-    // Hierarchy Enforcement: Cannot create an account with equal or higher role than yourself
     if (getRoleLevel(role) >= creatorLevel) {
         return res.status(403).json({ error: 'Cannot create an account with equal or higher privileges than your own' });
     }
 
-    const db = await getDb();
-    var existing = await db.collection('users').findOne({ employeeId: employeeId });
-    if (existing) {
-        return res.status(409).json({ error: 'Employee ID already exists' });
-    }
+    try {
+        const db = await getDb();
+        var existing = await db.collection('users').findOne({ employeeId: employeeId });
+        if (existing) {
+            return res.status(409).json({ error: 'Employee ID already exists' });
+        }
 
-    var newUser = {
-        id: 'USR' + Date.now().toString().slice(-6),
-        employeeId: employeeId,
-        fullName: fullName,
-        password: password,
-        role: role,
-        createdAt: new Date().toISOString()
-    };
-    
-    await db.collection('users').insertOne(newUser);
-    res.status(201).json({
-        message: 'Account created for ' + fullName,
-        user: { id: newUser.id, employeeId: newUser.employeeId, fullName: newUser.fullName, role: newUser.role, createdAt: newUser.createdAt }
-    });
+        var newUser = {
+            id: 'USR' + Date.now().toString().slice(-6),
+            employeeId: employeeId,
+            fullName: fullName,
+            password: password,
+            role: role,
+            createdAt: new Date().toISOString()
+        };
+        
+        await db.collection('users').insertOne(newUser);
+        res.status(201).json({
+            message: 'Account created for ' + fullName,
+            user: { id: newUser.id, employeeId: newUser.employeeId, fullName: newUser.fullName, role: newUser.role, createdAt: newUser.createdAt }
+        });
+    } catch (e) {
+        console.error('Create user error:', e.message);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 
 // DELETE USER
@@ -214,7 +267,6 @@ app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, re
     var creatorRole = req.user.role;
     var creatorLevel = getRoleLevel(creatorRole);
     
-    // Only Team Leader (3) and above can delete accounts
     if (creatorLevel < 3) {
         return res.status(403).json({ error: 'Not authorized to delete accounts' });
     }
@@ -224,20 +276,23 @@ app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, re
         return res.status(400).json({ error: 'Cannot delete your own account' });
     }
     
-    const db = await getDb();
-    var targetUser = await db.collection('users').findOne({ employeeId: targetId });
+    try {
+        const db = await getDb();
+        var targetUser = await db.collection('users').findOne({ employeeId: targetId });
 
-    if (!targetUser) {
-        return res.status(404).json({ error: 'User not found' });
+        if (!targetUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        if (getRoleLevel(targetUser.role) >= creatorLevel) {
+            return res.status(403).json({ error: 'Cannot delete an account with equal or higher privileges than your own' });
+        }
+
+        await db.collection('users').deleteOne({ employeeId: targetId });
+        res.json({ message: 'Account "' + targetId + '" deleted' });
+    } catch (e) {
+        console.error('Delete user error:', e.message);
+        res.status(500).json({ error: 'Database error' });
     }
-
-    // Hierarchy Enforcement: Cannot delete an account with equal or higher role than yourself
-    if (getRoleLevel(targetUser.role) >= creatorLevel) {
-        return res.status(403).json({ error: 'Cannot delete an account with equal or higher privileges than your own' });
-    }
-
-    await db.collection('users').deleteOne({ employeeId: targetId });
-    res.json({ message: 'Account "' + targetId + '" deleted' });
 });
 
 // CHECK USER EXISTS
@@ -247,12 +302,17 @@ app.post('/api/auth/check-user', async function(req, res) {
         return res.status(400).json({ error: 'Employee ID is required' });
     }
     
-    const db = await getDb();
-    var user = await db.collection('users').findOne({ employeeId: employeeId });
-    if (!user) {
-        return res.status(404).json({ error: 'No account found with that Employee ID' });
+    try {
+        const db = await getDb();
+        var user = await db.collection('users').findOne({ employeeId: employeeId });
+        if (!user) {
+            return res.status(404).json({ error: 'No account found with that Employee ID' });
+        }
+        res.json({ found: true, employeeId: user.employeeId, fullName: user.fullName });
+    } catch (e) {
+        console.error('Check user error:', e.message);
+        res.status(500).json({ error: 'Database error' });
     }
-    res.json({ found: true, employeeId: user.employeeId, fullName: user.fullName });
 });
 
 // RESET PASSWORD
@@ -266,16 +326,21 @@ app.post('/api/auth/reset-password', async function(req, res) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
     
-    const db = await getDb();
-    var result = await db.collection('users').updateOne(
-        { employeeId: employeeId },
-        { $set: { password: newPassword } }
-    );
-    
-    if (result.matchedCount === 0) {
-        return res.status(404).json({ error: 'No account found with that Employee ID' });
+    try {
+        const db = await getDb();
+        var result = await db.collection('users').updateOne(
+            { employeeId: employeeId },
+            { $set: { password: newPassword } }
+        );
+        
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: 'No account found with that Employee ID' });
+        }
+        res.json({ message: 'Password updated successfully' });
+    } catch (e) {
+        console.error('Reset password error:', e.message);
+        res.status(500).json({ error: 'Database error' });
     }
-    res.json({ message: 'Password updated successfully' });
 });
 
 // ============================================================
@@ -309,10 +374,19 @@ app.post('/api/chat', async function(req, res) {
 });
 
 // HEALTH CHECK
-app.get('/api/health', function(req, res) {
+app.get('/api/health', async function(req, res) {
+    var dbStatus = 'disconnected';
+    try {
+        const db = await getDb();
+        await db.command({ ping: 1 });
+        dbStatus = 'connected';
+    } catch (e) {
+        dbStatus = 'error: ' + e.message;
+    }
     res.json({
         status: 'online',
         message: 'Maya API is running',
+        database: dbStatus,
         groqKeySet: !!process.env.GROQ_API_KEY,
         authKeySet: !!process.env.RENDER_AUTH_KEY
     });
@@ -323,9 +397,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // START SERVER
 var PORT = process.env.PORT || 10000;
-app.listen(PORT, function() {
+app.listen(PORT, async function() {
     console.log('===================================');
     console.log('Maya app running on port ' + PORT);
     console.log('===================================');
-    seedAdmin(); // Initialize DB connection and seed admin on startup
+    await seedAdmin();
 });
