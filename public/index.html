@@ -69,12 +69,12 @@
         .module-d-alert.show { display: flex; }
         .module-d-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; }
         .module-d-alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #6ee7b7; }
-        .user-table-wrap { max-height: 300px; overflow-y: auto; border-radius: 8px; border: 1px solid #27272a; }
+        .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #27272a; }
         .user-table-wrap::-webkit-scrollbar { width: 4px; }
         .user-table-wrap::-webkit-scrollbar-track { background: transparent; }
         .user-table-wrap::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
-        .user-row { transition: background 0.15s; }
-        .user-row:hover { background: rgba(139, 92, 246, 0.05); }
+        .user-row { transition: background 0.15s; cursor: pointer; }
+        .user-row:hover { background: rgba(139, 92, 246, 0.08); }
         .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .role-tag-admin { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
         .role-tag-client { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
@@ -82,9 +82,31 @@
         .role-tag-tl { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
         .role-tag-agent { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.3); }
         .role-tag-training { background: rgba(236, 72, 153, 0.15); color: #f9a8d4; border: 1px solid rgba(236, 72, 153, 0.3); }
+        .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(139, 92, 246, 0.2); color: #a78bfa; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+        .btn-action-user:hover { background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4); }
+        .btn-action-user:disabled { opacity: 0.3; cursor: not-allowed; }
         .btn-delete-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
         .btn-delete-user:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
         .btn-delete-user:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        /* Edit Modal Styles */
+        .modal-backdrop-module-d { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-backdrop-module-d.open { display: flex; }
+        .modal-card-module-d { background: rgba(24, 24, 27, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
+        @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-card-module-d::-webkit-scrollbar { width: 4px; }
+        .modal-card-module-d::-webkit-scrollbar-track { background: transparent; }
+        .modal-card-module-d::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+        .edit-field-input { width: 100%; background: rgba(9, 9, 11, 0.8); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+        .edit-field-input:focus { border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
+        .edit-field-input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .edit-field-input.mono { font-family: 'JetBrains Mono', monospace; }
+        .edit-field-select { width: 100%; background: rgba(9, 9, 11, 0.8); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px; }
+        .edit-field-select:focus { border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
+        .edit-field-select option { background: #09090b; color: #f4f4f5; }
+        .info-box { background: rgba(139, 92, 246, 0.06); border: 1px solid rgba(139, 92, 246, 0.15); border-radius: 10px; padding: 14px 16px; }
+        .info-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #8b5cf6; margin-bottom: 6px; font-weight: 600; }
+        .info-box-text { font-size: 14px; color: #f4f4f5; }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
@@ -102,7 +124,6 @@
     </div>
 
     <div class="ambient-glow"></div>
-    <!-- Floating Orbs -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
@@ -174,12 +195,17 @@
             <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
             <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
                 <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><p class="text-sm text-zinc-400 py-2.5">Agent <span class="text-zinc-600">(auto-assigned)</span></p></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
+                    </div>
                     <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-violet-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div></div></div>
                     <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
                 </div>
             </div>
-            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Action</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
+            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
         </div>
 
         <!-- MINI PAYMENTS CALCULATOR -->
@@ -196,6 +222,48 @@
         <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p></div>
     </footer>
 
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal-backdrop-module-d">
+        <div class="modal-card-module-d">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-white">Edit Account</h2>
+                <button onclick="closeEditModal()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div id="edit-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="edit-alert-text"></span></div>
+
+            <div class="space-y-4">
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="edit-employeeid" class="edit-field-input mono" disabled></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="edit-fullname" class="edit-field-input" placeholder="Enter full name"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="edit-role" class="edit-field-select"><option value="TRAINING">Training</option><option value="AGENT">Agent</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option><option value="ADMIN">Admin</option></select></div>
+                
+                <div class="border-t border-zinc-800 pt-4">
+                    <p class="text-[10px] uppercase tracking-wider text-violet-400 font-semibold mb-3">Security Question</p>
+                    <div class="info-box mb-4"><div class="info-box-label">Current Question</div><div class="info-box-text" id="edit-security-question-display">-</div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Question (optional)</label><select id="edit-security-question" class="edit-field-select"><option value="">Keep current...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Answer (optional)</label><input type="text" id="edit-security-answer" class="edit-field-input" placeholder="Leave blank to keep current"></div>
+                    </div>
+                </div>
+
+                <div class="border-t border-zinc-800 pt-4">
+                    <p class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold mb-3">Reset Password (optional)</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Password</label><input type="password" id="edit-new-password" class="edit-field-input" placeholder="Leave blank to keep current"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Created</label><input type="text" id="edit-created" class="edit-field-input" disabled></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="saveUserEdit()" class="flex-1 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Changes</button>
+                <button onclick="closeEditModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <button id="ai-fab" onclick="toggleAIWindow()" class="fixed bottom-6 right-6 z-40 w-16 h-16 bg-violet-600 hover:bg-violet-500 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 animate-fade-in"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 8H5v2h2V8zm2 0h2v2h-2v-2zm6 0h-2v2h2v-2zm6 0h2v2h-2v-2z" clip-rule="evenodd"/></svg></button>
     <div id="ai-window" class="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] md:w-[400px] h-[600px] max-h-[70vh] glass-panel rounded-2xl shadow-2xl flex flex-col overflow-hidden hidden ai-window-slide-up">
         <div class="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/90"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-violet-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya.ph AI</h2></div><div class="flex items-center gap-2"><button onclick="clearMayaChat()" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 text-[10px] uppercase font-bold rounded transition-colors">Clear</button><button onclick="toggleAIWindow()" class="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 rounded transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button></div></div>
@@ -210,13 +278,15 @@
         <div class="p-3 border-t border-zinc-800 flex gap-2"><input type="text" id="maya-input" placeholder="Ask internal questions..." autocomplete="off" class="flex-grow bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-4 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all" onkeydown="if(event.key==='Enter')sendMayaMessage()"><button onclick="sendMayaMessage()" id="maya-send-btn" class="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg transition-colors flex items-center gap-2 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg></button></div>
     </div>
 
-    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events-none z-50"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events:none z-50"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
 
     <script>
         var API_BASE_URL  = '';
         var API_ENDPOINT  = '/api/chat';
         var API_KEY       = 'maya-secret-2025';
         var API_MODEL     = 'llama-3.3-70b-versatile';
+        var editingUserId = null;
+        var allUsersCache = [];
 
         function getToken(){return localStorage.getItem('maya_token')||sessionStorage.getItem('maya_token');}
 
@@ -249,6 +319,16 @@
         function formatDate(d){if(!d)return'-';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
         function escapeHtml(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
         function showModuleDAlert(m,t){var e=document.getElementById('module-d-alert');document.getElementById('module-d-alert-text').textContent=m;e.className='module-d-alert module-d-alert-'+(t||'error')+' show';setTimeout(function(){e.classList.remove('show');},4000);}
+        function showEditAlert(m,t){var e=document.getElementById('edit-alert');document.getElementById('edit-alert-text').textContent=m;e.className='module-d-alert module-d-alert-'+(t||'error')+' show';setTimeout(function(){e.classList.remove('show');},4000);}
+        function hideEditAlert(){document.getElementById('edit-alert').classList.remove('show');}
+
+        function getAvailableRoles(currentUserRole){
+            var levels={ADMIN:6,CLIENT:5,'OPERATIONS MANAGER':4,'TEAM LEADER':3,AGENT:2,TRAINING:1};
+            var cl=levels[currentUserRole]||0;
+            var roles=[];
+            for(var r in levels){if(levels[r]<cl)roles.push(r);}
+            return roles;
+        }
 
         function renderUserTable(){
             var tbody=document.getElementById('user-table-body');
@@ -257,44 +337,128 @@
             fetch('/api/auth/users',{headers:{'x-maya-token':getToken()}})
             .then(function(r){return r.json();})
             .then(function(users){
+                allUsersCache=users;
                 document.getElementById('user-count').textContent=users.length+' user'+(users.length!==1?'s':'');
                 if(!users.length){tbody.innerHTML='<tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">No accounts found.</td></tr>';return;}
                 var h='';
+                var canEdit=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'].indexOf(cr)!==-1;
+                var canDelete=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'].indexOf(cr)!==-1;
                 for(var i=0;i<users.length;i++){
                     var u=users[i];
-                    var cd = ['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'].indexOf(cr) !== -1 && cr !== u.role && u.employeeId !== cu;
-                    h+='<tr class="user-row border-t border-zinc-800/50"><td class="px-3 py-3 text-violet-400">'+escapeHtml(u.employeeId)+'</td><td class="px-3 py-3 text-zinc-300 font-sans">'+escapeHtml(u.fullName)+'</td><td class="px-3 py-3 text-center"><span class="role-tag '+getRoleTagClass(u.role)+'">'+getRoleShortName(u.role)+'</span></td><td class="px-3 py-3 text-right text-zinc-500">'+formatDate(u.createdAt)+'</td><td class="px-3 py-3 text-center"><button class="btn-delete-user" onclick="deleteUser(\''+escapeHtml(u.employeeId)+'\')" '+(cd?'':'disabled')+'>Delete</button></td></tr>';
+                    var canEditThis=canEdit&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);
+                    var canDeleteThis=canDelete&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);
+                    h+='<tr class="user-row border-t border-zinc-800/50" onclick="openEditModal(\''+escapeHtml(u.employeeId)+'\')">';
+                    h+='<td class="px-3 py-3 text-violet-400">'+escapeHtml(u.employeeId)+'</td>';
+                    h+='<td class="px-3 py-3 text-zinc-300 font-sans">'+escapeHtml(u.fullName)+'</td>';
+                    h+='<td class="px-3 py-3 text-center"><span class="role-tag '+getRoleTagClass(u.role)+'">'+getRoleShortName(u.role)+'</span></td>';
+                    h+='<td class="px-3 py-3 text-right text-zinc-500">'+formatDate(u.createdAt)+'</td>';
+                    h+='<td class="px-3 py-3 text-center" onclick="event.stopPropagation()">';
+                    h+='<div class="flex items-center justify-center gap-1">';
+                    h+='<button class="btn-action-user" onclick="openEditModal(\''+escapeHtml(u.employeeId)+'\')" '+(canEditThis?'':'disabled')+'>Edit</button>';
+                    h+='<button class="btn-delete-user" onclick="deleteUser(\''+escapeHtml(u.employeeId)+'\')" '+(canDeleteThis?'':'disabled')+'>Del</button>';
+                    h+='</div></td></tr>';
                 }
                 tbody.innerHTML=h;
             })
             .catch(function(){tbody.innerHTML='<tr><td colspan="5" class="text-center text-red-400 py-8 text-sm font-sans normal-case">Failed to load users.</td></tr>';});
         }
 
+        function getRoleLevel(role){var levels={ADMIN:6,CLIENT:5,'OPERATIONS MANAGER':4,'TEAM LEADER':3,AGENT:2,TRAINING:1};return levels[role]||0;}
+
         function toggleCreateForm(){
             var f=document.getElementById('create-form'),b=document.getElementById('toggle-create-btn');
-            if(f.classList.contains('hidden')){f.classList.remove('hidden');b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg> Cancel';document.getElementById('new-fullname').value='';document.getElementById('new-employeeid').value='';document.getElementById('new-password').value='';document.getElementById('new-security-question').value='';document.getElementById('new-security-answer').value='';}
-            else{f.classList.add('hidden');b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account';}
+            if(f.classList.contains('hidden')){
+                f.classList.remove('hidden');
+                b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg> Cancel';
+                document.getElementById('new-fullname').value='';
+                document.getElementById('new-employeeid').value='';
+                document.getElementById('new-password').value='';
+                document.getElementById('new-role').value='AGENT';
+                document.getElementById('new-security-question').value='';
+                document.getElementById('new-security-answer').value='';
+                populateRoleSelect('new-role');
+            }else{
+                f.classList.add('hidden');
+                b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account';
+            }
+        }
+
+        function populateRoleSelect(selectId){
+            var sel=document.getElementById(selectId);
+            var cr=sessionStorage.getItem('maya_user_role')||'';
+            var available=getAvailableRoles(cr);
+            var currentVal=sel.value;
+            sel.innerHTML='';
+            for(var i=0;i<available.length;i++){
+                var opt=document.createElement('option');
+                opt.value=available[i];
+                opt.textContent=available[i].charAt(0)+available[i].slice(1).toLowerCase();
+                sel.appendChild(opt);
+            }
+            if(available.indexOf(currentVal)!==-1)sel.value=currentVal;
         }
 
         function createAccount(){
-            var fn=document.getElementById('new-fullname').value.trim(),ei=document.getElementById('new-employeeid').value.trim().toLowerCase(),pw=document.getElementById('new-password').value,sq=document.getElementById('new-security-question').value,sa=document.getElementById('new-security-answer').value.trim();
+            var fn=document.getElementById('new-fullname').value.trim(),ei=document.getElementById('new-employeeid').value.trim().toLowerCase(),pw=document.getElementById('new-password').value,ro=document.getElementById('new-role').value,sq=document.getElementById('new-security-question').value,sa=document.getElementById('new-security-answer').value.trim();
             if(!fn){showModuleDAlert('Please enter a full name.','error');return;}
             if(!ei){showModuleDAlert('Please enter an Employee ID.','error');return;}
             if(!pw||pw.length<6){showModuleDAlert('Password must be at least 6 characters.','error');return;}
             if(!sq){showModuleDAlert('Please select a security question.','error');return;}
             if(!sa){showModuleDAlert('Please enter the security answer.','error');return;}
-            fetch('/api/auth/users',{method:'POST',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify({fullName:fn,employeeId:ei,password:pw,securityQuestion:sq,securityAnswer:sa})})
+            fetch('/api/auth/users',{method:'POST',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify({fullName:fn,employeeId:ei,password:pw,role:ro,securityQuestion:sq,securityAnswer:sa})})
             .then(function(r){return r.json();})
             .then(function(d){if(d.error){showModuleDAlert(d.error,'error');return;}renderUserTable();toggleCreateForm();showModuleDAlert(d.message,'success');})
             .catch(function(){showModuleDAlert('Cannot connect to server.','error');});
         }
 
         function deleteUser(id){
-            if(!confirm('Delete account "'+id+'"?'))return;
+            if(!confirm('Delete account "'+id+'"? This cannot be undone.'))return;
             fetch('/api/auth/users/'+encodeURIComponent(id),{method:'DELETE',headers:{'x-maya-token':getToken()}})
             .then(function(r){return r.json();})
             .then(function(d){if(d.error){showModuleDAlert(d.error,'error');return;}renderUserTable();showModuleDAlert(d.message,'success');})
             .catch(function(){showModuleDAlert('Cannot connect to server.','error');});
+        }
+
+        function openEditModal(employeeId){
+            var user=allUsersCache.find(function(u){return u.employeeId===employeeId;});
+            if(!user)return;
+            editingUserId=employeeId;
+            hideEditAlert();
+            document.getElementById('edit-employeeid').value=user.employeeId;
+            document.getElementById('edit-fullname').value=user.fullName;
+            document.getElementById('edit-created').value=formatDate(user.createdAt);
+            document.getElementById('edit-security-question-display').textContent=user.securityQuestion||'Not set';
+            document.getElementById('edit-security-question').value='';
+            document.getElementById('edit-security-answer').value='';
+            document.getElementById('edit-new-password').value='';
+            populateRoleSelect('edit-role');
+            document.getElementById('edit-role').value=user.role;
+            document.getElementById('editModal').classList.add('open');
+        }
+
+        function closeEditModal(){
+            document.getElementById('editModal').classList.remove('open');
+            editingUserId=null;
+        }
+
+        function saveUserEdit(){
+            hideEditAlert();
+            var fn=document.getElementById('edit-fullname').value.trim();
+            var ro=document.getElementById('edit-role').value;
+            var sq=document.getElementById('edit-security-question').value;
+            var sa=document.getElementById('edit-security-answer').value.trim();
+            var np=document.getElementById('edit-new-password').value;
+            if(!fn){showEditAlert('Please enter a full name.','error');return;}
+            if(sq&&!sa){showEditAlert('Please enter the security answer.','error');return;}
+            if(np&&np.length<6){showEditAlert('Password must be at least 6 characters.','error');return;}
+            var body={fullName:fn,role:ro};
+            if(sq)body.securityQuestion=sq;
+            if(sa)body.securityAnswer=sa;
+            if(np)body.password=np;
+            fetch('/api/auth/users/'+encodeURIComponent(editingUserId),{method:'PUT',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify(body)})
+            .then(function(r){return r.json();})
+            .then(function(d){if(d.error){showEditAlert(d.error,'error');return;}closeEditModal();renderUserTable();showModuleDAlert(d.message,'success');})
+            .catch(function(){showEditAlert('Cannot connect to server.','error');});
         }
 
         // ===== UTILS =====
@@ -379,6 +543,9 @@
             .then(function(data){removeMayaTyping();var reply=data.choices&&data.choices[0]?data.choices[0].message.content:'Sorry, I couldn\'t process that.';addMayaMsg('ai',reply.replace(/\n/g,'<br>'));mayaSendBtn.disabled=false;})
             .catch(function(){removeMayaTyping();addMayaMsg('ai','<span class="text-red-400">Connection error. Please try again.</span>');mayaSendBtn.disabled=false;});
         }
+
+        // Close modals on backdrop click
+        document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
     </script>
 </body>
 </html>
