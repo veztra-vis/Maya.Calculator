@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -24,25 +25,18 @@
     <style>
         body { background: radial-gradient(circle at 50% 50%, #18181b 0%, #09090b 100%); background-attachment: fixed; }
         .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 40%); z-index: -1; pointer-events: none; }
-        
-        /* --- FUN DESIGN ADDITIONS: Floating Orbs & Panel Hover --- */
         @keyframes floatOrb { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(20px, -30px) scale(1.1); } }
         .orb { position: fixed; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.4; animation: floatOrb 10s ease-in-out infinite; pointer-events: none; }
         .orb-1 { width: 300px; height: 300px; background: rgba(139, 92, 246, 0.2); top: -50px; left: -50px; }
         .orb-2 { width: 400px; height: 400px; background: rgba(16, 185, 129, 0.15); bottom: -100px; right: -100px; animation-delay: 2s; }
         .orb-3 { width: 250px; height: 250px; background: rgba(59, 130, 246, 0.15); top: 40%; right: 20%; animation-delay: 4s; }
-        
         .glass-panel { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(39, 39, 42, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
         .glass-panel:hover { border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 0 30px rgba(139, 92, 246, 0.1); transform: translateY(-3px); }
-        
         button:hover { transition: all 0.2s ease; }
         .ai-quick-btn { transition: transform 0.2s ease, background 0.2s ease; }
         .ai-quick-btn:hover { transform: scale(1.05); }
-        
         #ai-fab { animation: pulseGlow 2.5s infinite; }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
-        /* --- END FUN DESIGN ADDITIONS --- */
-
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #09090b; }
         ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
@@ -88,8 +82,6 @@
         .btn-delete-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
         .btn-delete-user:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
         .btn-delete-user:disabled { opacity: 0.3; cursor: not-allowed; }
-        
-        /* Edit Modal Styles */
         .modal-backdrop-module-d { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-backdrop-module-d.open { display: flex; }
         .modal-card-module-d { background: rgba(24, 24, 27, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
@@ -107,6 +99,9 @@
         .info-box { background: rgba(139, 92, 246, 0.06); border: 1px solid rgba(139, 92, 246, 0.15); border-radius: 10px; padding: 14px 16px; }
         .info-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #8b5cf6; margin-bottom: 6px; font-weight: 600; }
         .info-box-text { font-size: 14px; color: #f4f4f5; }
+        .contact-textarea { width: 100%; background: rgba(9, 9, 11, 0.8); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
+        .contact-textarea:focus { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .contact-textarea::placeholder { color: #3f3f46; }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
@@ -217,6 +212,34 @@
         </div>
     </main>
 
+    <!-- CONTACT ADMIN SECTION -->
+    <section class="max-w-6xl mx-auto mt-8 opacity-0 animate-fade-in" style="animation-delay: 0.35s;">
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-blue-500 rounded-full"></span>
+                    <h2 class="text-lg font-bold text-white">Contact Admin</h2>
+                </div>
+                <span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Support</span>
+            </div>
+            <p class="text-xs text-zinc-500 mb-5 leading-relaxed">Having issues with your account or the website? Send a message directly to the admin. All fields are required.</p>
+            <div id="contact-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="contact-alert-text"></span></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Role Change Request">Role Change Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Website Problem">Website Problem</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
+            </div>
+            <div class="mb-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Message</label><textarea id="contact-message" class="contact-textarea" placeholder="Describe your concern in detail..." rows="4"></textarea></div>
+            <div class="flex items-center justify-between">
+                <p class="text-[10px] text-zinc-600">Messages are sent directly to the admin via email.</p>
+                <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                    Send Message
+                </button>
+            </div>
+        </div>
+    </section>
+
     <footer class="max-w-6xl mx-auto mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-600 animate-fade-in" style="animation-delay: 0.4s;">
         <div class="flex items-center gap-3"><div class="px-2 py-1 rounded border border-zinc-800 bg-zinc-950/50"><p class="text-[9px] font-mono uppercase text-emerald-500">System Normal</p></div><p class="text-[10px] uppercase tracking-widest">Maya Infrastructure</p></div>
         <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p></div>
@@ -227,18 +250,13 @@
         <div class="modal-card-module-d">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-white">Edit Account</h2>
-                <button onclick="closeEditModal()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+                <button onclick="closeEditModal()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
-            
             <div id="edit-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="edit-alert-text"></span></div>
-
             <div class="space-y-4">
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="edit-employeeid" class="edit-field-input mono" disabled></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="edit-fullname" class="edit-field-input" placeholder="Enter full name"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="edit-role" class="edit-field-select"><option value="TRAINING">Training</option><option value="AGENT">Agent</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option><option value="ADMIN">Admin</option></select></div>
-                
                 <div class="border-t border-zinc-800 pt-4">
                     <p class="text-[10px] uppercase tracking-wider text-violet-400 font-semibold mb-3">Security Question</p>
                     <div class="info-box mb-4"><div class="info-box-label">Current Question</div><div class="info-box-text" id="edit-security-question-display">-</div></div>
@@ -247,7 +265,6 @@
                         <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Answer (optional)</label><input type="text" id="edit-security-answer" class="edit-field-input" placeholder="Leave blank to keep current"></div>
                     </div>
                 </div>
-
                 <div class="border-t border-zinc-800 pt-4">
                     <p class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold mb-3">Reset Password (optional)</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -256,7 +273,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="flex gap-3 mt-6">
                 <button onclick="saveUserEdit()" class="flex-1 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Changes</button>
                 <button onclick="closeEditModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
@@ -288,6 +304,13 @@
         var editingUserId = null;
         var allUsersCache = [];
 
+        // =============================================
+        // EMAILJS CONFIG - REPLACE THESE 3 VALUES
+        // =============================================
+        var EMAILJS_SERVICE_ID = 'service_1zm2s7c';
+        var EMAILJS_TEMPLATE_ID = 'template_h7keskr';
+        var EMAILJS_PUBLIC_KEY  = 'EqpvSEszjMBtqUSBd';
+
         function getToken(){return localStorage.getItem('maya_token')||sessionStorage.getItem('maya_token');}
 
         // ===== AUTH CHECK =====
@@ -302,6 +325,8 @@
                 sessionStorage.setItem('maya_user_name',data.user.name);
                 sessionStorage.setItem('maya_user_role',data.user.role);
                 document.getElementById('user-name').textContent=data.user.name;
+                document.getElementById('contact-name').value=data.user.name;
+                document.getElementById('contact-eid').value=data.user.id;
                 document.getElementById('user-info').classList.remove('hidden');
                 document.getElementById('logout-btn').classList.remove('hidden');
                 var rb=document.getElementById('role-badge');rb.textContent=data.user.role;rb.classList.remove('hidden');
@@ -313,22 +338,51 @@
 
         function handleLogout(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');}
 
+        // ===== CONTACT ADMIN =====
+        function showContactAlert(m,t){var e=document.getElementById('contact-alert');document.getElementById('contact-alert-text').textContent=m;e.className='module-d-alert module-d-alert-'+(t||'error')+' show';setTimeout(function(){e.classList.remove('show');},4000);}
+        function sendContactMessage(){
+            var subj=document.getElementById('contact-subject').value;
+            var msg=document.getElementById('contact-message').value.trim();
+            var btn=document.getElementById('contact-send-btn');
+            if(!subj){showContactAlert('Please select a subject.','error');return;}
+            if(!msg){showContactAlert('Please enter your message.','error');return;}
+            if(msg.length<10){showContactAlert('Message is too short. Please provide more details.','error');return;}
+            btn.disabled=true;btn.innerHTML='<svg class="h-4 w-4 animate-spin" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="50 80" style="animation:arcDashSmall 1s ease-in-out infinite"/></svg> Sending...';
+            var templateParams={
+                from_name:document.getElementById('contact-name').value,
+                from_id:document.getElementById('contact-eid').value,
+                subject:subj,
+                message:msg,
+                to_email:'ancel.claudio1@gmail.com',
+                sent_at:new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'})
+            };
+            emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,templateParams,EMAILJS_PUBLIC_KEY)
+            .then(function(){
+                showContactAlert('Message sent successfully! The admin will respond to your concern.','success');
+                document.getElementById('contact-subject').value='';
+                document.getElementById('contact-message').value='';
+                btn.disabled=false;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message';
+            })
+            .catch(function(err){
+                // Fallback: open mailto if EmailJS fails
+                var mailBody='Name: '+templateParams.from_name+'%0AEmployee ID: '+templateParams.from_id+'%0ASubject: '+subj+'%0A%0A'+msg;
+                window.open('mailto:ancel.claudio1@gmail.com?subject='+encodeURIComponent('[Maya Terminal] '+subj)+'&body='+mailBody);
+                showContactAlert('Email client opened. If it didn\'t open, email admin directly at ancel.claudio1@gmail.com','error');
+                btn.disabled=false;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message';
+            });
+        }
+
         // ===== MODULE D FUNCTIONS =====
         function getRoleTagClass(r){return {ADMIN:'role-tag-admin',CLIENT:'role-tag-client','OPERATIONS MANAGER':'role-tag-om','TEAM LEADER':'role-tag-tl',AGENT:'role-tag-agent',TRAINING:'role-tag-training'}[r]||'role-tag-agent';}
         function getRoleShortName(r){return {ADMIN:'Admin',CLIENT:'Client','OPERATIONS MANAGER':'OM','TEAM LEADER':'TL',AGENT:'Agent',TRAINING:'Trainee'}[r]||'Agent';}
+        function getRoleLevel(role){var levels={ADMIN:6,CLIENT:5,'OPERATIONS MANAGER':4,'TEAM LEADER':3,AGENT:2,TRAINING:1};return levels[role]||0;}
         function formatDate(d){if(!d)return'-';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
         function escapeHtml(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
         function showModuleDAlert(m,t){var e=document.getElementById('module-d-alert');document.getElementById('module-d-alert-text').textContent=m;e.className='module-d-alert module-d-alert-'+(t||'error')+' show';setTimeout(function(){e.classList.remove('show');},4000);}
         function showEditAlert(m,t){var e=document.getElementById('edit-alert');document.getElementById('edit-alert-text').textContent=m;e.className='module-d-alert module-d-alert-'+(t||'error')+' show';setTimeout(function(){e.classList.remove('show');},4000);}
         function hideEditAlert(){document.getElementById('edit-alert').classList.remove('show');}
-
-        function getAvailableRoles(currentUserRole){
-            var levels={ADMIN:6,CLIENT:5,'OPERATIONS MANAGER':4,'TEAM LEADER':3,AGENT:2,TRAINING:1};
-            var cl=levels[currentUserRole]||0;
-            var roles=[];
-            for(var r in levels){if(levels[r]<cl)roles.push(r);}
-            return roles;
-        }
+        function getAvailableRoles(currentUserRole){var levels={ADMIN:6,CLIENT:5,'OPERATIONS MANAGER':4,'TEAM LEADER':3,AGENT:2,TRAINING:1};var cl=levels[currentUserRole]||0;var roles=[];for(var r in levels){if(levels[r]<cl)roles.push(r);}return roles;}
+        function populateRoleSelect(selectId){var sel=document.getElementById(selectId);var cr=sessionStorage.getItem('maya_user_role')||'';var available=getAvailableRoles(cr);var currentVal=sel.value;sel.innerHTML='';for(var i=0;i<available.length;i++){var opt=document.createElement('option');opt.value=available[i];opt.textContent=available[i].charAt(0)+available[i].slice(1).toLowerCase();sel.appendChild(opt);}if(available.indexOf(currentVal)!==-1)sel.value=currentVal;}
 
         function renderUserTable(){
             var tbody=document.getElementById('user-table-body');
@@ -340,20 +394,15 @@
                 allUsersCache=users;
                 document.getElementById('user-count').textContent=users.length+' user'+(users.length!==1?'s':'');
                 if(!users.length){tbody.innerHTML='<tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">No accounts found.</td></tr>';return;}
-                var h='';
-                var canEdit=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'].indexOf(cr)!==-1;
-                var canDelete=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'].indexOf(cr)!==-1;
+                var h='';var canEdit=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'].indexOf(cr)!==-1;var canDelete=canEdit;
                 for(var i=0;i<users.length;i++){
-                    var u=users[i];
-                    var canEditThis=canEdit&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);
-                    var canDeleteThis=canDelete&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);
-                    h+='<tr class="user-row border-t border-zinc-800/50" onclick="openEditModal(\''+escapeHtml(u.employeeId)+'\')">';
+                    var u=users[i];var canEditThis=canEdit&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);var canDeleteThis=canDelete&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);
+                    h+='<tr class="user-row border-t border-zinc-800/50"'+(canEditThis?' onclick="openEditModal(\''+escapeHtml(u.employeeId)+'\')"':'')+'>';
                     h+='<td class="px-3 py-3 text-violet-400">'+escapeHtml(u.employeeId)+'</td>';
                     h+='<td class="px-3 py-3 text-zinc-300 font-sans">'+escapeHtml(u.fullName)+'</td>';
                     h+='<td class="px-3 py-3 text-center"><span class="role-tag '+getRoleTagClass(u.role)+'">'+getRoleShortName(u.role)+'</span></td>';
                     h+='<td class="px-3 py-3 text-right text-zinc-500">'+formatDate(u.createdAt)+'</td>';
-                    h+='<td class="px-3 py-3 text-center" onclick="event.stopPropagation()">';
-                    h+='<div class="flex items-center justify-center gap-1">';
+                    h+='<td class="px-3 py-3 text-center" onclick="event.stopPropagation()"><div class="flex items-center justify-center gap-1">';
                     h+='<button class="btn-action-user" onclick="openEditModal(\''+escapeHtml(u.employeeId)+'\')" '+(canEditThis?'':'disabled')+'>Edit</button>';
                     h+='<button class="btn-delete-user" onclick="deleteUser(\''+escapeHtml(u.employeeId)+'\')" '+(canDeleteThis?'':'disabled')+'>Del</button>';
                     h+='</div></td></tr>';
@@ -363,102 +412,33 @@
             .catch(function(){tbody.innerHTML='<tr><td colspan="5" class="text-center text-red-400 py-8 text-sm font-sans normal-case">Failed to load users.</td></tr>';});
         }
 
-        function getRoleLevel(role){var levels={ADMIN:6,CLIENT:5,'OPERATIONS MANAGER':4,'TEAM LEADER':3,AGENT:2,TRAINING:1};return levels[role]||0;}
-
         function toggleCreateForm(){
             var f=document.getElementById('create-form'),b=document.getElementById('toggle-create-btn');
             if(f.classList.contains('hidden')){
-                f.classList.remove('hidden');
-                b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg> Cancel';
-                document.getElementById('new-fullname').value='';
-                document.getElementById('new-employeeid').value='';
-                document.getElementById('new-password').value='';
-                document.getElementById('new-role').value='AGENT';
-                document.getElementById('new-security-question').value='';
-                document.getElementById('new-security-answer').value='';
-                populateRoleSelect('new-role');
-            }else{
-                f.classList.add('hidden');
-                b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account';
-            }
-        }
-
-        function populateRoleSelect(selectId){
-            var sel=document.getElementById(selectId);
-            var cr=sessionStorage.getItem('maya_user_role')||'';
-            var available=getAvailableRoles(cr);
-            var currentVal=sel.value;
-            sel.innerHTML='';
-            for(var i=0;i<available.length;i++){
-                var opt=document.createElement('option');
-                opt.value=available[i];
-                opt.textContent=available[i].charAt(0)+available[i].slice(1).toLowerCase();
-                sel.appendChild(opt);
-            }
-            if(available.indexOf(currentVal)!==-1)sel.value=currentVal;
+                f.classList.remove('hidden');b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg> Cancel';
+                document.getElementById('new-fullname').value='';document.getElementById('new-employeeid').value='';document.getElementById('new-password').value='';document.getElementById('new-role').value='AGENT';document.getElementById('new-security-question').value='';document.getElementById('new-security-answer').value='';populateRoleSelect('new-role');
+            }else{f.classList.add('hidden');b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account';}
         }
 
         function createAccount(){
             var fn=document.getElementById('new-fullname').value.trim(),ei=document.getElementById('new-employeeid').value.trim().toLowerCase(),pw=document.getElementById('new-password').value,ro=document.getElementById('new-role').value,sq=document.getElementById('new-security-question').value,sa=document.getElementById('new-security-answer').value.trim();
-            if(!fn){showModuleDAlert('Please enter a full name.','error');return;}
-            if(!ei){showModuleDAlert('Please enter an Employee ID.','error');return;}
-            if(!pw||pw.length<6){showModuleDAlert('Password must be at least 6 characters.','error');return;}
-            if(!sq){showModuleDAlert('Please select a security question.','error');return;}
-            if(!sa){showModuleDAlert('Please enter the security answer.','error');return;}
+            if(!fn){showModuleDAlert('Please enter a full name.','error');return;}if(!ei){showModuleDAlert('Please enter an Employee ID.','error');return;}if(!pw||pw.length<6){showModuleDAlert('Password must be at least 6 characters.','error');return;}if(!sq){showModuleDAlert('Please select a security question.','error');return;}if(!sa){showModuleDAlert('Please enter the security answer.','error');return;}
             fetch('/api/auth/users',{method:'POST',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify({fullName:fn,employeeId:ei,password:pw,role:ro,securityQuestion:sq,securityAnswer:sa})})
-            .then(function(r){return r.json();})
-            .then(function(d){if(d.error){showModuleDAlert(d.error,'error');return;}renderUserTable();toggleCreateForm();showModuleDAlert(d.message,'success');})
-            .catch(function(){showModuleDAlert('Cannot connect to server.','error');});
+            .then(function(r){return r.json();}).then(function(d){if(d.error){showModuleDAlert(d.error,'error');return;}renderUserTable();toggleCreateForm();showModuleDAlert(d.message,'success');}).catch(function(){showModuleDAlert('Cannot connect to server.','error');});
         }
 
-        function deleteUser(id){
-            if(!confirm('Delete account "'+id+'"? This cannot be undone.'))return;
-            fetch('/api/auth/users/'+encodeURIComponent(id),{method:'DELETE',headers:{'x-maya-token':getToken()}})
-            .then(function(r){return r.json();})
-            .then(function(d){if(d.error){showModuleDAlert(d.error,'error');return;}renderUserTable();showModuleDAlert(d.message,'success');})
-            .catch(function(){showModuleDAlert('Cannot connect to server.','error');});
-        }
+        function deleteUser(id){if(!confirm('Delete account "'+id+'"? This cannot be undone.'))return;fetch('/api/auth/users/'+encodeURIComponent(id),{method:'DELETE',headers:{'x-maya-token':getToken()}}).then(function(r){return r.json();}).then(function(d){if(d.error){showModuleDAlert(d.error,'error');return;}renderUserTable();showModuleDAlert(d.message,'success');}).catch(function(){showModuleDAlert('Cannot connect to server.','error');});}
 
         function openEditModal(employeeId){
-            var user=allUsersCache.find(function(u){return u.employeeId===employeeId;});
-            if(!user)return;
-            editingUserId=employeeId;
-            hideEditAlert();
-            document.getElementById('edit-employeeid').value=user.employeeId;
-            document.getElementById('edit-fullname').value=user.fullName;
-            document.getElementById('edit-created').value=formatDate(user.createdAt);
-            document.getElementById('edit-security-question-display').textContent=user.securityQuestion||'Not set';
-            document.getElementById('edit-security-question').value='';
-            document.getElementById('edit-security-answer').value='';
-            document.getElementById('edit-new-password').value='';
-            populateRoleSelect('edit-role');
-            document.getElementById('edit-role').value=user.role;
-            document.getElementById('editModal').classList.add('open');
+            var user=allUsersCache.find(function(u){return u.employeeId===employeeId;});if(!user)return;editingUserId=employeeId;hideEditAlert();
+            document.getElementById('edit-employeeid').value=user.employeeId;document.getElementById('edit-fullname').value=user.fullName;document.getElementById('edit-created').value=formatDate(user.createdAt);document.getElementById('edit-security-question-display').textContent=user.securityQuestion||'Not set';document.getElementById('edit-security-question').value='';document.getElementById('edit-security-answer').value='';document.getElementById('edit-new-password').value='';populateRoleSelect('edit-role');document.getElementById('edit-role').value=user.role;document.getElementById('editModal').classList.add('open');
         }
-
-        function closeEditModal(){
-            document.getElementById('editModal').classList.remove('open');
-            editingUserId=null;
-        }
-
+        function closeEditModal(){document.getElementById('editModal').classList.remove('open');editingUserId=null;}
         function saveUserEdit(){
-            hideEditAlert();
-            var fn=document.getElementById('edit-fullname').value.trim();
-            var ro=document.getElementById('edit-role').value;
-            var sq=document.getElementById('edit-security-question').value;
-            var sa=document.getElementById('edit-security-answer').value.trim();
-            var np=document.getElementById('edit-new-password').value;
-            if(!fn){showEditAlert('Please enter a full name.','error');return;}
-            if(sq&&!sa){showEditAlert('Please enter the security answer.','error');return;}
-            if(np&&np.length<6){showEditAlert('Password must be at least 6 characters.','error');return;}
-            var body={fullName:fn,role:ro};
-            if(sq)body.securityQuestion=sq;
-            if(sa)body.securityAnswer=sa;
-            if(np)body.password=np;
-            fetch('/api/auth/users/'+encodeURIComponent(editingUserId),{method:'PUT',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify(body)})
-            .then(function(r){return r.json();})
-            .then(function(d){if(d.error){showEditAlert(d.error,'error');return;}closeEditModal();renderUserTable();showModuleDAlert(d.message,'success');})
-            .catch(function(){showEditAlert('Cannot connect to server.','error');});
+            hideEditAlert();var fn=document.getElementById('edit-fullname').value.trim(),ro=document.getElementById('edit-role').value,sq=document.getElementById('edit-security-question').value,sa=document.getElementById('edit-security-answer').value.trim(),np=document.getElementById('edit-new-password').value;
+            if(!fn){showEditAlert('Please enter a full name.','error');return;}if(sq&&!sa){showEditAlert('Please enter the security answer.','error');return;}if(np&&np.length<6){showEditAlert('Password must be at least 6 characters.','error');return;}
+            var body={fullName:fn,role:ro};if(sq)body.securityQuestion=sq;if(sa)body.securityAnswer=sa;if(np)body.password=np;
+            fetch('/api/auth/users/'+encodeURIComponent(editingUserId),{method:'PUT',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){showEditAlert(d.error,'error');return;}closeEditModal();renderUserTable();showModuleDAlert(d.message,'success');}).catch(function(){showEditAlert('Cannot connect to server.','error');});
         }
 
         // ===== UTILS =====
@@ -474,8 +454,7 @@
 
         // ===== LOADER =====
         function hideLoader(){var e=document.getElementById('loader');if(e)e.classList.add('hidden-loader');}
-        window.addEventListener('load',function(){setTimeout(hideLoader,1200);});
-        setTimeout(hideLoader,5000);
+        window.addEventListener('load',function(){setTimeout(hideLoader,1200);});setTimeout(hideLoader,5000);
         
         // ===== MILES CALCULATOR =====
         var spendInput=document.getElementById('spend-input'),multSelect=document.getElementById('multiplier-select'),customMult=document.getElementById('custom-multiplier'),milesInput=document.getElementById('miles-input');
@@ -492,59 +471,25 @@
         // ===== LANDERS CALCULATOR =====
         setupCurrencyInput('landers-spend');setupCurrencyInput('total-card-spend');
         var landersCat=document.getElementById('landers-category'),landersCustom=document.getElementById('landers-custom-group'),landersCustomRate=document.getElementById('landers-custom-rate');
-        function calcLanders(){var a=parseCurrency(document.getElementById('landers-spend').value),c=parseCurrency(document.getElementById('total-card-spend').value),cat=landersCat.value,rate=0,pts=0,breakdown='';
-            if(cat==='landers'){var total=a+c;var t1=Math.min(total,3000)*0.01;var t2=total>3000?Math.min(total-3000,7000)*0.015:0;var t3=total>10000?Math.min(total-10000,40000)*0.02:0;var t4=total>50000?(total-50000)*0.025:0;pts=t1+t2+t3+t4;rate='Progressive';breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';}
-            else if(cat==='dining'){rate=2;pts=a*0.02;breakdown='Flat 2% on dining';}
-            else if(cat==='other'){rate=1;pts=a*0.01;breakdown='Flat 1% on other retail';}
-            else if(cat==='excluded'){rate=0;pts=0;breakdown='Excluded - 0%';}
-            else if(cat==='custom'){rate=parseFloat(landersCustomRate.value)||0;pts=a*(rate/100);breakdown='Custom rate: '+rate+'%';}
-            document.getElementById('landers-result').textContent=formatCurrency(pts);document.getElementById('voucher-result').textContent=Math.floor(pts/500);document.getElementById('tier-breakdown').textContent=breakdown||'Select category';}
-        landersCat.addEventListener('change',function(){if(landersCat.value==='custom'){landersCustom.classList.remove('hidden');landersCustomRate.focus();}else{landersCustom.classList.add('hidden');}calcLanders();});
-        landersCustomRate.addEventListener('input',calcLanders);
+        function calcLanders(){var a=parseCurrency(document.getElementById('landers-spend').value),c=parseCurrency(document.getElementById('total-card-spend').value),cat=landersCat.value,rate=0,pts=0,breakdown='';if(cat==='landers'){var total=a+c;var t1=Math.min(total,3000)*0.01;var t2=total>3000?Math.min(total-3000,7000)*0.015:0;var t3=total>10000?Math.min(total-10000,40000)*0.02:0;var t4=total>50000?(total-50000)*0.025:0;pts=t1+t2+t3+t4;rate='Progressive';breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';}else if(cat==='dining'){rate=2;pts=a*0.02;breakdown='Flat 2% on dining';}else if(cat==='other'){rate=1;pts=a*0.01;breakdown='Flat 1% on other retail';}else if(cat==='excluded'){rate=0;pts=0;breakdown='Excluded - 0%';}else if(cat==='custom'){rate=parseFloat(landersCustomRate.value)||0;pts=a*(rate/100);breakdown='Custom rate: '+rate+'%';}document.getElementById('landers-result').textContent=formatCurrency(pts);document.getElementById('voucher-result').textContent=Math.floor(pts/500);document.getElementById('tier-breakdown').textContent=breakdown||'Select category';}
+        landersCat.addEventListener('change',function(){if(landersCat.value==='custom'){landersCustom.classList.remove('hidden');landersCustomRate.focus();}else{landersCustom.classList.add('hidden');}calcLanders();});landersCustomRate.addEventListener('input',calcLanders);
         ['landers-spend','total-card-spend'].forEach(function(id){document.getElementById(id).addEventListener('calculate',calcLanders);document.getElementById(id).addEventListener('input',calcLanders);});
 
         // ===== EMI CALCULATOR =====
         setupCurrencyInput('emi-principal');
-        function calcEMI(){
-            var P=parseCurrency(document.getElementById('emi-principal').value),EIR=parseFloat(document.getElementById('emi-rate').value)||0,N=parseInt(document.getElementById('emi-months').value)||0,D=parseInt(document.getElementById('emi-days-year').value)||365,startDate=document.getElementById('emi-start-date').value;
-            if(P<=0||N<=0||EIR<=0){document.getElementById('emi-nominal-rate').textContent='0.00';document.getElementById('emi-daily-rate').textContent='0.000000';document.getElementById('emi-fixed-amount').textContent='0.00';document.getElementById('emi-total-interest').textContent='0.00';document.getElementById('emi-table-body').innerHTML='<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';return;}
-            var r=Math.pow(1+EIR/100,1/12)-1;var nominal=(Math.pow(1+EIR/100,12)-1)*100;var daily=r*12/D;
-            document.getElementById('emi-nominal-rate').textContent=nominal.toFixed(2);document.getElementById('emi-daily-rate').textContent=daily.toFixed(6);
-            var emi=P*r*Math.pow(1+r,N)/(Math.pow(1+r,N)-1);var totalInt=emi*N-P;
-            document.getElementById('emi-fixed-amount').textContent=formatCurrency(emi);document.getElementById('emi-total-interest').textContent=formatCurrency(totalInt);
-            var bal=P,html='',curDate=new Date(startDate);
-            for(var i=1;i<=N;i++){
-                var daysInMonth=new Date(curDate.getFullYear(),curDate.getMonth()+1,0).getDate();
-                var intAmt=bal*daily*daysInMonth;var prinPaid=emi-intAmt;bal-=prinPaid;if(bal<0)bal=0;
-                var dueDate=curDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-                html+='<tr class="border-t border-zinc-800/50"><td class="px-3 py-2.5 text-center text-zinc-500">'+i+'</td><td class="px-3 py-2.5 text-zinc-300">'+dueDate+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+daysInMonth+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal+prinPaid)+'</td><td class="px-3 py-2.5 text-right text-amber-400/70">'+formatCurrency(intAmt)+'</td><td class="px-3 py-2.5 text-right text-emerald-400/70">'+formatCurrency(prinPaid)+'</td><td class="px-3 py-2.5 text-right text-zinc-200 font-medium">'+formatCurrency(emi)+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal)+'</td></tr>';
-                curDate.setMonth(curDate.getMonth()+1);
-            }
-            document.getElementById('emi-table-body').innerHTML=html;
-        }
+        function calcEMI(){var P=parseCurrency(document.getElementById('emi-principal').value),EIR=parseFloat(document.getElementById('emi-rate').value)||0,N=parseInt(document.getElementById('emi-months').value)||0,D=parseInt(document.getElementById('emi-days-year').value)||365,startDate=document.getElementById('emi-start-date').value;if(P<=0||N<=0||EIR<=0){document.getElementById('emi-nominal-rate').textContent='0.00';document.getElementById('emi-daily-rate').textContent='0.000000';document.getElementById('emi-fixed-amount').textContent='0.00';document.getElementById('emi-total-interest').textContent='0.00';document.getElementById('emi-table-body').innerHTML='<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';return;}var r=Math.pow(1+EIR/100,1/12)-1;var nominal=(Math.pow(1+EIR/100,12)-1)*100;var daily=r*12/D;document.getElementById('emi-nominal-rate').textContent=nominal.toFixed(2);document.getElementById('emi-daily-rate').textContent=daily.toFixed(6);var emi=P*r*Math.pow(1+r,N)/(Math.pow(1+r,N)-1);var totalInt=emi*N-P;document.getElementById('emi-fixed-amount').textContent=formatCurrency(emi);document.getElementById('emi-total-interest').textContent=formatCurrency(totalInt);var bal=P,html='',curDate=new Date(startDate);for(var i=1;i<=N;i++){var daysInMonth=new Date(curDate.getFullYear(),curDate.getMonth()+1,0).getDate();var intAmt=bal*daily*daysInMonth;var prinPaid=emi-intAmt;bal-=prinPaid;if(bal<0)bal=0;var dueDate=curDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});html+='<tr class="border-t border-zinc-800/50"><td class="px-3 py-2.5 text-center text-zinc-500">'+i+'</td><td class="px-3 py-2.5 text-zinc-300">'+dueDate+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+daysInMonth+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal+prinPaid)+'</td><td class="px-3 py-2.5 text-right text-amber-400/70">'+formatCurrency(intAmt)+'</td><td class="px-3 py-2.5 text-right text-emerald-400/70">'+formatCurrency(prinPaid)+'</td><td class="px-3 py-2.5 text-right text-zinc-200 font-medium">'+formatCurrency(emi)+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal)+'</td></tr>';curDate.setMonth(curDate.getMonth()+1);}document.getElementById('emi-table-body').innerHTML=html;}
         ['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcEMI);el.addEventListener('change',calcEMI);});
 
         // ===== MAYA AI =====
         var mayaChat=document.getElementById('maya-chat'),mayaInput=document.getElementById('maya-input'),mayaSendBtn=document.getElementById('maya-send-btn');
         function toggleAIWindow(){var w=document.getElementById('ai-window');w.classList.toggle('hidden');if(!w.classList.contains('hidden')){mayaInput.focus();if(!mayaChat.children.length)addMayaMsg('ai','Hello! I\'m Maya AI. How can I help you today?');}}
         function clearMayaChat(){mayaChat.innerHTML='';addMayaMsg('ai','Chat cleared. How can I help you?');}
-        function addMayaMsg(type,text){var div=document.createElement('div');div.className='flex '+(type==='user'?'justify-end':'justify-start')+' animate-fade-in';
-            var bubble=document.createElement('div');bubble.className='max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed '+(type==='user'?'bg-violet-600 text-white rounded-br-md':'bg-zinc-900 border border-zinc-800 text-zinc-200 rounded-bl-md');
-            bubble.innerHTML=text;div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;return bubble;}
-        function addMayaTyping(){var div=document.createElement('div');div.className='flex justify-start animate-fade-in';div.id='maya-typing';
-            var bubble=document.createElement('div');bubble.className='bg-zinc-900 border border-zinc-800 px-4 py-3 rounded-2xl rounded-bl-md flex gap-1.5 items-center';
-            for(var i=0;i<3;i++){var dot=document.createElement('div');dot.className='typing-dot w-2 h-2 bg-violet-400 rounded-full';bubble.appendChild(dot);}
-            div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;}
+        function addMayaMsg(type,text){var div=document.createElement('div');div.className='flex '+(type==='user'?'justify-end':'justify-start')+' animate-fade-in';var bubble=document.createElement('div');bubble.className='max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed '+(type==='user'?'bg-violet-600 text-white rounded-br-md':'bg-zinc-900 border border-zinc-800 text-zinc-200 rounded-bl-md');bubble.innerHTML=text;div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;return bubble;}
+        function addMayaTyping(){var div=document.createElement('div');div.className='flex justify-start animate-fade-in';div.id='maya-typing';var bubble=document.createElement('div');bubble.className='bg-zinc-900 border border-zinc-800 px-4 py-3 rounded-2xl rounded-bl-md flex gap-1.5 items-center';for(var i=0;i<3;i++){var dot=document.createElement('div');dot.className='typing-dot w-2 h-2 bg-violet-400 rounded-full';bubble.appendChild(dot);}div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;}
         function removeMayaTyping(){var t=document.getElementById('maya-typing');if(t)t.remove();}
         function sendMayaQuick(q){mayaInput.value=q;sendMayaMessage();}
-        function sendMayaMessage(){var msg=mayaInput.value.trim();if(!msg)return;mayaInput.value='';addMayaMsg('user',escapeHtml(msg));mayaSendBtn.disabled=true;addMayaTyping();
-            fetch(API_BASE_URL+API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+API_KEY},body:JSON.stringify({model:API_MODEL,messages:[{role:'system',content:'You are Maya AI, an internal assistant for Maya Philippines credit card operations. Be concise and helpful. Answer questions about Maya products, policies, and procedures.'},{role:'user',content:msg}],stream:false})})
-            .then(function(r){return r.json();})
-            .then(function(data){removeMayaTyping();var reply=data.choices&&data.choices[0]?data.choices[0].message.content:'Sorry, I couldn\'t process that.';addMayaMsg('ai',reply.replace(/\n/g,'<br>'));mayaSendBtn.disabled=false;})
-            .catch(function(){removeMayaTyping();addMayaMsg('ai','<span class="text-red-400">Connection error. Please try again.</span>');mayaSendBtn.disabled=false;});
-        }
+        function sendMayaMessage(){var msg=mayaInput.value.trim();if(!msg)return;mayaInput.value='';addMayaMsg('user',escapeHtml(msg));mayaSendBtn.disabled=true;addMayaTyping();fetch(API_BASE_URL+API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+API_KEY},body:JSON.stringify({model:API_MODEL,messages:[{role:'system',content:'You are Maya AI, an internal assistant for Maya Philippines credit card operations. Be concise and helpful.'},{role:'user',content:msg}],stream:false})}).then(function(r){return r.json();}).then(function(data){removeMayaTyping();var reply=data.choices&&data.choices[0]?data.choices[0].message.content:'Sorry, I couldn\'t process that.';addMayaMsg('ai',reply.replace(/\n/g,'<br>'));mayaSendBtn.disabled=false;}).catch(function(){removeMayaTyping();addMayaMsg('ai','<span class="text-red-400">Connection error. Please try again.</span>');mayaSendBtn.disabled=false;});}
 
-        // Close modals on backdrop click
         document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
     </script>
 </body>
