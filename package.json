@@ -1,12 +1,14 @@
 {
-  "name": "maya-app",
+  "name": "maya-utility-terminal",
   "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "node-fetch": "^2.7.0"
+    "mongodb": "^6.3.0",
+    "node-fetch": "^2.6.7"
   }
 }
