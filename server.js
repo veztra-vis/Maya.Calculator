@@ -25,17 +25,23 @@ async function seedAdmin() {
     try {
         const db = await getDb();
         const users = db.collection('users');
-        const existing = await users.countDocuments();
-        if (existing === 0) {
+        var existing = await users.findOne({ employeeId: 'ancel' });
+        if (!existing) {
             await users.insertOne({
                 id: 'USR001',
                 employeeId: 'ancel',
                 fullName: 'Ancel Claudio',
                 password: 'maya2026',
                 role: 'ADMIN',
+                securityQuestion: 'What is your pet\'s name?',
+                securityAnswer: 'maya',
                 createdAt: new Date().toISOString()
             });
             console.log('Seed admin created');
+        } else if (!existing.securityQuestion) {
+            // Fix existing admin if missing security fields
+            await users.updateOne({ employeeId: 'ancel' }, { $set: { securityQuestion: 'What is your pet\'s name?', securityAnswer: 'maya' } });
+            console.log('Seed admin security question added');
         }
     } catch (e) {
         console.error('MONGO FAILED:', e.message);
@@ -104,14 +110,24 @@ app.get('/api/auth/users', authMiddleware, async function(req, res) {
 app.post('/api/auth/users', authMiddleware, async function(req, res) {
     var creatorLevel = getRoleLevel(req.user.role);
     if (creatorLevel < 3) return res.status(403).json({ error: 'Not authorized' });
-    var fullName = req.body.fullName, employeeId = (req.body.employeeId || '').toLowerCase(), password = req.body.password, role = req.body.role;
-    if (!fullName || !employeeId || !password || !role) return res.status(400).json({ error: 'All fields required' });
+    var fullName = req.body.fullName, employeeId = (req.body.employeeId || '').toLowerCase(), password = req.body.password;
+    var securityQuestion = req.body.securityQuestion, securityAnswer = req.body.securityAnswer;
+    if (!fullName || !employeeId || !password) return res.status(400).json({ error: 'All fields required' });
     if (password.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
-    if (getRoleLevel(role) >= creatorLevel) return res.status(403).json({ error: 'Cannot create equal or higher role' });
+    if (!securityQuestion || !securityAnswer) return res.status(400).json({ error: 'Security question and answer required' });
     try {
         const db = await getDb();
         if (await db.collection('users').findOne({ employeeId: employeeId })) return res.status(409).json({ error: 'Employee ID already exists' });
-        var newUser = { id: 'USR' + Date.now().toString().slice(-6), employeeId: employeeId, fullName: fullName, password: password, role: role, createdAt: new Date().toISOString() };
+        var newUser = {
+            id: 'USR' + Date.now().toString().slice(-6),
+            employeeId: employeeId,
+            fullName: fullName,
+            password: password,
+            role: 'AGENT',
+            securityQuestion: securityQuestion,
+            securityAnswer: securityAnswer.toLowerCase().trim(),
+            createdAt: new Date().toISOString()
+        };
         await db.collection('users').insertOne(newUser);
         res.status(201).json({ message: 'Account created for ' + fullName, user: { id: newUser.id, employeeId: newUser.employeeId, fullName: newUser.fullName, role: newUser.role, createdAt: newUser.createdAt } });
     } catch (e) { res.status(500).json({ error: 'Database error' }); }
@@ -138,16 +154,34 @@ app.post('/api/auth/check-user', async function(req, res) {
     try {
         var user = await (await getDb()).collection('users').findOne({ employeeId: employeeId });
         if (!user) return res.status(404).json({ error: 'No account found' });
-        res.json({ found: true, employeeId: user.employeeId, fullName: user.fullName });
+        res.json({ found: true, employeeId: user.employeeId, fullName: user.fullName, securityQuestion: user.securityQuestion || null });
+    } catch (e) { res.status(500).json({ error: 'Database error' }); }
+});
+
+app.post('/api/auth/verify-security', async function(req, res) {
+    var employeeId = (req.body.employeeId || '').toLowerCase();
+    var answer = (req.body.answer || '').trim().toLowerCase();
+    if (!employeeId || !answer) return res.status(400).json({ error: 'All fields required' });
+    try {
+        var user = await (await getDb()).collection('users').findOne({ employeeId: employeeId });
+        if (!user) return res.status(404).json({ error: 'No account found' });
+        if (!user.securityAnswer || answer !== user.securityAnswer.toLowerCase()) {
+            return res.status(401).json({ error: 'Incorrect answer' });
+        }
+        res.json({ verified: true });
     } catch (e) { res.status(500).json({ error: 'Database error' }); }
 });
 
 app.post('/api/auth/reset-password', async function(req, res) {
-    var employeeId = (req.body.employeeId || '').toLowerCase(), newPassword = req.body.newPassword;
+    var employeeId = (req.body.employeeId || '').toLowerCase();
+    var newPassword = req.body.newPassword;
+    var securityQuestion = req.body.securityQuestion || null;
+    var securityAnswer = req.body.securityAnswer || null;
     if (!employeeId || !newPassword) return res.status(400).json({ error: 'All fields required' });
     if (newPassword.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
     try {
-        var result = await (await getDb()).collection('users').updateOne({ employeeId: employeeId }, { $set: { password: newPassword } });
+        var db = await getDb();
+        var result = await db.collection('users').updateOne({ employeeId: employeeId }, { $set: { password: newPassword, securityQuestion: securityQuestion, securityAnswer: securityAnswer ? securityAnswer.toLowerCase().trim() : null } });
         if (result.matchedCount === 0) return res.status(404).json({ error: 'No account found' });
         res.json({ message: 'Password updated' });
     } catch (e) { res.status(500).json({ error: 'Database error' }); }
