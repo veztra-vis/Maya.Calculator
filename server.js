@@ -39,7 +39,6 @@ async function seedAdmin() {
             });
             console.log('Seed admin created');
         } else if (!existing.securityQuestion) {
-            // Fix existing admin if missing security fields
             await users.updateOne({ employeeId: 'ancel' }, { $set: { securityQuestion: 'What is your pet\'s name?', securityAnswer: 'maya' } });
             console.log('Seed admin security question added');
         }
@@ -103,7 +102,16 @@ app.get('/api/auth/users', authMiddleware, async function(req, res) {
     if (getRoleLevel(req.user.role) < 3) return res.status(403).json({ error: 'Not authorized' });
     try {
         const db = await getDb();
-        res.json((await db.collection('users').find({}).toArray()).map(function(u) { return { id: u.id, employeeId: u.employeeId, fullName: u.fullName, role: u.role, createdAt: u.createdAt }; }));
+        res.json((await db.collection('users').find({}).toArray()).map(function(u) {
+            return {
+                id: u.id,
+                employeeId: u.employeeId,
+                fullName: u.fullName,
+                role: u.role,
+                securityQuestion: u.securityQuestion || null,
+                createdAt: u.createdAt
+            };
+        }));
     } catch (e) { res.status(500).json({ error: 'Database error' }); }
 });
 
@@ -111,9 +119,12 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
     var creatorLevel = getRoleLevel(req.user.role);
     if (creatorLevel < 3) return res.status(403).json({ error: 'Not authorized' });
     var fullName = req.body.fullName, employeeId = (req.body.employeeId || '').toLowerCase(), password = req.body.password;
+    var role = req.body.role;
     var securityQuestion = req.body.securityQuestion, securityAnswer = req.body.securityAnswer;
     if (!fullName || !employeeId || !password) return res.status(400).json({ error: 'All fields required' });
     if (password.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
+    if (!role) role = 'AGENT';
+    if (getRoleLevel(role) >= creatorLevel) return res.status(403).json({ error: 'Cannot create equal or higher role' });
     if (!securityQuestion || !securityAnswer) return res.status(400).json({ error: 'Security question and answer required' });
     try {
         const db = await getDb();
@@ -123,13 +134,44 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
             employeeId: employeeId,
             fullName: fullName,
             password: password,
-            role: 'AGENT',
+            role: role,
             securityQuestion: securityQuestion,
             securityAnswer: securityAnswer.toLowerCase().trim(),
             createdAt: new Date().toISOString()
         };
         await db.collection('users').insertOne(newUser);
         res.status(201).json({ message: 'Account created for ' + fullName, user: { id: newUser.id, employeeId: newUser.employeeId, fullName: newUser.fullName, role: newUser.role, createdAt: newUser.createdAt } });
+    } catch (e) { res.status(500).json({ error: 'Database error' }); }
+});
+
+app.put('/api/auth/users/:employeeId', authMiddleware, async function(req, res) {
+    var creatorLevel = getRoleLevel(req.user.role);
+    if (creatorLevel < 3) return res.status(403).json({ error: 'Not authorized' });
+    var targetId = req.params.employeeId.toLowerCase();
+    if (targetId === req.user.id) return res.status(400).json({ error: 'Cannot edit own account' });
+    try {
+        const db = await getDb();
+        var targetUser = await db.collection('users').findOne({ employeeId: targetId });
+        if (!targetUser) return res.status(404).json({ error: 'User not found' });
+        if (getRoleLevel(targetUser.role) >= creatorLevel) return res.status(403).json({ error: 'Cannot edit equal or higher role' });
+
+        var updateFields = {};
+        if (req.body.fullName) updateFields.fullName = req.body.fullName;
+        if (req.body.role) {
+            if (getRoleLevel(req.body.role) >= creatorLevel) return res.status(403).json({ error: 'Cannot assign equal or higher role' });
+            updateFields.role = req.body.role;
+        }
+        if (req.body.password) {
+            if (req.body.password.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
+            updateFields.password = req.body.password;
+        }
+        if (req.body.securityQuestion) updateFields.securityQuestion = req.body.securityQuestion;
+        if (req.body.securityAnswer) updateFields.securityAnswer = req.body.securityAnswer.toLowerCase().trim();
+
+        if (Object.keys(updateFields).length === 0) return res.status(400).json({ error: 'No changes provided' });
+
+        await db.collection('users').updateOne({ employeeId: targetId }, { $set: updateFields });
+        res.json({ message: 'Account "' + targetId + '" updated' });
     } catch (e) { res.status(500).json({ error: 'Database error' }); }
 });
 
