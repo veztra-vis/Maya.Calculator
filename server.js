@@ -22,98 +22,95 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Clean URI — remove any TLS/SSL query params so our driver options control it
+function cleanUri(uri) {
+    var cleaned = uri.replace(/[?&](tls|ssl|tlsAllowInvalidCertificates|tlsCAFile|retryWrites|w)=[^&]*/gi, '');
+    cleaned = cleaned.replace(/\?&/, '?').replace(/[?&]$/, '');
+    if (!cleaned.includes('?') && uri.includes('?')) {
+        cleaned += '?';
+    }
+    return cleaned;
+}
+
+function isSecureConnection(uri) {
+    return uri.startsWith('mongodb+srv://') || uri.includes('mongodb.net') || uri.includes('ssl=true') || uri.includes('tls=true');
+}
+
 async function connectWithRetry(maxRetries) {
-    var isAtlas = MONGO_URI.startsWith('mongodb+srv://');
+    var secure = isSecureConnection(MONGO_URI);
+    var baseUri = cleanUri(MONGO_URI);
 
-    // Strip conflicting TLS params from URI so driver options take over cleanly
-    var cleanUri = MONGO_URI.replace(/[?&](tls|ssl|tlsAllowInvalidCertificates|tlsCAFile)=[^&]*/gi, '');
-    // If we stripped params but left a dangling ? or &, fix it
-    cleanUri = cleanUri.replace(/\?&/, '?').replace(/[?&]$/, '');
+    // Build strategies
+    var strategies = [];
 
-    var attempts = [];
-
-    // Strategy 1: Standard TLS with cert validation
-    if (isAtlas) {
-        attempts.push({
+    if (secure) {
+        strategies.push({
             name: 'TLS strict',
             options: {
                 tls: true,
-                tlsAllowInvalidCertificates: false,
                 serverSelectionTimeoutMS: 8000,
                 connectTimeoutMS: 8000,
-                maxPoolSize: 10,
-                retryWrites: false,
-                directConnection: false
+                maxPoolSize: 5
             }
         });
-    }
-
-    // Strategy 2: TLS with relaxed cert validation (common Render fix)
-    if (isAtlas) {
-        attempts.push({
-            name: 'TLS relaxed',
+        strategies.push({
+            name: 'TLS skip verify',
             options: {
                 tls: true,
                 tlsAllowInvalidCertificates: true,
                 serverSelectionTimeoutMS: 8000,
                 connectTimeoutMS: 8000,
-                maxPoolSize: 10,
-                retryWrites: false,
-                directConnection: false
+                maxPoolSize: 5
             }
         });
     }
 
-    // Strategy 3: No TLS (local fallback)
-    if (!isAtlas) {
-        attempts.push({
-            name: 'No TLS (local)',
-            options: {
-                serverSelectionTimeoutMS: 5000,
-                connectTimeoutMS: 5000
-            }
-        });
-    }
+    strategies.push({
+        name: 'No TLS',
+        options: {
+            serverSelectionTimeoutMS: 8000,
+            connectTimeoutMS: 8000,
+            maxPoolSize: 5
+        }
+    });
 
-    for (var a = 0; a < attempts.length; a++) {
-        var strategy = attempts[a];
+    for (var s = 0; s < strategies.length; s++) {
+        var strat = strategies[s];
         for (var r = 0; r < maxRetries; r++) {
+            var client;
             try {
-                console.log('MongoDB attempt [' + strategy.name + '] retry ' + (r + 1) + '/' + maxRetries);
-                var client = new MongoClient(cleanUri, strategy.options);
+                console.log('[' + strat.name + '] attempt ' + (r + 1) + '/' + maxRetries);
+                client = new MongoClient(baseUri, strat.options);
                 await client.connect();
-                // Verify it actually works
                 await client.db(DB_NAME).command({ ping: 1 });
-                console.log('MongoDB connected via [' + strategy.name + ']');
+                console.log('Connected via [' + strat.name + ']');
                 return client;
             } catch (e) {
-                console.log('  Failed: ' + e.message.slice(0, 100));
-                try { await client.close(); } catch (_) {}
-                if (r < maxRetries - 1) {
-                    await sleep(3000 * (r + 1)); // Backoff: 3s, 6s, 9s...
-                }
+                var msg = e.message || '';
+                console.log('  -> ' + msg.slice(0, 120));
+                try { if (client) await client.close(); } catch (_) {}
+                if (r < maxRetries - 1) await sleep(3000 * (r + 1));
             }
         }
     }
 
-    throw new Error('All connection strategies failed after ' + maxRetries + ' retries each');
+    throw new Error('All strategies exhausted');
 }
 
 async function getDb() {
     if (!mongoClient) {
         if (!dbConnectionPromise) {
-            dbConnectionPromise = connectWithRetry(3);
+            dbConnectionPromise = connectWithRetry(2);
         }
         mongoClient = await dbConnectionPromise;
     }
     return mongoClient.db(DB_NAME);
 }
 
-// Graceful shutdown
 process.on('SIGINT', async () => {
     if (mongoClient) {
-        await mongoClient.close();
-        console.log('MongoDB connection closed');
+        try { await mongoClient.close(); } catch (_) {}
+        console.log('MongoDB closed');
     }
     process.exit(0);
 });
@@ -133,19 +130,15 @@ async function seedAdmin() {
                 role: 'ADMIN',
                 createdAt: new Date().toISOString()
             });
-            console.log('Seed admin created in MongoDB');
+            console.log('Seed admin created');
         }
     } catch (e) {
         console.error('=====================================');
-        console.error('MongoDB connection failed on startup');
-        console.error('Error:', e.message);
+        console.error('MONGO FAILED: ' + e.message);
         console.error('=====================================');
-        console.error('Check these in Render:');
-        console.error('1. MONGODB_URI env var is set correctly');
-        console.error('2. IP is whitelisted in Atlas (use 0.0.0.0/0 for Render)');
-        console.error('3. Database user credentials in URI are correct');
-        console.error('4. Atlas free tier cluster may need manual wake-up');
-        console.error('   Go to Atlas dashboard and click "Connect" to wake it');
+        console.error('Fix: Change MONGODB_URI in Render to');
+        console.error('the mongodb:// format (NOT mongodb+srv://)');
+        console.error('Get it from Atlas > Connect > Drivers');
         console.error('=====================================');
         process.exit(1);
     }
@@ -203,17 +196,14 @@ function authMiddleware(req, res, next) {
     next();
 }
 
-// Serve login at root
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Serve dashboard at /app
 app.get('/app', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// LOGIN
 app.post('/api/auth/login', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     var password = req.body.password;
@@ -229,11 +219,7 @@ app.post('/api/auth/login', async function(req, res) {
         var token = generateToken(user);
         res.json({
             token: token,
-            user: {
-                employeeId: user.employeeId,
-                fullName: user.fullName,
-                role: user.role
-            }
+            user: { employeeId: user.employeeId, fullName: user.fullName, role: user.role }
         });
     } catch (e) {
         console.error('Login error:', e.message);
@@ -241,12 +227,10 @@ app.post('/api/auth/login', async function(req, res) {
     }
 });
 
-// VERIFY TOKEN
 app.get('/api/auth/verify', authMiddleware, function(req, res) {
     res.json({ valid: true, user: req.user });
 });
 
-// GET ALL USERS
 app.get('/api/auth/users', authMiddleware, async function(req, res) {
     if (getRoleLevel(req.user.role) < 3) {
         return res.status(403).json({ error: 'Not authorized to view accounts' });
@@ -254,26 +238,17 @@ app.get('/api/auth/users', authMiddleware, async function(req, res) {
     try {
         const db = await getDb();
         const users = await db.collection('users').find({}).toArray();
-        var safe = users.map(function(u) {
-            return {
-                id: u.id,
-                employeeId: u.employeeId,
-                fullName: u.fullName,
-                role: u.role,
-                createdAt: u.createdAt
-            };
-        });
-        res.json(safe);
+        res.json(users.map(function(u) {
+            return { id: u.id, employeeId: u.employeeId, fullName: u.fullName, role: u.role, createdAt: u.createdAt };
+        }));
     } catch (e) {
         console.error('Get users error:', e.message);
         res.status(500).json({ error: 'Database error' });
     }
 });
 
-// CREATE USER
 app.post('/api/auth/users', authMiddleware, async function(req, res) {
-    var creatorRole = req.user.role;
-    var creatorLevel = getRoleLevel(creatorRole);
+    var creatorLevel = getRoleLevel(req.user.role);
     if (creatorLevel < 3) {
         return res.status(403).json({ error: 'Not authorized to create accounts' });
     }
@@ -315,10 +290,8 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
     }
 });
 
-// DELETE USER
 app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, res) {
-    var creatorRole = req.user.role;
-    var creatorLevel = getRoleLevel(creatorRole);
+    var creatorLevel = getRoleLevel(req.user.role);
     if (creatorLevel < 3) {
         return res.status(403).json({ error: 'Not authorized to delete accounts' });
     }
@@ -343,7 +316,6 @@ app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, re
     }
 });
 
-// CHECK USER EXISTS
 app.post('/api/auth/check-user', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     if (!employeeId) {
@@ -362,7 +334,6 @@ app.post('/api/auth/check-user', async function(req, res) {
     }
 });
 
-// RESET PASSWORD
 app.post('/api/auth/reset-password', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     var newPassword = req.body.newPassword;
@@ -388,9 +359,7 @@ app.post('/api/auth/reset-password', async function(req, res) {
     }
 });
 
-// ============================================================
 // AI CHAT PROXY
-// ============================================================
 app.post('/api/chat', async function(req, res) {
     var authHeader = req.headers.authorization || '';
     var token = authHeader.replace('Bearer ', '').trim();
@@ -429,17 +398,14 @@ app.get('/api/health', async function(req, res) {
     }
     res.json({
         status: 'online',
-        message: 'Maya API is running',
         database: dbStatus,
         groqKeySet: !!process.env.GROQ_API_KEY,
         authKeySet: !!process.env.RENDER_AUTH_KEY
     });
 });
 
-// STATIC FILES
 app.use(express.static(path.join(__dirname, 'public')));
 
-// START SERVER
 var PORT = process.env.PORT || 10000;
 app.listen(PORT, async function() {
     console.log('===================================');
