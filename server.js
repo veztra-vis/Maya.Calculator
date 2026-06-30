@@ -1,145 +1,59 @@
+console.log('=== SERVER VERSION: DATA-API ===');
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
 const crypto = require('crypto');
-const { MongoClient } = require('mongodb');
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
 // ============================================================
-// MONGODB SETUP
+// ATLAS DATA API (HTTPS — no MongoDB driver, no TLS issues)
 // ============================================================
-const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const DB_NAME = 'maya-app';
-let mongoClient = null;
-let dbConnectionPromise = null;
+const DATA_API_URL = process.env.ATLAS_DATA_API_URL;
+const DATA_API_KEY = process.env.ATLAS_DATA_API_KEY;
+const DB_NAME = process.env.ATLAS_CLUSTER || 'maya-app';
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Clean URI — remove any TLS/SSL query params so our driver options control it
-function cleanUri(uri) {
-    var cleaned = uri.replace(/[?&](tls|ssl|tlsAllowInvalidCertificates|tlsCAFile|retryWrites|w)=[^&]*/gi, '');
-    cleaned = cleaned.replace(/\?&/, '?').replace(/[?&]$/, '');
-    if (!cleaned.includes('?') && uri.includes('?')) {
-        cleaned += '?';
-    }
-    return cleaned;
-}
-
-function isSecureConnection(uri) {
-    return uri.startsWith('mongodb+srv://') || uri.includes('mongodb.net') || uri.includes('ssl=true') || uri.includes('tls=true');
-}
-
-async function connectWithRetry(maxRetries) {
-    var secure = isSecureConnection(MONGO_URI);
-    var baseUri = cleanUri(MONGO_URI);
-
-    // Build strategies
-    var strategies = [];
-
-    if (secure) {
-        strategies.push({
-            name: 'TLS strict',
-            options: {
-                tls: true,
-                serverSelectionTimeoutMS: 8000,
-                connectTimeoutMS: 8000,
-                maxPoolSize: 5
-            }
-        });
-        strategies.push({
-            name: 'TLS skip verify',
-            options: {
-                tls: true,
-                tlsAllowInvalidCertificates: true,
-                serverSelectionTimeoutMS: 8000,
-                connectTimeoutMS: 8000,
-                maxPoolSize: 5
-            }
-        });
-    }
-
-    strategies.push({
-        name: 'No TLS',
-        options: {
-            serverSelectionTimeoutMS: 8000,
-            connectTimeoutMS: 8000,
-            maxPoolSize: 5
-        }
+async function atlas(action, collection, payload) {
+    var res = await fetch(DATA_API_URL + '/action/' + action, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'api-key': DATA_API_KEY
+        },
+        body: JSON.stringify(Object.assign({
+            dataSource: 'Cluster0',
+            database: DB_NAME,
+            collection: collection
+        }, payload))
     });
-
-    for (var s = 0; s < strategies.length; s++) {
-        var strat = strategies[s];
-        for (var r = 0; r < maxRetries; r++) {
-            var client;
-            try {
-                console.log('[' + strat.name + '] attempt ' + (r + 1) + '/' + maxRetries);
-                client = new MongoClient(baseUri, strat.options);
-                await client.connect();
-                await client.db(DB_NAME).command({ ping: 1 });
-                console.log('Connected via [' + strat.name + ']');
-                return client;
-            } catch (e) {
-                var msg = e.message || '';
-                console.log('  -> ' + msg.slice(0, 120));
-                try { if (client) await client.close(); } catch (_) {}
-                if (r < maxRetries - 1) await sleep(3000 * (r + 1));
-            }
-        }
-    }
-
-    throw new Error('All strategies exhausted');
+    var json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json;
 }
 
-async function getDb() {
-    if (!mongoClient) {
-        if (!dbConnectionPromise) {
-            dbConnectionPromise = connectWithRetry(2);
-        }
-        mongoClient = await dbConnectionPromise;
-    }
-    return mongoClient.db(DB_NAME);
-}
-
-process.on('SIGINT', async () => {
-    if (mongoClient) {
-        try { await mongoClient.close(); } catch (_) {}
-        console.log('MongoDB closed');
-    }
-    process.exit(0);
-});
-
-// Seed default admin on first run
 async function seedAdmin() {
     try {
-        const db = await getDb();
-        const users = db.collection('users');
-        const existing = await users.countDocuments();
-        if (existing === 0) {
-            await users.insertOne({
-                id: 'USR001',
-                employeeId: 'ancel',
-                fullName: 'Ancel Claudio',
-                password: 'maya2026',
-                role: 'ADMIN',
-                createdAt: new Date().toISOString()
+        var result = await atlas('findOne', 'users', {
+            filter: { employeeId: 'ancel' }
+        });
+        if (!result.document) {
+            await atlas('insertOne', 'users', {
+                document: {
+                    id: 'USR001',
+                    employeeId: 'ancel',
+                    fullName: 'Ancel Claudio',
+                    password: 'maya2026',
+                    role: 'ADMIN',
+                    createdAt: new Date().toISOString()
+                }
             });
             console.log('Seed admin created');
         }
     } catch (e) {
-        console.error('=====================================');
-        console.error('MONGO FAILED: ' + e.message);
-        console.error('=====================================');
-        console.error('Fix: Change MONGODB_URI in Render to');
-        console.error('the mongodb:// format (NOT mongodb+srv://)');
-        console.error('Get it from Atlas > Connect > Drivers');
-        console.error('=====================================');
+        console.error('SEED FAILED:', e.message);
         process.exit(1);
     }
 }
@@ -204,6 +118,7 @@ app.get('/app', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// LOGIN
 app.post('/api/auth/login', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     var password = req.body.password;
@@ -211,8 +126,10 @@ app.post('/api/auth/login', async function(req, res) {
         return res.status(400).json({ error: 'Employee ID and password are required' });
     }
     try {
-        const db = await getDb();
-        var user = await db.collection('users').findOne({ employeeId: employeeId });
+        var result = await atlas('findOne', 'users', {
+            filter: { employeeId: employeeId }
+        });
+        var user = result.document;
         if (!user || user.password !== password) {
             return res.status(401).json({ error: 'Invalid Employee ID or Password' });
         }
@@ -227,18 +144,19 @@ app.post('/api/auth/login', async function(req, res) {
     }
 });
 
+// VERIFY TOKEN
 app.get('/api/auth/verify', authMiddleware, function(req, res) {
     res.json({ valid: true, user: req.user });
 });
 
+// GET ALL USERS
 app.get('/api/auth/users', authMiddleware, async function(req, res) {
     if (getRoleLevel(req.user.role) < 3) {
         return res.status(403).json({ error: 'Not authorized to view accounts' });
     }
     try {
-        const db = await getDb();
-        const users = await db.collection('users').find({}).toArray();
-        res.json(users.map(function(u) {
+        var result = await atlas('find', 'users', { filter: {} });
+        res.json(result.documents.map(function(u) {
             return { id: u.id, employeeId: u.employeeId, fullName: u.fullName, role: u.role, createdAt: u.createdAt };
         }));
     } catch (e) {
@@ -247,6 +165,7 @@ app.get('/api/auth/users', authMiddleware, async function(req, res) {
     }
 });
 
+// CREATE USER
 app.post('/api/auth/users', authMiddleware, async function(req, res) {
     var creatorLevel = getRoleLevel(req.user.role);
     if (creatorLevel < 3) {
@@ -266,9 +185,10 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
         return res.status(403).json({ error: 'Cannot create an account with equal or higher privileges than your own' });
     }
     try {
-        const db = await getDb();
-        var existing = await db.collection('users').findOne({ employeeId: employeeId });
-        if (existing) {
+        var existing = await atlas('findOne', 'users', {
+            filter: { employeeId: employeeId }
+        });
+        if (existing.document) {
             return res.status(409).json({ error: 'Employee ID already exists' });
         }
         var newUser = {
@@ -279,7 +199,7 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
             role: role,
             createdAt: new Date().toISOString()
         };
-        await db.collection('users').insertOne(newUser);
+        await atlas('insertOne', 'users', { document: newUser });
         res.status(201).json({
             message: 'Account created for ' + fullName,
             user: { id: newUser.id, employeeId: newUser.employeeId, fullName: newUser.fullName, role: newUser.role, createdAt: newUser.createdAt }
@@ -290,6 +210,7 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
     }
 });
 
+// DELETE USER
 app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, res) {
     var creatorLevel = getRoleLevel(req.user.role);
     if (creatorLevel < 3) {
@@ -300,15 +221,19 @@ app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, re
         return res.status(400).json({ error: 'Cannot delete your own account' });
     }
     try {
-        const db = await getDb();
-        var targetUser = await db.collection('users').findOne({ employeeId: targetId });
+        var targetResult = await atlas('findOne', 'users', {
+            filter: { employeeId: targetId }
+        });
+        var targetUser = targetResult.document;
         if (!targetUser) {
             return res.status(404).json({ error: 'User not found' });
         }
         if (getRoleLevel(targetUser.role) >= creatorLevel) {
             return res.status(403).json({ error: 'Cannot delete an account with equal or higher privileges than your own' });
         }
-        await db.collection('users').deleteOne({ employeeId: targetId });
+        await atlas('deleteOne', 'users', {
+            filter: { employeeId: targetId }
+        });
         res.json({ message: 'Account "' + targetId + '" deleted' });
     } catch (e) {
         console.error('Delete user error:', e.message);
@@ -316,14 +241,17 @@ app.delete('/api/auth/users/:employeeId', authMiddleware, async function(req, re
     }
 });
 
+// CHECK USER EXISTS
 app.post('/api/auth/check-user', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     if (!employeeId) {
         return res.status(400).json({ error: 'Employee ID is required' });
     }
     try {
-        const db = await getDb();
-        var user = await db.collection('users').findOne({ employeeId: employeeId });
+        var result = await atlas('findOne', 'users', {
+            filter: { employeeId: employeeId }
+        });
+        var user = result.document;
         if (!user) {
             return res.status(404).json({ error: 'No account found with that Employee ID' });
         }
@@ -334,6 +262,7 @@ app.post('/api/auth/check-user', async function(req, res) {
     }
 });
 
+// RESET PASSWORD
 app.post('/api/auth/reset-password', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
     var newPassword = req.body.newPassword;
@@ -344,12 +273,11 @@ app.post('/api/auth/reset-password', async function(req, res) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
     try {
-        const db = await getDb();
-        var result = await db.collection('users').updateOne(
-            { employeeId: employeeId },
-            { $set: { password: newPassword } }
-        );
-        if (result.matchedCount === 0) {
+        var result = await atlas('updateOne', 'users', {
+            filter: { employeeId: employeeId },
+            update: { $set: { password: newPassword } }
+        });
+        if (result.modifiedCount === 0) {
             return res.status(404).json({ error: 'No account found with that Employee ID' });
         }
         res.json({ message: 'Password updated successfully' });
@@ -390,8 +318,7 @@ app.post('/api/chat', async function(req, res) {
 app.get('/api/health', async function(req, res) {
     var dbStatus = 'disconnected';
     try {
-        const db = await getDb();
-        await db.command({ ping: 1 });
+        await atlas('findOne', 'users', { filter: { employeeId: '__health__' } });
         dbStatus = 'connected';
     } catch (e) {
         dbStatus = 'error: ' + e.message;
