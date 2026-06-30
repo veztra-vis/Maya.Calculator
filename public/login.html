@@ -56,6 +56,9 @@
         .field-input::placeholder{color:#3f3f46}
         .field-input.padded-left{padding-left:46px}
         .field-input.padded-right{padding-right:50px}
+        .field-select{width:100%;background:rgba(9,9,11,0.8);border:1px solid rgba(39,39,42,0.8);border-radius:12px;padding:14px 18px;font-size:14px;color:#f4f4f5;font-family:'Inter',sans-serif;outline:none;transition:all .2s;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:12px}
+        .field-select:focus{border-color:rgba(139,92,246,0.5);box-shadow:0 0 0 3px rgba(139,92,246,.1),0 0 20px rgba(139,92,246,.05)}
+        .field-select option{background:#09090b;color:#f4f4f5}
         .input-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#52525b;pointer-events:none;transition:color .2s}
         .field:focus-within .input-icon{color:#8b5cf6}
         .pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#52525b;cursor:pointer;padding:4px;transition:color .2s;line-height:0}
@@ -92,7 +95,7 @@
         .footer-copy{text-align:center;margin-top:16px;font-size:11px;color:#3f3f46}
         .modal-backdrop{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
         .modal-backdrop.open{display:flex}
-        .modal-card{background:rgba(24,24,27,.95);backdrop-filter:blur(20px);border:1px solid rgba(39,39,42,0.8);border-radius:20px;padding:36px;width:100%;max-width:420px;box-shadow:0 30px 70px -15px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,0.03) inset;animation:modalIn .3s ease-out}
+        .modal-card{background:rgba(24,24,27,.95);backdrop-filter:blur(20px);border:1px solid rgba(39,39,42,0.8);border-radius:20px;padding:36px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 70px -15px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,0.03) inset;animation:modalIn .3s ease-out}
         @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
         .modal-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:8px}
         .modal-desc{font-size:14px;color:#71717a;margin-bottom:28px;line-height:1.6}
@@ -104,6 +107,11 @@
         .security-box{background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:10px;padding:14px 16px;margin-bottom:24px}
         .security-box-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#8b5cf6;margin-bottom:6px;font-weight:600}
         .security-box-text{font-size:14px;color:#f4f4f5}
+        .first-time-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:#fbbf24;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:6px;margin-bottom:20px}
+        .first-time-badge svg{width:12px;height:12px}
+        .divider-line{height:1px;background:rgba(39,39,42,0.8);margin:20px 0}
+        .divider-label{display:flex;align-items:center;gap:12px;margin:20px 0;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#52525b;font-weight:600}
+        .divider-label::before,.divider-label::after{content:'';flex:1;height:1px;background:rgba(39,39,42,0.8)}
         ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#09090b}::-webkit-scrollbar-thumb{background:#27272a;border-radius:3px}
         @media (max-width: 480px) {.card, .modal-card {padding: 28px 24px;}.brand-title {font-size: 24px;}.brand-icon {width: 70px; height: 70px; font-size: 28px; border-radius: 18px;}}
     </style>
@@ -160,16 +168,18 @@
                 <div class="field"><label class="field-label" for="forgotUser">Employee ID</label><div class="input-wrap"><svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg><input type="text" id="forgotUser" class="field-input padded-left" placeholder="Enter your Employee ID"></div></div>
                 <div class="modal-actions"><button type="button" class="btn-ghost" onclick="closeForgotModal()">Cancel</button><button type="button" class="submit-btn" id="forgotVerifyBtn" onclick="verifyForgotUser()"><span class="btn-label">Continue</span><span class="btn-spinner"><svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="arc" cx="25" cy="25" r="20"/></svg></span></button></div>
             </div>
-            <!-- Step 2: Security Question -->
+
+            <!-- Step 2: Verify Security Question (shown when user HAS a security question) -->
             <div id="forgotStep2" class="view">
                 <h2 class="modal-title">Verify Identity</h2>
-                <p class="modal-desc">Answer your security question.</p>
+                <p class="modal-desc">Answer your security question to continue.</p>
                 <div id="forgot-alert-2" class="alert alert-error"><span id="forgot-alert-text-2"></span></div>
                 <div class="security-box"><div class="security-box-label">Security Question</div><div class="security-box-text" id="securityQuestionText">Loading...</div></div>
                 <div class="field"><label class="field-label" for="securityAnswer">Your Answer</label><div class="input-wrap"><svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg><input type="text" id="securityAnswer" class="field-input padded-left" placeholder="Type your answer"></div></div>
                 <div class="modal-actions"><button type="button" class="btn-ghost" onclick="showForgotStep(1)">Back</button><button type="button" class="submit-btn" id="forgotSecurityBtn" onclick="verifySecurityAnswer()"><span class="btn-label">Verify</span><span class="btn-spinner"><svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="arc" cx="25" cy="25" r="20"/></svg></span></button></div>
             </div>
-            <!-- Step 3: New Password -->
+
+            <!-- Step 3: Set New Password (after security verification) -->
             <div id="forgotStep3" class="view">
                 <h2 class="modal-title">Set New Password</h2>
                 <p class="modal-desc">New password for <strong id="forgotUsername" style="color:#a78bfa"></strong>.</p>
@@ -178,8 +188,46 @@
                 <div class="field"><label class="field-label" for="confirmPass">Confirm Password</label><input type="password" id="confirmPass" class="field-input" placeholder="Confirm new password"></div>
                 <div class="modal-actions"><button type="button" class="btn-ghost" onclick="showForgotStep(2)">Back</button><button type="button" class="submit-btn" id="forgotResetBtn" onclick="resetPassword()"><span class="btn-label">Reset Password</span><span class="btn-spinner"><svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="arc" cx="25" cy="25" r="20"/></svg></span></button></div>
             </div>
-            <!-- Step 4: Success -->
+
+            <!-- Step 4: First Time - Set Security Question + New Password (shown when user has NO security question) -->
             <div id="forgotStep4" class="view">
+                <div class="first-time-badge"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg> First Time Setup</div>
+                <h2 class="modal-title">Set Security & Password</h2>
+                <p class="modal-desc">No security question found for <strong id="forgotUsername4" style="color:#a78bfa"></strong>. You'll set one now along with your new password.</p>
+                <div id="forgot-alert-4" class="alert alert-error"><span id="forgot-alert-text-4"></span></div>
+
+                <div class="field">
+                    <label class="field-label" for="firstTimeQuestion">Security Question</label>
+                    <select id="firstTimeQuestion" class="field-select">
+                        <option value="">Select a question...</option>
+                        <option value="What is your pet's name?">What is your pet's name?</option>
+                        <option value="What city were you born in?">What city were you born in?</option>
+                        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                        <option value="What was your first car?">What was your first car?</option>
+                        <option value="What is your favorite food?">What is your favorite food?</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="firstTimeAnswer">Your Answer</label>
+                    <input type="text" id="firstTimeAnswer" class="field-input" placeholder="Type your answer">
+                </div>
+
+                <div class="divider-label">New Password</div>
+
+                <div class="field" style="margin-top:16px">
+                    <label class="field-label" for="firstTimeNewPass">New Password</label>
+                    <input type="password" id="firstTimeNewPass" class="field-input" placeholder="Min. 6 characters">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="firstTimeConfirmPass">Confirm Password</label>
+                    <input type="password" id="firstTimeConfirmPass" class="field-input" placeholder="Confirm new password">
+                </div>
+
+                <div class="modal-actions"><button type="button" class="btn-ghost" onclick="showForgotStep(1)">Back</button><button type="button" class="submit-btn" id="firstTimeResetBtn" onclick="resetFirstTime()"><span class="btn-label">Set & Reset</span><span class="btn-spinner"><svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="arc" cx="25" cy="25" r="20"/></svg></span></button></div>
+            </div>
+
+            <!-- Step 5: Success -->
+            <div id="forgotStep5" class="view">
                 <div style="text-align:center;padding:32px 0"><div style="width:64px;height:64px;margin:0 auto 24px;border-radius:50%;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(16,185,129,0.1)"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 20 20" fill="#10b981"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></div><h2 class="modal-title">Password Updated</h2><p class="modal-desc">You can now log in with your new password.</p></div>
                 <button type="button" class="submit-btn" onclick="closeForgotModal()" style="margin-top:12px"><span class="btn-label">Back to Login</span></button>
             </div>
@@ -206,46 +254,113 @@
             .catch(function(){showAlert('login-alert','Cannot connect to server.','error');btn.classList.remove('busy');});
         });
 
-        function openForgotModal(){forgotTarget=null;document.getElementById('forgotUser').value='';document.getElementById('securityAnswer').value='';document.getElementById('newPass').value='';document.getElementById('confirmPass').value='';hideAlert('forgot-alert-1');hideAlert('forgot-alert-2');hideAlert('forgot-alert-3');showForgotStep(1);document.getElementById('forgotModal').classList.add('open');}
+        function openForgotModal(){
+            forgotTarget=null;
+            document.getElementById('forgotUser').value='';
+            document.getElementById('securityAnswer').value='';
+            document.getElementById('newPass').value='';
+            document.getElementById('confirmPass').value='';
+            document.getElementById('firstTimeQuestion').value='';
+            document.getElementById('firstTimeAnswer').value='';
+            document.getElementById('firstTimeNewPass').value='';
+            document.getElementById('firstTimeConfirmPass').value='';
+            hideAlert('forgot-alert-1');hideAlert('forgot-alert-2');hideAlert('forgot-alert-3');hideAlert('forgot-alert-4');
+            showForgotStep(1);
+            document.getElementById('forgotModal').classList.add('open');
+        }
         function closeForgotModal(){document.getElementById('forgotModal').classList.remove('open');}
-        function showForgotStep(n){for(var i=1;i<=4;i++)document.getElementById('forgotStep'+i).classList.toggle('active',i===n);}
+        function showForgotStep(n){for(var i=1;i<=5;i++)document.getElementById('forgotStep'+i).classList.toggle('active',i===n);}
 
         function verifyForgotUser(){
-            hideAlert('forgot-alert-1');var uid=document.getElementById('forgotUser').value.trim(),btn=document.getElementById('forgotVerifyBtn');
+            hideAlert('forgot-alert-1');
+            var uid=document.getElementById('forgotUser').value.trim(),btn=document.getElementById('forgotVerifyBtn');
             if(!uid){showAlert('forgot-alert-1','Please enter your Employee ID.','error');return;}
             btn.classList.add('busy');
             fetch('/api/auth/check-user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employeeId:uid})})
             .then(function(r){return r.json();})
-            .then(function(data){btn.classList.remove('busy');if(data.error){showAlert('forgot-alert-1',data.error,'error');return;}if(!data.securityQuestion){showAlert('forgot-alert-1','No security question set. Contact admin.','error');return;}forgotTarget=uid;document.getElementById('securityQuestionText').textContent=data.securityQuestion;document.getElementById('securityAnswer').value='';hideAlert('forgot-alert-2');showForgotStep(2);setTimeout(function(){document.getElementById('securityAnswer').focus();},100);})
+            .then(function(data){
+                btn.classList.remove('busy');
+                if(data.error){showAlert('forgot-alert-1',data.error,'error');return;}
+                forgotTarget=uid;
+                if(data.securityQuestion){
+                    // HAS security question → go verify it (Step 2)
+                    document.getElementById('securityQuestionText').textContent=data.securityQuestion;
+                    document.getElementById('securityAnswer').value='';
+                    hideAlert('forgot-alert-2');
+                    showForgotStep(2);
+                    setTimeout(function(){document.getElementById('securityAnswer').focus();},100);
+                } else {
+                    // NO security question → first time, let them set it + new password (Step 4)
+                    document.getElementById('forgotUsername4').textContent=uid;
+                    document.getElementById('firstTimeQuestion').value='';
+                    document.getElementById('firstTimeAnswer').value='';
+                    document.getElementById('firstTimeNewPass').value='';
+                    document.getElementById('firstTimeConfirmPass').value='';
+                    hideAlert('forgot-alert-4');
+                    showForgotStep(4);
+                    setTimeout(function(){document.getElementById('firstTimeQuestion').focus();},100);
+                }
+            })
             .catch(function(){btn.classList.remove('busy');showAlert('forgot-alert-1','Cannot connect to server.','error');});
         }
 
         function verifySecurityAnswer(){
-            hideAlert('forgot-alert-2');var answer=document.getElementById('securityAnswer').value.trim(),btn=document.getElementById('forgotSecurityBtn');
+            hideAlert('forgot-alert-2');
+            var answer=document.getElementById('securityAnswer').value.trim(),btn=document.getElementById('forgotSecurityBtn');
             if(!answer){showAlert('forgot-alert-2','Please enter your answer.','error');return;}
             btn.classList.add('busy');
             fetch('/api/auth/verify-security',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employeeId:forgotTarget,answer:answer})})
             .then(function(r){return r.json();})
-            .then(function(data){btn.classList.remove('busy');if(data.error){showAlert('forgot-alert-2',data.error,'error');return;}document.getElementById('forgotUsername').textContent=forgotTarget;document.getElementById('newPass').value='';document.getElementById('confirmPass').value='';hideAlert('forgot-alert-3');showForgotStep(3);setTimeout(function(){document.getElementById('newPass').focus();},100);})
+            .then(function(data){
+                btn.classList.remove('busy');
+                if(data.error){showAlert('forgot-alert-2',data.error,'error');return;}
+                document.getElementById('forgotUsername').textContent=forgotTarget;
+                document.getElementById('newPass').value='';
+                document.getElementById('confirmPass').value='';
+                hideAlert('forgot-alert-3');
+                showForgotStep(3);
+                setTimeout(function(){document.getElementById('newPass').focus();},100);
+            })
             .catch(function(){btn.classList.remove('busy');showAlert('forgot-alert-2','Cannot connect to server.','error');});
         }
 
         function resetPassword(){
-            hideAlert('forgot-alert-3');var np=document.getElementById('newPass').value,cp=document.getElementById('confirmPass').value,btn=document.getElementById('forgotResetBtn');
+            hideAlert('forgot-alert-3');
+            var np=document.getElementById('newPass').value,cp=document.getElementById('confirmPass').value,btn=document.getElementById('forgotResetBtn');
             if(!np||!cp){showAlert('forgot-alert-3','Please fill in both fields.','error');return;}
             if(np.length<6){showAlert('forgot-alert-3','Password must be at least 6 characters.','error');return;}
             if(np!==cp){showAlert('forgot-alert-3','Passwords do not match.','error');return;}
             btn.classList.add('busy');
             fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employeeId:forgotTarget,newPassword:np})})
             .then(function(r){return r.json();})
-            .then(function(data){btn.classList.remove('busy');if(data.error){showAlert('forgot-alert-3',data.error,'error');return;}showForgotStep(4);})
+            .then(function(data){btn.classList.remove('busy');if(data.error){showAlert('forgot-alert-3',data.error,'error');return;}showForgotStep(5);})
             .catch(function(){btn.classList.remove('busy');showAlert('forgot-alert-3','Cannot connect to server.','error');});
+        }
+
+        function resetFirstTime(){
+            hideAlert('forgot-alert-4');
+            var sq=document.getElementById('firstTimeQuestion').value;
+            var sa=document.getElementById('firstTimeAnswer').value.trim();
+            var np=document.getElementById('firstTimeNewPass').value;
+            var cp=document.getElementById('firstTimeConfirmPass').value;
+            var btn=document.getElementById('firstTimeResetBtn');
+            if(!sq){showAlert('forgot-alert-4','Please select a security question.','error');return;}
+            if(!sa){showAlert('forgot-alert-4','Please enter the answer to your security question.','error');return;}
+            if(!np||!cp){showAlert('forgot-alert-4','Please fill in both password fields.','error');return;}
+            if(np.length<6){showAlert('forgot-alert-4','Password must be at least 6 characters.','error');return;}
+            if(np!==cp){showAlert('forgot-alert-4','Passwords do not match.','error');return;}
+            btn.classList.add('busy');
+            fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employeeId:forgotTarget,newPassword:np,securityQuestion:sq,securityAnswer:sa})})
+            .then(function(r){return r.json();})
+            .then(function(data){btn.classList.remove('busy');if(data.error){showAlert('forgot-alert-4',data.error,'error');return;}showForgotStep(5);})
+            .catch(function(){btn.classList.remove('busy');showAlert('forgot-alert-4','Cannot connect to server.','error');});
         }
 
         document.getElementById('forgotModal').addEventListener('click',function(e){if(e.target===this)closeForgotModal();});
         document.getElementById('forgotUser').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();verifyForgotUser();}});
         document.getElementById('securityAnswer').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();verifySecurityAnswer();}});
         document.getElementById('confirmPass').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();resetPassword();}});
+        document.getElementById('firstTimeConfirmPass').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();resetFirstTime();}});
     </script>
 </body>
 </html>
