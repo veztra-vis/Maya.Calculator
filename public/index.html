@@ -15,7 +15,7 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                    colors: { zinc: { 850: '#18181b', 950: '#09090b' } },
+                    colors: { zinc: { 850: '#111113', 950: '#08090A' } },
                     animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
                     keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
                 }
@@ -23,23 +23,23 @@
         }
     </script>
     <style>
-        body { background: radial-gradient(circle at 50% 50%, #18181b 0%, #09090b 100%); background-attachment: fixed; }
-        .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 40%); z-index: -1; pointer-events: none; }
+        body { background: radial-gradient(circle at 50% 50%, #111113 0%, #08090A 100%); background-attachment: fixed; }
+        .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 80% 20%, rgba(0, 209, 122, 0.03) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(0, 209, 122, 0.03) 0%, transparent 40%); z-index: -1; pointer-events: none; }
         @keyframes floatOrb { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(20px, -30px) scale(1.1); } }
         .orb { position: fixed; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.4; animation: floatOrb 10s ease-in-out infinite; pointer-events: none; }
-        .orb-1 { width: 300px; height: 300px; background: rgba(139, 92, 246, 0.2); top: -50px; left: -50px; }
-        .orb-2 { width: 400px; height: 400px; background: rgba(16, 185, 129, 0.15); bottom: -100px; right: -100px; animation-delay: 2s; }
-        .orb-3 { width: 250px; height: 250px; background: rgba(59, 130, 246, 0.15); top: 40%; right: 20%; animation-delay: 4s; }
-        .glass-panel { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(39, 39, 42, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
-        .glass-panel:hover { border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 0 30px rgba(139, 92, 246, 0.1); transform: translateY(-3px); }
+        .orb-1 { width: 300px; height: 300px; background: rgba(0, 209, 122, 0.2); top: -50px; left: -50px; }
+        .orb-2 { width: 400px; height: 400px; background: rgba(0, 153, 90, 0.15); bottom: -100px; right: -100px; animation-delay: 2s; }
+        .orb-3 { width: 250px; height: 250px; background: rgba(0, 245, 144, 0.15); top: 40%; right: 20%; animation-delay: 4s; }
+        .glass-panel { background: rgba(17, 17, 19, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(30, 30, 32, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .glass-panel:hover { border-color: rgba(0, 209, 122, 0.4); box-shadow: 0 0 30px rgba(0, 209, 122, 0.1); transform: translateY(-3px); }
         button:hover { transition: all 0.2s ease; }
         .ai-quick-btn { transition: transform 0.2s ease, background 0.2s ease; }
         .ai-quick-btn:hover { transform: scale(1.05); }
         #ai-fab { animation: pulseGlow 2.5s infinite; }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(0, 209, 122, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 209, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 209, 122, 0); } }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #09090b; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #08090A; }
+        ::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
         .loader-overlay { transition: opacity 0.6s ease-out, visibility 0.6s; }
         .hidden-loader { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -51,9 +51,9 @@
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         #maya-chat::-webkit-scrollbar { width: 4px; }
         #maya-chat::-webkit-scrollbar-track { background: transparent; }
-        #maya-chat::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+        #maya-chat::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
         .header-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; }
-        .logo-fallback { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #a78bfa; }
+        .logo-fallback { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #00D17A; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
         .ai-window-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -62,45 +62,45 @@
         .module-d-alert { padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; display: none; align-items: center; gap: 8px; line-height: 1.45; }
         .module-d-alert.show { display: flex; }
         .module-d-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; }
-        .module-d-alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #6ee7b7; }
-        .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #27272a; }
+        .module-d-alert-success { background: rgba(0, 209, 122, 0.1); border: 1px solid rgba(0, 209, 122, 0.2); color: #6ee7b7; }
+        .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #1f1f22; }
         .user-table-wrap::-webkit-scrollbar { width: 4px; }
         .user-table-wrap::-webkit-scrollbar-track { background: transparent; }
-        .user-table-wrap::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+        .user-table-wrap::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
         .user-row { transition: background 0.15s; cursor: pointer; }
-        .user-row:hover { background: rgba(139, 92, 246, 0.08); }
+        .user-row:hover { background: rgba(0, 209, 122, 0.08); }
         .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-        .role-tag-admin { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .role-tag-admin { background: rgba(0, 209, 122, 0.15); color: #00D17A; border: 1px solid rgba(0, 209, 122, 0.3); }
         .role-tag-client { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .role-tag-om { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .role-tag-om { background: rgba(0, 153, 90, 0.15); color: #34d399; border: 1px solid rgba(0, 153, 90, 0.3); }
         .role-tag-tl { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
         .role-tag-agent { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.3); }
         .role-tag-training { background: rgba(236, 72, 153, 0.15); color: #f9a8d4; border: 1px solid rgba(236, 72, 153, 0.3); }
-        .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(139, 92, 246, 0.2); color: #a78bfa; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-        .btn-action-user:hover { background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4); }
+        .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(0, 209, 122, 0.2); color: #00D17A; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+        .btn-action-user:hover { background: rgba(0, 209, 122, 0.1); border-color: rgba(0, 209, 122, 0.4); }
         .btn-action-user:disabled { opacity: 0.3; cursor: not-allowed; }
         .btn-delete-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
         .btn-delete-user:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
         .btn-delete-user:disabled { opacity: 0.3; cursor: not-allowed; }
         .modal-backdrop-module-d { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-backdrop-module-d.open { display: flex; }
-        .modal-card-module-d { background: rgba(24, 24, 27, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
+        .modal-card-module-d { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
         @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .modal-card-module-d::-webkit-scrollbar { width: 4px; }
         .modal-card-module-d::-webkit-scrollbar-track { background: transparent; }
-        .modal-card-module-d::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
-        .edit-field-input { width: 100%; background: rgba(9, 9, 11, 0.8); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
-        .edit-field-input:focus { border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
+        .modal-card-module-d::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
+        .edit-field-input { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
+        .edit-field-input:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .edit-field-input:disabled { opacity: 0.5; cursor: not-allowed; }
         .edit-field-input.mono { font-family: 'JetBrains Mono', monospace; }
-        .edit-field-select { width: 100%; background: rgba(9, 9, 11, 0.8); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px; }
-        .edit-field-select:focus { border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
-        .edit-field-select option { background: #09090b; color: #f4f4f5; }
-        .info-box { background: rgba(139, 92, 246, 0.06); border: 1px solid rgba(139, 92, 246, 0.15); border-radius: 10px; padding: 14px 16px; }
-        .info-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #8b5cf6; margin-bottom: 6px; font-weight: 600; }
+        .edit-field-select { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px; }
+        .edit-field-select:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
+        .edit-field-select option { background: #08090A; color: #f4f4f5; }
+        .info-box { background: rgba(0, 209, 122, 0.06); border: 1px solid rgba(0, 209, 122, 0.15); border-radius: 10px; padding: 14px 16px; }
+        .info-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #00D17A; margin-bottom: 6px; font-weight: 600; }
         .info-box-text { font-size: 14px; color: #f4f4f5; }
-        .contact-textarea { width: 100%; background: rgba(9, 9, 11, 0.8); border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
-        .contact-textarea:focus { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
+        .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .contact-textarea::placeholder { color: #3f3f46; }
     </style>
 </head>
@@ -109,11 +109,11 @@
     <div id="loader" class="fixed inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center loader-overlay">
         <div class="relative w-20 h-20 mb-8">
             <svg class="w-full h-full" style="animation:spinRing 2s linear infinite" viewBox="0 0 50 50">
-                <defs><linearGradient id="loaderGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="50%" stop-color="#10b981"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs>
-                <circle cx="25" cy="25" r="20" fill="none" stroke="#27272a" stroke-width="3.5"/>
+                <defs><linearGradient id="loaderGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00D17A"/><stop offset="50%" stop-color="#00F590"/><stop offset="100%" stop-color="#00995A"/></linearGradient></defs>
+                <circle cx="25" cy="25" r="20" fill="none" stroke="#1f1f22" stroke-width="3.5"/>
                 <circle cx="25" cy="25" r="20" fill="none" stroke="url(#loaderGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="120 210" style="animation:arcDash 1.6s ease-in-out infinite"/>
             </svg>
-            <div class="absolute inset-0 flex items-center justify-center"><div class="logo-fallback w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-500/30 text-sm">M</div></div>
+            <div class="absolute inset-0 flex items-center justify-center"><div class="logo-fallback w-12 h-12 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-sm">M</div></div>
         </div>
         <p class="text-zinc-500 text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Maya Link...</p>
     </div>
@@ -125,13 +125,13 @@
 
     <header class="max-w-6xl mx-auto mb-10 border-b border-zinc-800 pb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
         <div class="flex items-center gap-4">
-            <div class="header-logo flex items-center justify-center overflow-hidden bg-zinc-800/50"><div class="logo-fallback w-10 h-10 rounded-[10px] bg-violet-600/20 border border-violet-500/30 text-sm">M</div></div>
+            <div class="header-logo flex items-center justify-center overflow-hidden bg-zinc-800/50"><div class="logo-fallback w-10 h-10 rounded-[10px] bg-emerald-600/20 border border-emerald-500/30 text-sm">M</div></div>
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v2.3.2</p>
-                    <span id="role-badge" class="hidden px-2 py-0.5 bg-violet-500/15 border border-violet-500/30 text-violet-400 text-[9px] uppercase font-bold rounded"></span>
+                    <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
         </div>
@@ -186,18 +186,18 @@
 
         <!-- ACCOUNT MANAGEMENT - Module D -->
         <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-violet-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
             <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
-            <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
+            <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
                 <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
                     </div>
-                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-violet-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all placeholder-zinc-600"></div></div></div>
-                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
+                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
+                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
                 </div>
             </div>
             <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
@@ -217,22 +217,22 @@
         <div class="glass-panel rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
-                    <span class="w-1.5 h-8 bg-blue-500 rounded-full"></span>
+                    <span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span>
                     <h2 class="text-lg font-bold text-white">Contact Admin</h2>
                 </div>
-                <span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Support</span>
+                <span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Support</span>
             </div>
             <p class="text-xs text-zinc-500 mb-5 leading-relaxed">Having issues with your account or the website? Send a message directly to the admin. All fields are required.</p>
             <div id="contact-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="contact-alert-text"></span></div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Role Change Request">Role Change Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Website Problem">Website Problem</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Role Change Request">Role Change Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Website Problem">Website Problem</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
             </div>
             <div class="mb-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Message</label><textarea id="contact-message" class="contact-textarea" placeholder="Describe your concern in detail..." rows="4"></textarea></div>
             <div class="flex items-center justify-between">
                 <p class="text-[10px] text-zinc-600">Messages are sent directly to the admin via email.</p>
-                <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
                     Send Message
                 </button>
@@ -258,7 +258,7 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="edit-fullname" class="edit-field-input" placeholder="Enter full name"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="edit-role" class="edit-field-select"><option value="TRAINING">Training</option><option value="AGENT">Agent</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option><option value="ADMIN">Admin</option></select></div>
                 <div class="border-t border-zinc-800 pt-4">
-                    <p class="text-[10px] uppercase tracking-wider text-violet-400 font-semibold mb-3">Security Question</p>
+                    <p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p>
                     <div class="info-box mb-4"><div class="info-box-label">Current Question</div><div class="info-box-text" id="edit-security-question-display">-</div></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Question (optional)</label><select id="edit-security-question" class="edit-field-select"><option value="">Keep current...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div>
@@ -274,24 +274,24 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-6">
-                <button onclick="saveUserEdit()" class="flex-1 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Changes</button>
+                <button onclick="saveUserEdit()" class="flex-1 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Changes</button>
                 <button onclick="closeEditModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
             </div>
         </div>
     </div>
 
-    <button id="ai-fab" onclick="toggleAIWindow()" class="fixed bottom-6 right-6 z-40 w-16 h-16 bg-violet-600 hover:bg-violet-500 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 animate-fade-in"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 8H5v2h2V8zm2 0h2v2h-2v-2zm6 0h-2v2h2v-2zm6 0h2v2h-2v-2z" clip-rule="evenodd"/></svg></button>
+    <button id="ai-fab" onclick="toggleAIWindow()" class="fixed bottom-6 right-6 z-40 w-16 h-16 bg-emerald-600 hover:bg-emerald-500 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 animate-fade-in"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 8H5v2h2V8zm2 0h2v2h-2v-2zm6 0h-2v2h2v-2zm6 0h2v2h-2v-2z" clip-rule="evenodd"/></svg></button>
     <div id="ai-window" class="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] md:w-[400px] h-[600px] max-h-[70vh] glass-panel rounded-2xl shadow-2xl flex flex-col overflow-hidden hidden ai-window-slide-up">
-        <div class="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/90"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-violet-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya.ph AI</h2></div><div class="flex items-center gap-2"><button onclick="clearMayaChat()" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 text-[10px] uppercase font-bold rounded transition-colors">Clear</button><button onclick="toggleAIWindow()" class="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 rounded transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button></div></div>
-        <div class="flex items-center gap-2 p-3 bg-violet-500/5 border-b border-violet-500/10"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-violet-400 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg><p class="text-[10px] text-violet-300/80 leading-relaxed">Maya AI may occasionally provide inaccurate information.</p></div>
+        <div class="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/90"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya.ph AI</h2></div><div class="flex items-center gap-2"><button onclick="clearMayaChat()" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 text-[10px] uppercase font-bold rounded transition-colors">Clear</button><button onclick="toggleAIWindow()" class="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 rounded transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button></div></div>
+        <div class="flex items-center gap-2 p-3 bg-emerald-500/5 border-b border-emerald-500/10"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-400 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg><p class="text-[10px] text-emerald-300/80 leading-relaxed">Maya AI may occasionally provide inaccurate information.</p></div>
         <div class="flex flex-wrap gap-2 p-3 border-b border-zinc-800">
-            <button onclick="sendMayaQuick('What is Maya Black CC?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Product Info</button>
-            <button onclick="sendMayaQuick('How do I process CC Closure?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">CC Closure</button>
-            <button onclick="sendMayaQuick('What is Mini Payments eligibility?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Mini Payments</button>
-            <button onclick="sendMayaQuick('Who created you?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 text-[9px] rounded-full transition-all">Creators</button>
+            <button onclick="sendMayaQuick('What is Maya Black CC?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-300 text-[9px] rounded-full transition-all">Product Info</button>
+            <button onclick="sendMayaQuick('How do I process CC Closure?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-300 text-[9px] rounded-full transition-all">CC Closure</button>
+            <button onclick="sendMayaQuick('What is Mini Payments eligibility?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-300 text-[9px] rounded-full transition-all">Mini Payments</button>
+            <button onclick="sendMayaQuick('Who created you?')" class="ai-quick-btn px-2 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-300 text-[9px] rounded-full transition-all">Creators</button>
         </div>
         <div id="maya-chat" class="flex-grow overflow-y-auto space-y-3 p-3 pr-2 scroll-smooth"></div>
-        <div class="p-3 border-t border-zinc-800 flex gap-2"><input type="text" id="maya-input" placeholder="Ask internal questions..." autocomplete="off" class="flex-grow bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-4 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all" onkeydown="if(event.key==='Enter')sendMayaMessage()"><button onclick="sendMayaMessage()" id="maya-send-btn" class="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg transition-colors flex items-center gap-2 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg></button></div>
+        <div class="p-3 border-t border-zinc-800 flex gap-2"><input type="text" id="maya-input" placeholder="Ask internal questions..." autocomplete="off" class="flex-grow bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-4 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all" onkeydown="if(event.key==='Enter')sendMayaMessage()"><button onclick="sendMayaMessage()" id="maya-send-btn" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors flex items-center gap-2 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg></button></div>
     </div>
 
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events:none z-50"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
@@ -364,7 +364,6 @@
                 btn.disabled=false;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message';
             })
             .catch(function(err){
-                // Fallback: open mailto if EmailJS fails
                 var mailBody='Name: '+templateParams.from_name+'%0AEmployee ID: '+templateParams.from_id+'%0ASubject: '+subj+'%0A%0A'+msg;
                 window.open('mailto:ancel.claudio1@gmail.com?subject='+encodeURIComponent('[Maya Terminal] '+subj)+'&body='+mailBody);
                 showContactAlert('Email client opened. If it didn\'t open, email admin directly at ancel.claudio1@gmail.com','error');
@@ -398,7 +397,7 @@
                 for(var i=0;i<users.length;i++){
                     var u=users[i];var canEditThis=canEdit&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);var canDeleteThis=canDelete&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);
                     h+='<tr class="user-row border-t border-zinc-800/50"'+(canEditThis?' onclick="openEditModal(\''+escapeHtml(u.employeeId)+'\')"':'')+'>';
-                    h+='<td class="px-3 py-3 text-violet-400">'+escapeHtml(u.employeeId)+'</td>';
+                    h+='<td class="px-3 py-3 text-emerald-400">'+escapeHtml(u.employeeId)+'</td>';
                     h+='<td class="px-3 py-3 text-zinc-300 font-sans">'+escapeHtml(u.fullName)+'</td>';
                     h+='<td class="px-3 py-3 text-center"><span class="role-tag '+getRoleTagClass(u.role)+'">'+getRoleShortName(u.role)+'</span></td>';
                     h+='<td class="px-3 py-3 text-right text-zinc-500">'+formatDate(u.createdAt)+'</td>';
@@ -484,8 +483,8 @@
         var mayaChat=document.getElementById('maya-chat'),mayaInput=document.getElementById('maya-input'),mayaSendBtn=document.getElementById('maya-send-btn');
         function toggleAIWindow(){var w=document.getElementById('ai-window');w.classList.toggle('hidden');if(!w.classList.contains('hidden')){mayaInput.focus();if(!mayaChat.children.length)addMayaMsg('ai','Hello! I\'m Maya AI. How can I help you today?');}}
         function clearMayaChat(){mayaChat.innerHTML='';addMayaMsg('ai','Chat cleared. How can I help you?');}
-        function addMayaMsg(type,text){var div=document.createElement('div');div.className='flex '+(type==='user'?'justify-end':'justify-start')+' animate-fade-in';var bubble=document.createElement('div');bubble.className='max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed '+(type==='user'?'bg-violet-600 text-white rounded-br-md':'bg-zinc-900 border border-zinc-800 text-zinc-200 rounded-bl-md');bubble.innerHTML=text;div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;return bubble;}
-        function addMayaTyping(){var div=document.createElement('div');div.className='flex justify-start animate-fade-in';div.id='maya-typing';var bubble=document.createElement('div');bubble.className='bg-zinc-900 border border-zinc-800 px-4 py-3 rounded-2xl rounded-bl-md flex gap-1.5 items-center';for(var i=0;i<3;i++){var dot=document.createElement('div');dot.className='typing-dot w-2 h-2 bg-violet-400 rounded-full';bubble.appendChild(dot);}div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;}
+        function addMayaMsg(type,text){var div=document.createElement('div');div.className='flex '+(type==='user'?'justify-end':'justify-start')+' animate-fade-in';var bubble=document.createElement('div');bubble.className='max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed '+(type==='user'?'bg-emerald-600 text-white rounded-br-md':'bg-zinc-900 border border-zinc-800 text-zinc-200 rounded-bl-md');bubble.innerHTML=text;div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;return bubble;}
+        function addMayaTyping(){var div=document.createElement('div');div.className='flex justify-start animate-fade-in';div.id='maya-typing';var bubble=document.createElement('div');bubble.className='bg-zinc-900 border border-zinc-800 px-4 py-3 rounded-2xl rounded-bl-md flex gap-1.5 items-center';for(var i=0;i<3;i++){var dot=document.createElement('div');dot.className='typing-dot w-2 h-2 bg-emerald-400 rounded-full';bubble.appendChild(dot);}div.appendChild(bubble);mayaChat.appendChild(div);mayaChat.scrollTop=mayaChat.scrollHeight;}
         function removeMayaTyping(){var t=document.getElementById('maya-typing');if(t)t.remove();}
         function sendMayaQuick(q){mayaInput.value=q;sendMayaMessage();}
         function sendMayaMessage(){var msg=mayaInput.value.trim();if(!msg)return;mayaInput.value='';addMayaMsg('user',escapeHtml(msg));mayaSendBtn.disabled=true;addMayaTyping();fetch(API_BASE_URL+API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+API_KEY},body:JSON.stringify({model:API_MODEL,messages:[{role:'system',content:'You are Maya AI, an internal assistant for Maya Philippines credit card operations. Be concise and helpful.'},{role:'user',content:msg}],stream:false})}).then(function(r){return r.json();}).then(function(data){removeMayaTyping();var reply=data.choices&&data.choices[0]?data.choices[0].message.content:'Sorry, I couldn\'t process that.';addMayaMsg('ai',reply.replace(/\n/g,'<br>'));mayaSendBtn.disabled=false;}).catch(function(){removeMayaTyping();addMayaMsg('ai','<span class="text-red-400">Connection error. Please try again.</span>');mayaSendBtn.disabled=false;});}
