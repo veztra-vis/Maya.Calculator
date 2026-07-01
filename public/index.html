@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -102,6 +103,36 @@
         .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .contact-textarea::placeholder { color: #3f3f46; }
+
+        /* --- NEW FEATURE STYLES --- */
+        /* 1. Validation */
+        .input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; background: rgba(239, 68, 68, 0.05) !important; }
+        .err-msg { color: #fca5a5; font-size: 10px; margin-top: 4px; display: none; font-family: 'Inter', sans-serif; }
+        
+        /* 2. Formula Breakdown */
+        .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
+        .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; outline: none; user-select: none; }
+        .formula-card summary:hover { color: #00F590; }
+        .formula-text { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a1a1aa; white-space: pre-wrap; line-height: 1.6; background: #08090A; padding: 12px; border-radius: 6px; border: 1px dashed #27272a; }
+        .formula-text span { color: #00D17A; font-weight: bold; }
+
+        /* 3. History */
+        .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
+        .hist-item:hover { background: #18181b; transform: translateX(4px); }
+        .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
+        .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+        .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
+
+        /* 4. Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #emi-print-area, #emi-print-area * { visibility: visible; }
+            #emi-print-area { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
+            #emi-print-area .glass-panel { border: 1px solid #ccc !important; box-shadow: none !important; transform: none !important; }
+            #emi-print-area table { color: black !important; }
+            #emi-print-area th { background: #eee !important; }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
@@ -136,6 +167,10 @@
             </div>
         </div>
         <div class="flex items-center gap-3">
+            <button onclick="toggleHistory()" class="px-3 py-2 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                History
+            </button>
             <div id="user-info" class="hidden text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
                 <span id="user-name" class="text-xs font-medium text-zinc-300"></span><span class="text-zinc-600 mx-2">•</span><span id="live-date-time" class="text-xs font-mono text-zinc-400">Syncing...</span>
             </div>
@@ -150,29 +185,37 @@
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
             <div class="space-y-5 flex-grow">
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Customer Spend (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700"></div></div>
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Customer Spend (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="spend-input-err"></div></div>
                 <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Multiplier Rate</label><select id="multiplier-select" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="1">1x (Base)</option><option value="2">2x (Preferred)</option><option value="5">5x (Elite)</option><option value="10">10x (Max)</option><option value="custom">Custom Multiplier</option></select><input type="number" id="custom-multiplier" placeholder="Enter Multiplier (e.g. 3)" class="hidden mt-2 w-full bg-zinc-950/50 border border-emerald-500/50 rounded-lg py-2 px-3 text-emerald-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 animate-fade-in"></div>
                 <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/50 mt-2"><label class="block text-[10px] uppercase tracking-wider text-zinc-600 mb-1">Miles Generated</label><div class="relative w-full"><input type="text" id="miles-input" readonly class="w-full bg-transparent border-none text-3xl font-mono font-bold text-emerald-400 focus:outline-none cursor-default data-font" value="0.00"><button onclick="copyToClipboard('miles-input')" class="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors p-1" title="Copy"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div></div>
             </div>
             <div class="grid grid-cols-2 gap-4 pt-5 border-t border-zinc-800 mt-4"><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Est. Cash Value</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="cash-value">0.00</span></p></div><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Processed Spend</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="est-spend">0.00</span></p></div></div>
+            <button onclick="saveMilesHistory()" class="mt-4 w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
         </div>
 
         <!-- FINANCE CHARGE CALCULATOR -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-red-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span></div>
             <div class="space-y-5 flex-grow">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div></div></div>
-                <div class="grid grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label><input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label><input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="loan-credit-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="partial-payment-err"></div></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label><input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="loan-term-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label><input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="days-held-err"></div></div>
+                </div>
                 <div class="space-y-2"><div class="flex justify-between text-xs text-zinc-400"><span>Remaining Principal</span><span class="font-mono text-zinc-200" id="fb-principal">₱0.00</span></div><div class="flex justify-between text-xs text-zinc-400"><span>Interest Accrued (3%)</span><span class="font-mono text-zinc-200" id="fb-interest">₱0.00</span></div></div>
             </div>
             <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-red-500/80 mb-1">Total Payable Amount</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('finance-charge-result')"><p class="text-3xl font-mono font-bold text-white group-hover:text-red-400 transition-colors data-font">₱<span id="finance-charge-result">0.00</span></p></div></div>
+            <button onclick="saveFinanceHistory()" class="mt-4 w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
         </div>
 
         <!-- LANDERS REWARDS CALCULATOR -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="landers-spend-err"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="total-card-spend-err"></div></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label><select id="landers-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors"><option value="landers">Landers Superstore (Progressive)</option><option value="dining">Dining (2%)</option><option value="other">Other Retail (1%)</option><option value="excluded">Excluded Categories (0%)</option><option value="custom">Custom Percentage...</option></select><div id="landers-custom-group" class="hidden mt-3 animate-fade-in"><label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label><div class="relative"><input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all"><span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span></div></div></div>
                 <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em]">Waiting for input...</p></div>
             </div>
@@ -203,17 +246,44 @@
             <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
         </div>
 
-        <!-- MINI PAYMENTS CALCULATOR -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6"><div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" value="2026-01-02" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div></div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"><div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div><div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p></div><div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-amber-400 data-font">₱<span id="emi-fixed-amount">0.00</span></p></div><div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p></div></div>
+        <!-- MINI PAYMENTS CALCULATOR (EMI) -->
+        <div id="emi-print-area" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
+                <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="emi-principal-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-rate-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-months-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" value="2026-01-02" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
+            </div>
+            
+            <!-- Export Toolkit -->
+            <div class="flex flex-wrap gap-2 mb-4 no-print">
+                <button onclick="exportEMICSV()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export CSV</button>
+                <button onclick="exportEMIPDF()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>Export PDF</button>
+                <button onclick="copyEMIText()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy Text</button>
+                <button onclick="window.print()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>Print</button>
+                <button onclick="saveEMIHistory()" class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-400 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History</button>
+            </div>
+
+            <!-- Formula Breakdown -->
+            <details class="formula-card mb-4 no-print">
+                <summary>Show Calculation Breakdown</summary>
+                <div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div>
+            </details>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p></div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-amber-400 data-font">₱<span id="emi-fixed-amount">0.00</span></p></div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p></div>
+            </div>
             <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
         </div>
     </main>
 
     <!-- CONTACT ADMIN SECTION -->
-    <section class="max-w-6xl mx-auto mt-8 opacity-0 animate-fade-in" style="animation-delay: 0.35s;">
+    <section class="max-w-6xl mx-auto mt-8 opacity-0 animate-fade-in no-print" style="animation-delay: 0.35s;">
         <div class="glass-panel rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
@@ -240,10 +310,26 @@
         </div>
     </section>
 
-    <footer class="max-w-6xl mx-auto mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-600 animate-fade-in" style="animation-delay: 0.4s;">
+    <footer class="max-w-6xl mx-auto mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-600 animate-fade-in no-print" style="animation-delay: 0.4s;">
         <div class="flex items-center gap-3"><div class="px-2 py-1 rounded border border-zinc-800 bg-zinc-950/50"><p class="text-[9px] font-mono uppercase text-emerald-500">System Normal</p></div><p class="text-[10px] uppercase tracking-widest">Maya Infrastructure</p></div>
         <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p></div>
     </footer>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal-backdrop-module-d">
+        <div class="modal-card-module-d" style="max-width: 600px;">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-white">Calculation History</h2>
+                <div class="flex items-center gap-2">
+                    <button onclick="clearAllHistory()" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded transition-colors">Clear All</button>
+                    <button onclick="toggleHistory()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                </div>
+            </div>
+            <div id="history-list" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                <div class="text-center text-zinc-500 py-8 text-sm">No history saved yet.</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Edit User Modal -->
     <div id="editModal" class="modal-backdrop-module-d">
@@ -280,8 +366,8 @@
         </div>
     </div>
 
-    <button id="ai-fab" onclick="toggleAIWindow()" class="fixed bottom-6 right-6 z-40 w-16 h-16 bg-emerald-600 hover:bg-emerald-500 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 animate-fade-in"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 8H5v2h2V8zm2 0h2v2h-2v-2zm6 0h-2v2h2v-2zm6 0h2v2h-2v-2z" clip-rule="evenodd"/></svg></button>
-    <div id="ai-window" class="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] md:w-[400px] h-[600px] max-h-[70vh] glass-panel rounded-2xl shadow-2xl flex flex-col overflow-hidden hidden ai-window-slide-up">
+    <button id="ai-fab" onclick="toggleAIWindow()" class="fixed bottom-6 right-6 z-40 w-16 h-16 bg-emerald-600 hover:bg-emerald-500 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 animate-fade-in no-print"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 8H5v2h2V8zm2 0h2v2h-2v-2zm6 0h-2v2h2v-2zm6 0h2v2h-2v-2z" clip-rule="evenodd"/></svg></button>
+    <div id="ai-window" class="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] md:w-[400px] h-[600px] max-h-[70vh] glass-panel rounded-2xl shadow-2xl flex flex-col overflow-hidden hidden ai-window-slide-up no-print">
         <div class="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/90"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya.ph AI</h2></div><div class="flex items-center gap-2"><button onclick="clearMayaChat()" class="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 text-[10px] uppercase font-bold rounded transition-colors">Clear</button><button onclick="toggleAIWindow()" class="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 rounded transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button></div></div>
         <div class="flex items-center gap-2 p-3 bg-emerald-500/5 border-b border-emerald-500/10"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-400 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg><p class="text-[10px] text-emerald-300/80 leading-relaxed">Maya AI may occasionally provide inaccurate information.</p></div>
         <div class="flex flex-wrap gap-2 p-3 border-b border-zinc-800">
@@ -294,7 +380,7 @@
         <div class="p-3 border-t border-zinc-800 flex gap-2"><input type="text" id="maya-input" placeholder="Ask internal questions..." autocomplete="off" class="flex-grow bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-4 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all" onkeydown="if(event.key==='Enter')sendMayaMessage()"><button onclick="sendMayaMessage()" id="maya-send-btn" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors flex items-center gap-2 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg></button></div>
     </div>
 
-    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events:none z-50"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events:none z-50 no-print"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
 
     <script>
         var API_BASE_URL  = '';
@@ -447,6 +533,22 @@
         function showToast(m){var t=document.getElementById('toast');document.getElementById('toast-message').innerText=m||"Value Copied";t.classList.remove('opacity-0','translate-y-4','pointer-events:none');setTimeout(function(){t.classList.add('opacity-0','translate-y-4','pointer-events-none');},2000);}
         window.copyToClipboard=function(id){var t=document.getElementById(id).innerText||document.getElementById(id).value;navigator.clipboard.writeText(t).then(function(){showToast("Value Copied");});};
 
+        // ===== VALIDATION FUNCTIONS =====
+        function validateNum(id, min=0, max=Infinity, integer=false, errMsg='') {
+            const el = document.getElementById(id);
+            if(!el) return true;
+            let val = parseCurrency(el.value);
+            const errEl = document.getElementById(id+'-err');
+            let valid = true; let msg = '';
+            if(el.value.trim() === '' || isNaN(val)) { valid = false; msg = 'Value cannot be empty.'; }
+            else if(val < min) { valid = false; msg = errMsg || `Value must be at least ${min}.`; }
+            else if(val > max) { valid = false; msg = errMsg || `Value cannot exceed ${max}.`; }
+            else if(integer && !Number.isInteger(val)) { valid = false; msg = 'Value must be a whole number.'; }
+            if(errEl) { errEl.style.display = valid ? 'none' : 'block'; errEl.textContent = msg; }
+            el.classList.toggle('input-error', !valid);
+            return valid;
+        }
+
         // ===== CLOCK =====
         function updateClock(){var n=new Date();document.getElementById('live-date-time').textContent=n.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
         setInterval(updateClock,1000);updateClock();
@@ -458,26 +560,267 @@
         // ===== MILES CALCULATOR =====
         var spendInput=document.getElementById('spend-input'),multSelect=document.getElementById('multiplier-select'),customMult=document.getElementById('custom-multiplier'),milesInput=document.getElementById('miles-input');
         setupCurrencyInput('spend-input');
-        function calculateMiles(){var v=parseCurrency(spendInput.value),ic=multSelect.value==='custom',m=ic?(parseFloat(customMult.value)||0):parseFloat(multSelect.value),mi=(v/40)*m;milesInput.value=formatCurrency(mi);document.getElementById('cash-value').textContent=formatCurrency(mi*0.16);document.getElementById('est-spend').textContent=formatCurrency(v);}
+        function calculateMiles(){
+            if(!validateNum('spend-input', 0, Infinity, false, 'Spend must be greater than ₱0.')) return;
+            var v=parseCurrency(spendInput.value),ic=multSelect.value==='custom',m=ic?(parseFloat(customMult.value)||0):parseFloat(multSelect.value),mi=(v/40)*m;
+            milesInput.value=formatCurrency(mi);document.getElementById('cash-value').textContent=formatCurrency(mi*0.16);document.getElementById('est-spend').textContent=formatCurrency(v);
+        }
         spendInput.addEventListener('calculate',calculateMiles);spendInput.addEventListener('input',calculateMiles);customMult.addEventListener('input',calculateMiles);
         multSelect.addEventListener('change',function(){if(multSelect.value==='custom'){customMult.classList.remove('hidden');customMult.focus();}else{customMult.classList.add('hidden');}calculateMiles();});
 
         // ===== FINANCE CALCULATOR =====
         setupCurrencyInput('loan-credit');setupCurrencyInput('partial-payment');
-        function calcFinance(){var l=parseCurrency(document.getElementById('loan-credit').value),p=parseCurrency(document.getElementById('partial-payment').value),t=parseFloat(document.getElementById('loan-term').value)||0,d=parseFloat(document.getElementById('days-held').value)||0,rem=Math.max(0,l-p),int=rem*0.03*(d/t),tot=rem+int;document.getElementById('fb-principal').textContent='₱'+formatCurrency(rem);document.getElementById('fb-interest').textContent='₱'+formatCurrency(int);document.getElementById('finance-charge-result').textContent=formatCurrency(tot);}
+        function calcFinance(){
+            if(!validateNum('loan-credit', 0, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
+            if(!validateNum('partial-payment', 0, Infinity, false, 'Payment cannot be negative.')) return;
+            if(!validateNum('loan-term', 1, 365, true, 'Term must be a whole number of days.')) return;
+            if(!validateNum('days-held', 0, 365, true, 'Days held must be a whole number.')) return;
+            var l=parseCurrency(document.getElementById('loan-credit').value),p=parseCurrency(document.getElementById('partial-payment').value),t=parseFloat(document.getElementById('loan-term').value)||0,d=parseFloat(document.getElementById('days-held').value)||0,rem=Math.max(0,l-p),int=rem*0.03*(d/t),tot=rem+int;
+            document.getElementById('fb-principal').textContent='₱'+formatCurrency(rem);document.getElementById('fb-interest').textContent='₱'+formatCurrency(int);document.getElementById('finance-charge-result').textContent=formatCurrency(tot);
+        }
         ['loan-credit','partial-payment','loan-term','days-held'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcFinance);el.addEventListener('change',calcFinance);});
 
         // ===== LANDERS CALCULATOR =====
         setupCurrencyInput('landers-spend');setupCurrencyInput('total-card-spend');
         var landersCat=document.getElementById('landers-category'),landersCustom=document.getElementById('landers-custom-group'),landersCustomRate=document.getElementById('landers-custom-rate');
-        function calcLanders(){var a=parseCurrency(document.getElementById('landers-spend').value),c=parseCurrency(document.getElementById('total-card-spend').value),cat=landersCat.value,rate=0,pts=0,breakdown='';if(cat==='landers'){var total=a+c;var t1=Math.min(total,3000)*0.01;var t2=total>3000?Math.min(total-3000,7000)*0.015:0;var t3=total>10000?Math.min(total-10000,40000)*0.02:0;var t4=total>50000?(total-50000)*0.025:0;pts=t1+t2+t3+t4;rate='Progressive';breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';}else if(cat==='dining'){rate=2;pts=a*0.02;breakdown='Flat 2% on dining';}else if(cat==='other'){rate=1;pts=a*0.01;breakdown='Flat 1% on other retail';}else if(cat==='excluded'){rate=0;pts=0;breakdown='Excluded - 0%';}else if(cat==='custom'){rate=parseFloat(landersCustomRate.value)||0;pts=a*(rate/100);breakdown='Custom rate: '+rate+'%';}document.getElementById('landers-result').textContent=formatCurrency(pts);document.getElementById('voucher-result').textContent=Math.floor(pts/500);document.getElementById('tier-breakdown').textContent=breakdown||'Select category';}
+        function calcLanders(){
+            if(!validateNum('landers-spend', 0, Infinity, false, 'Transaction must be greater than ₱0.')) return;
+            if(!validateNum('total-card-spend', 0, Infinity, false, 'Accumulated cannot be negative.')) return;
+            var a=parseCurrency(document.getElementById('landers-spend').value),c=parseCurrency(document.getElementById('total-card-spend').value),cat=landersCat.value,rate=0,pts=0,breakdown='';
+            if(cat==='landers'){var total=a+c;var t1=Math.min(total,3000)*0.01;var t2=total>3000?Math.min(total-3000,7000)*0.015:0;var t3=total>10000?Math.min(total-10000,40000)*0.02:0;var t4=total>50000?(total-50000)*0.025:0;pts=t1+t2+t3+t4;rate='Progressive';breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';}
+            else if(cat==='dining'){rate=2;pts=a*0.02;breakdown='Flat 2% on dining';}
+            else if(cat==='other'){rate=1;pts=a*0.01;breakdown='Flat 1% on other retail';}
+            else if(cat==='excluded'){rate=0;pts=0;breakdown='Excluded - 0%';}
+            else if(cat==='custom'){rate=parseFloat(landersCustomRate.value)||0;pts=a*(rate/100);breakdown='Custom rate: '+rate+'%';}
+            document.getElementById('landers-result').textContent=formatCurrency(pts);document.getElementById('voucher-result').textContent=Math.floor(pts/500);document.getElementById('tier-breakdown').textContent=breakdown||'Select category';
+        }
         landersCat.addEventListener('change',function(){if(landersCat.value==='custom'){landersCustom.classList.remove('hidden');landersCustomRate.focus();}else{landersCustom.classList.add('hidden');}calcLanders();});landersCustomRate.addEventListener('input',calcLanders);
         ['landers-spend','total-card-spend'].forEach(function(id){document.getElementById(id).addEventListener('calculate',calcLanders);document.getElementById(id).addEventListener('input',calcLanders);});
 
         // ===== EMI CALCULATOR =====
         setupCurrencyInput('emi-principal');
-        function calcEMI(){var P=parseCurrency(document.getElementById('emi-principal').value),EIR=parseFloat(document.getElementById('emi-rate').value)||0,N=parseInt(document.getElementById('emi-months').value)||0,D=parseInt(document.getElementById('emi-days-year').value)||365,startDate=document.getElementById('emi-start-date').value;if(P<=0||N<=0||EIR<=0){document.getElementById('emi-nominal-rate').textContent='0.00';document.getElementById('emi-daily-rate').textContent='0.000000';document.getElementById('emi-fixed-amount').textContent='0.00';document.getElementById('emi-total-interest').textContent='0.00';document.getElementById('emi-table-body').innerHTML='<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';return;}var r=Math.pow(1+EIR/100,1/12)-1;var nominal=(Math.pow(1+EIR/100,12)-1)*100;var daily=r*12/D;document.getElementById('emi-nominal-rate').textContent=nominal.toFixed(2);document.getElementById('emi-daily-rate').textContent=daily.toFixed(6);var emi=P*r*Math.pow(1+r,N)/(Math.pow(1+r,N)-1);var totalInt=emi*N-P;document.getElementById('emi-fixed-amount').textContent=formatCurrency(emi);document.getElementById('emi-total-interest').textContent=formatCurrency(totalInt);var bal=P,html='',curDate=new Date(startDate);for(var i=1;i<=N;i++){var daysInMonth=new Date(curDate.getFullYear(),curDate.getMonth()+1,0).getDate();var intAmt=bal*daily*daysInMonth;var prinPaid=emi-intAmt;bal-=prinPaid;if(bal<0)bal=0;var dueDate=curDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});html+='<tr class="border-t border-zinc-800/50"><td class="px-3 py-2.5 text-center text-zinc-500">'+i+'</td><td class="px-3 py-2.5 text-zinc-300">'+dueDate+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+daysInMonth+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal+prinPaid)+'</td><td class="px-3 py-2.5 text-right text-amber-400/70">'+formatCurrency(intAmt)+'</td><td class="px-3 py-2.5 text-right text-emerald-400/70">'+formatCurrency(prinPaid)+'</td><td class="px-3 py-2.5 text-right text-zinc-200 font-medium">'+formatCurrency(emi)+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal)+'</td></tr>';curDate.setMonth(curDate.getMonth()+1);}document.getElementById('emi-table-body').innerHTML=html;}
+        function calcEMI(){
+            if(!validateNum('emi-principal', 1, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
+            if(!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')) return;
+            if(!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')) return;
+            
+            var P=parseCurrency(document.getElementById('emi-principal').value),EIR=parseFloat(document.getElementById('emi-rate').value)||0,N=parseInt(document.getElementById('emi-months').value)||0,D=parseInt(document.getElementById('emi-days-year').value)||365,startDate=document.getElementById('emi-start-date').value;
+            
+            var r=Math.pow(1+EIR/100,1/12)-1;
+            var nominal=(Math.pow(1+EIR/100,12)-1)*100;
+            var daily=r*12/D;
+            document.getElementById('emi-nominal-rate').textContent=nominal.toFixed(2);
+            document.getElementById('emi-daily-rate').textContent=daily.toFixed(6);
+            
+            var emi=P*r*Math.pow(1+r,N)/(Math.pow(1+r,N)-1);
+            var totalInt=emi*N-P;
+            document.getElementById('emi-fixed-amount').textContent=formatCurrency(emi);
+            document.getElementById('emi-total-interest').textContent=formatCurrency(totalInt);
+            
+            var bal=P,html='',curDate=new Date(startDate);
+            for(var i=1;i<=N;i++){
+                var daysInMonth=new Date(curDate.getFullYear(),curDate.getMonth()+1,0).getDate();
+                var intAmt=bal*daily*daysInMonth;
+                var prinPaid=emi-intAmt;
+                bal-=prinPaid;
+                if(bal<0)bal=0;
+                var dueDate=curDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+                html+='<tr class="border-t border-zinc-800/50"><td class="px-3 py-2.5 text-center text-zinc-500">'+i+'</td><td class="px-3 py-2.5 text-zinc-300">'+dueDate+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+daysInMonth+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal+prinPaid)+'</td><td class="px-3 py-2.5 text-right text-amber-400/70">'+formatCurrency(intAmt)+'</td><td class="px-3 py-2.5 text-right text-emerald-400/70">'+formatCurrency(prinPaid)+'</td><td class="px-3 py-2.5 text-right text-zinc-200 font-medium">'+formatCurrency(emi)+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal)+'</td></tr>';
+                curDate.setMonth(curDate.getMonth()+1);
+            }
+            document.getElementById('emi-table-body').innerHTML=html;
+
+            // Update Formula Breakdown
+            document.getElementById('emi-breakdown').innerHTML = 
+            `Assumptions:\n`+
+            `  - 1 Month = ${D}/12 days = ${(D/12).toFixed(2)} days\n`+
+            `  - Interest compounds monthly based on EIR.\n\n`+
+            `Formulas:\n`+
+            `  1. Monthly Rate (r) = (1 + EIR)^(1/12) - 1\n`+
+            `     => (1 + ${EIR}%)^(1/12) - 1 = <span>${(r*100).toFixed(6)}%</span>\n\n`+
+            `  2. Nominal Annual Rate = (1 + r)^12 - 1\n`+
+            `     => (1 + ${(r*100).toFixed(6)}%)^12 - 1 = <span>${nominal.toFixed(4)}%</span>\n\n`+
+            `  3. Daily Rate = r * 12 / Days in Year\n`+
+            `     => ${(r*100).toFixed(6)}% * 12 / ${D} = <span>${(daily*100).toFixed(8)}%</span>\n\n`+
+            `  4. Fixed Monthly EMI = P * r * (1+r)^N / ((1+r)^N - 1)\n`+
+            `     => ₱${formatCurrency(P)} * ${(r*100).toFixed(6)}% * (1+${(r*100).toFixed(6)}%)^${N} / ((1+${(r*100).toFixed(6)}%)^${N} - 1)\n`+
+            `     => EMI = <span>₱${formatCurrency(emi)}</span>\n\n`+
+            `  5. Total Interest = (EMI * N) - P\n`+
+            `     => (₱${formatCurrency(emi)} * ${N}) - ₱${formatCurrency(P)} = <span>₱${formatCurrency(totalInt)}</span>\n\n`+
+            `  6. Per Month Interest = Remaining Principal * Daily Rate * Days in Month`;
+        }
         ['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcEMI);el.addEventListener('change',calcEMI);});
+
+        // ===== HISTORY FUNCTIONS =====
+        function getHistory(){return JSON.parse(localStorage.getItem('maya_calc_history')||'[]');}
+        function saveHistory(type, summary, inputs){
+            var hist=getHistory();
+            hist.unshift({id:Date.now(),type:type,summary:summary,inputs:inputs,date:new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})});
+            if(hist.length>20)hist=hist.slice(0,20); // Keep max 20 records
+            localStorage.setItem('maya_calc_history',JSON.stringify(hist));
+            showToast('Saved to History');
+        }
+        function saveMilesHistory(){
+            saveHistory('Miles', `Spend: ₱${document.getElementById('est-spend').textContent} | Miles: ${document.getElementById('miles-input').value}`, {
+                spend: document.getElementById('spend-input').value,
+                mult: document.getElementById('multiplier-select').value,
+                customMult: document.getElementById('custom-multiplier').value
+            });
+        }
+        function saveFinanceHistory(){
+            saveHistory('Finance', `Total Payable: ₱${document.getElementById('finance-charge-result').textContent}`, {
+                loan: document.getElementById('loan-credit').value,
+                pay: document.getElementById('partial-payment').value,
+                term: document.getElementById('loan-term').value,
+                held: document.getElementById('days-held').value
+            });
+        }
+        function saveEMIHistory(){
+            saveHistory('EMI', `Principal: ₱${document.getElementById('emi-principal').value} | EMI: ₱${document.getElementById('emi-fixed-amount').textContent}`, {
+                P: document.getElementById('emi-principal').value,
+                EIR: document.getElementById('emi-rate').value,
+                N: document.getElementById('emi-months').value,
+                D: document.getElementById('emi-days-year').value,
+                startDate: document.getElementById('emi-start-date').value
+            });
+        }
+        function toggleHistory(){
+            var modal=document.getElementById('historyModal');
+            if(modal.classList.contains('open')){
+                modal.classList.remove('open');
+            } else {
+                renderHistory();
+                modal.classList.add('open');
+            }
+        }
+        function renderHistory(){
+            var hist=getHistory();
+            var list=document.getElementById('history-list');
+            if(!hist.length){list.innerHTML='<div class="text-center text-zinc-500 py-8 text-sm">No history saved yet.</div>';return;}
+            var h='';
+            for(var i=0;i<hist.length;i++){
+                var item=hist[i];
+                h+=`<div class="hist-item" onclick='loadHistory(${item.id})'>`;
+                h+=`<div class="flex justify-between items-start">`;
+                h+=`<div><span class="hist-type">${item.type}</span><p class="hist-date">${item.date}</p></div>`;
+                h+=`<button onclick='event.stopPropagation();deleteHistory(${item.id})' class="text-zinc-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+                h+=`</div>`;
+                h+=`<p class="hist-summary">${item.summary}</p>`;
+                h+=`</div>`;
+            }
+            list.innerHTML=h;
+        }
+        function deleteHistory(id){
+            var hist=getHistory().filter(function(item){return item.id!==id;});
+            localStorage.setItem('maya_calc_history',JSON.stringify(hist));
+            renderHistory();
+            showToast('History Deleted');
+        }
+        function clearAllHistory(){
+            if(!confirm('Clear all calculation history? This cannot be undone.'))return;
+            localStorage.removeItem('maya_calc_history');
+            renderHistory();
+            showToast('History Cleared');
+        }
+        function loadHistory(id){
+            var item=getHistory().find(function(i){return i.id===id;});
+            if(!item)return;
+            if(item.type==='Miles'){
+                document.getElementById('spend-input').value=item.inputs.spend||'';
+                document.getElementById('multiplier-select').value=item.inputs.mult||'1';
+                if(item.inputs.mult==='custom'){document.getElementById('custom-multiplier').value=item.inputs.customMult||'';document.getElementById('custom-multiplier').classList.remove('hidden');}
+                calculateMiles();
+            } else if(item.type==='Finance'){
+                document.getElementById('loan-credit').value=item.inputs.loan||'';
+                document.getElementById('partial-payment').value=item.inputs.pay||'';
+                document.getElementById('loan-term').value=item.inputs.term||'30';
+                document.getElementById('days-held').value=item.inputs.held||'20';
+                calcFinance();
+            } else if(item.type==='EMI'){
+                document.getElementById('emi-principal').value=item.inputs.P||'';
+                document.getElementById('emi-rate').value=item.inputs.EIR||'1.69';
+                document.getElementById('emi-months').value=item.inputs.N||'6';
+                document.getElementById('emi-days-year').value=item.inputs.D||'365';
+                document.getElementById('emi-start-date').value=item.inputs.startDate||'2026-01-02';
+                calcEMI();
+            }
+            toggleHistory();
+            showToast('Inputs Loaded');
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+
+        // ===== EXPORT FUNCTIONS =====
+        function copyEMIText(){
+            var P=document.getElementById('emi-principal').value,EIR=document.getElementById('emi-rate').value,N=document.getElementById('emi-months').value;
+            var emi=document.getElementById('emi-fixed-amount').textContent,totInt=document.getElementById('emi-total-interest').textContent;
+            var text=`Maya Mini Payments (EMI) Summary\n-------------------------\nPrincipal: ₱${P}\nMonthly EIR: ${EIR}%\nTerm: ${N} months\n-------------------------\nMonthly EMI: ₱${emi}\nTotal Interest: ₱${totInt}\nTotal Payable: ₱${(parseCurrency(emi)*N).toFixed(2)}`;
+            navigator.clipboard.writeText(text).then(function(){showToast('Summary Copied');});
+        }
+        function exportEMICSV(){
+            var rows=[["No","Due Date","Days","Principal Amt","Interest Amt","Principal Paid","Installment Amt","Remaining Prin"]];
+            var table=document.getElementById('emi-table-body');
+            if(!table.rows.length){showToast('No data to export');return;}
+            for(var i=0;i<table.rows.length;i++){
+                var cells=[];
+                for(var j=0;j<table.rows[i].cells.length;j++){cells.push(table.rows[i].cells[j].innerText);}
+                rows.push(cells);
+            }
+            var csv='';
+            rows.forEach(function(row){
+                csv+=row.join(',')+'\n';
+            });
+            var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+            var link=document.createElement('a');
+            link.href=URL.createObjectURL(blob);
+            link.download='Maya_EMI_Schedule.csv';
+            link.click();
+            showToast('CSV Exported');
+        }
+        function exportEMIPDF(){
+            const { jsPDF } = window.jspdf;
+            var doc=new jsPDF();
+            var P=document.getElementById('emi-principal').value,EIR=document.getElementById('emi-rate').value,N=document.getElementById('emi-months').value;
+            var emi=document.getElementById('emi-fixed-amount').textContent,totInt=document.getElementById('emi-total-interest').textContent;
+            
+            doc.setFontSize(18);
+            doc.setTextColor(0,209,122);
+            doc.text('Maya | Mini Payments (EMI)', 14, 22);
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text('Generated: '+new Date().toLocaleString(), 14, 28);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0);
+            doc.text('Loan Summary', 14, 40);
+            
+            doc.setFontSize(10);
+            doc.text('Principal Amount: ₱'+P, 14, 48);
+            doc.text('Monthly EIR: '+EIR+'%', 14, 54);
+            doc.text('Term: '+N+' months', 14, 60);
+            doc.text('Monthly EMI: ₱'+emi, 14, 66);
+            doc.text('Total Interest: ₱'+totInt, 14, 72);
+            
+            // Table
+            var rows=[];
+            var table=document.getElementById('emi-table-body');
+            for(var i=0;i<table.rows.length;i++){
+                var cells=[];
+                for(var j=0;j<table.rows[i].cells.length;j++){cells.push(table.rows[i].cells[j].innerText);}
+                rows.push(cells);
+            }
+            
+            doc.autoTable({
+                head: [["#", "Due Date", "Days", "Prin Amt", "Int Amt", "Prin Paid", "Installment", "Remain Prin"]],
+                body: rows,
+                startY: 80,
+                theme: 'striped',
+                headStyles: { fillColor: [0, 153, 90], textColor: 255 },
+                styles: { fontSize: 8, cellPadding: 2 }
+            });
+            
+            doc.save('Maya_EMI_Schedule.pdf');
+            showToast('PDF Exported');
+        }
 
         // ===== MAYA AI =====
         var mayaChat=document.getElementById('maya-chat'),mayaInput=document.getElementById('maya-input'),mayaSendBtn=document.getElementById('maya-send-btn');
@@ -490,6 +833,7 @@
         function sendMayaMessage(){var msg=mayaInput.value.trim();if(!msg)return;mayaInput.value='';addMayaMsg('user',escapeHtml(msg));mayaSendBtn.disabled=true;addMayaTyping();fetch(API_BASE_URL+API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+API_KEY},body:JSON.stringify({model:API_MODEL,messages:[{role:'system',content:'You are Maya AI, an internal assistant for Maya Philippines credit card operations. Be concise and helpful.'},{role:'user',content:msg}],stream:false})}).then(function(r){return r.json();}).then(function(data){removeMayaTyping();var reply=data.choices&&data.choices[0]?data.choices[0].message.content:'Sorry, I couldn\'t process that.';addMayaMsg('ai',reply.replace(/\n/g,'<br>'));mayaSendBtn.disabled=false;}).catch(function(){removeMayaTyping();addMayaMsg('ai','<span class="text-red-400">Connection error. Please try again.</span>');mayaSendBtn.disabled=false;});}
 
         document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
+        document.getElementById('historyModal').addEventListener('click',function(e){if(e.target===this)toggleHistory();});
     </script>
 </body>
 </html>
