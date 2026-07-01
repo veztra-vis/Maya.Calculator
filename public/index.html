@@ -11,7 +11,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -124,14 +123,26 @@
         .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
 
-        /* 4. Print Styles */
+        /* 4. Receipt Styles */
+        .receipt-container { width: 100%; max-width: 320px; margin: 0 auto; background: #fff; color: #000; font-family: 'Courier New', Courier, monospace; font-size: 12px; padding: 15px; line-height: 1.4; }
+        .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+        .receipt-title { font-size: 18px; font-weight: bold; color: #00995A; text-transform: uppercase; letter-spacing: 1px; }
+        .receipt-sub { font-size: 10px; color: #555; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .receipt-label { font-weight: bold; color: #333; }
+        .receipt-val { color: #000; }
+        .receipt-divider { border-top: 1px dashed #000; margin: 10px 0; }
+        .receipt-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
+        .receipt-table th, .receipt-table td { border-bottom: 1px solid #eee; padding: 4px 2px; text-align: left; }
+        .receipt-table th { border-bottom: 2px solid #000; font-weight: bold; }
+        .receipt-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; background: #f0f0f0; padding: 8px; margin-top: 5px; border-radius: 4px; }
+        .receipt-footer { text-align: center; font-size: 10px; margin-top: 15px; color: #555; }
+        
+        /* 5. Print Styles */
         @media print {
             body * { visibility: hidden; }
-            #emi-print-area, #emi-print-area * { visibility: visible; }
-            #emi-print-area { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
-            #emi-print-area .glass-panel { border: 1px solid #ccc !important; box-shadow: none !important; transform: none !important; }
-            #emi-print-area table { color: black !important; }
-            #emi-print-area th { background: #eee !important; }
+            #receipt-print-area, #receipt-print-area * { visibility: visible; }
+            #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; }
             .no-print { display: none !important; }
         }
     </style>
@@ -248,7 +259,7 @@
         </div>
 
         <!-- MINI PAYMENTS CALCULATOR (EMI) -->
-        <div id="emi-print-area" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
                 <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="emi-principal-err"></div></div>
@@ -260,11 +271,16 @@
             
             <!-- Export Toolkit -->
             <div class="flex flex-wrap gap-2 mb-4 no-print">
-                <button onclick="exportEMICSV()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export CSV</button>
-                <button onclick="exportEMIPDF()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>Export PDF</button>
-                <button onclick="copyEMIText()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy Text</button>
-                <button onclick="window.print()" class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>Print</button>
-                <button onclick="saveEMIHistory()" class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-400 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History</button>
+                <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    Generate Official Receipt
+                </button>
+                <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History
+                </button>
+                <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export Data (CSV)
+                </button>
             </div>
 
             <!-- Formula Breakdown -->
@@ -279,7 +295,7 @@
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-amber-400 data-font">₱<span id="emi-fixed-amount">0.00</span></p></div>
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p></div>
             </div>
-            <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
+            <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
         </div>
     </main>
 
@@ -315,6 +331,89 @@
         <div class="flex items-center gap-3"><div class="px-2 py-1 rounded border border-zinc-800 bg-zinc-950/50"><p class="text-[9px] font-mono uppercase text-emerald-500">System Normal</p></div><p class="text-[10px] uppercase tracking-widest">Maya Infrastructure</p></div>
         <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p></div>
     </footer>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal-backdrop-module-d">
+        <div class="modal-card-module-d" style="max-width: 360px; padding: 0; background: #fff; overflow: hidden;">
+            <div class="bg-zinc-900 p-3 flex justify-between items-center no-print">
+                <h2 class="text-sm font-bold text-white px-2">Official Receipt</h2>
+                <button onclick="closeReceiptModal()" class="p-1.5 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            
+            <div id="receipt-print-area" class="receipt-container">
+                <div class="receipt-header">
+                    <div class="receipt-title">MAYA</div>
+                    <div class="receipt-sub">Mini Payments Computation</div>
+                    <div class="receipt-sub">Ref: <span id="rcpt-ref">MX-000000</span></div>
+                    <div class="receipt-sub">Date: <span id="rcpt-date">Jan 01, 2026</span></div>
+                </div>
+                
+                <div class="receipt-row"><span class="receipt-label">Principal:</span><span class="receipt-val" id="rcpt-principal">₱0.00</span></div>
+                <div class="receipt-row"><span class="receipt-label">Monthly EIR:</span><span class="receipt-val" id="rcpt-rate">0.00%</span></div>
+                <div class="receipt-row"><span class="receipt-label">Term:</span><span class="receipt-val" id="rcpt-term">0 months</span></div>
+                
+                <div class="receipt-divider"></div>
+                
+                <table class="receipt-table">
+                    <thead>
+                        <tr><th>#</th><th>Due Date</th><th style="text-align:right;">Installment</th><th style="text-align:right;">Balance</th></tr>
+                    </thead>
+                    <tbody id="rcpt-table-body"></tbody>
+                </table>
+                
+                <div class="receipt-divider"></div>
+                
+                <div class="receipt-row"><span class="receipt-label">Monthly EMI:</span><span class="receipt-val" id="rcpt-emi">₱0.00</span></div>
+                <div class="receipt-row"><span class="receipt-label">Total Interest:</span><span class="receipt-val" id="rcpt-interest">₱0.00</span></div>
+                <div class="receipt-total"><span>TOTAL PAYABLE:</span><span id="rcpt-total">₱0.00</span></div>
+                
+                <div class="receipt-footer">
+                    This is a system-generated computation.<br>Not an official billing statement.<br><br>
+                    <strong>Maya Philippines</strong><br>Internal Agent Terminal
+                </div>
+            </div>
+
+            <div class="bg-zinc-100 p-3 flex flex-col gap-2 no-print border-t border-zinc-300">
+                <button onclick="window.print()" class="w-full px-4 py-2 bg-zinc-800 hover:bg-zinc-900 text-white text-xs font-bold uppercase rounded-md transition-colors">Print Receipt</button>
+                <button onclick="downloadReceiptPDF()" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase rounded-md transition-colors">Download PDF</button>
+                <button onclick="openSendReceiptModal()" class="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase rounded-md transition-colors">Send to Customer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send to Customer Modal -->
+    <div id="sendReceiptModal" class="modal-backdrop-module-d">
+        <div class="modal-card-module-d" style="max-width: 420px;">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-white">Send Receipt</h2>
+                <button onclick="closeSendReceiptModal()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Name</label>
+                    <input type="text" id="send-cust-name" class="edit-field-input" placeholder="Juan Dela Cruz">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Email</label>
+                    <input type="email" id="send-cust-email" class="edit-field-input" placeholder="juan@example.com">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Mobile (WhatsApp/SMS)</label>
+                    <input type="text" id="send-cust-phone" class="edit-field-input mono" placeholder="639171234567">
+                </div>
+            </div>
+            <div class="flex flex-col gap-3 mt-6">
+                <button onclick="sendReceiptEmail()" class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    Send via Email
+                </button>
+                <button onclick="sendReceiptWhatsApp()" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C5.589 2 2 5.589 2 10c0 1.463.416 2.835 1.131 4.043L2 18l3.957-1.131A7.974 7.974 0 0010 18c4.411 0 8-3.589 8-8s-3.589-8-8-8zm0 14c-1.292 0-2.52-.355-3.586-1.01l-.233-.14-2.346.671.671-2.346-.14-.233A6.964 6.964 0 013 10c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"/></svg>
+                    Send via WhatsApp/SMS
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- History Modal -->
     <div id="historyModal" class="modal-backdrop-module-d">
@@ -657,12 +756,198 @@
         }
         ['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcEMI);el.addEventListener('change',calcEMI);});
 
+        // ===== RECEIPT & EXPORT FUNCTIONS =====
+        function generateReceipt() {
+            if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
+            if(!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')) return;
+            if(!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')) return;
+
+            var P = document.getElementById('emi-principal').value;
+            var EIR = document.getElementById('emi-rate').value;
+            var N = document.getElementById('emi-months').value;
+            var emi = document.getElementById('emi-fixed-amount').textContent;
+            var totInt = document.getElementById('emi-total-interest').textContent;
+            var totalPay = formatCurrency(parseCurrency(emi) * parseInt(N));
+
+            document.getElementById('rcpt-ref').textContent = 'MX-' + Math.floor(Math.random() * 900000 + 100000);
+            document.getElementById('rcpt-date').textContent = new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+            document.getElementById('rcpt-principal').textContent = '₱' + P;
+            document.getElementById('rcpt-rate').textContent = EIR + '%';
+            document.getElementById('rcpt-term').textContent = N + ' months';
+            document.getElementById('rcpt-emi').textContent = '₱' + emi;
+            document.getElementById('rcpt-interest').textContent = '₱' + totInt;
+            document.getElementById('rcpt-total').textContent = '₱' + totalPay;
+
+            var tableBody = document.getElementById('rcpt-table-body');
+            tableBody.innerHTML = '';
+            var mainTable = document.getElementById('emi-table-body');
+            for(var i=0; i<mainTable.rows.length; i++) {
+                var row = mainTable.rows[i];
+                var tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row.cells[0].innerText}</td><td>${row.cells[1].innerText}</td><td style="text-align:right;">${row.cells[6].innerText}</td><td style="text-align:right;">${row.cells[7].innerText}</td>`;
+                tableBody.appendChild(tr);
+            }
+
+            document.getElementById('receiptModal').classList.add('open');
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.remove('open');
+        }
+
+        function openSendReceiptModal() {
+            document.getElementById('sendReceiptModal').classList.add('open');
+        }
+
+        function closeSendReceiptModal() {
+            document.getElementById('sendReceiptModal').classList.remove('open');
+        }
+
+        function buildTextReceipt() {
+            var P = document.getElementById('emi-principal').value;
+            var EIR = document.getElementById('emi-rate').value;
+            var N = document.getElementById('emi-months').value;
+            var emi = document.getElementById('emi-fixed-amount').textContent;
+            var totInt = document.getElementById('emi-total-interest').textContent;
+            var totalPay = formatCurrency(parseCurrency(emi) * parseInt(N));
+            var ref = document.getElementById('rcpt-ref').textContent;
+            var date = document.getElementById('rcpt-date').textContent;
+
+            var text = `MAYA - Mini Payments Computation\n`;
+            text += `Ref: ${ref}\nDate: ${date}\n`;
+            text += `-----------------------------------\n`;
+            text += `Principal: ₱${P}\n`;
+            text += `Monthly EIR: ${EIR}%\n`;
+            text += `Term: ${N} months\n`;
+            text += `-----------------------------------\n`;
+            text += `Monthly EMI: ₱${emi}\n`;
+            text += `Total Interest: ₱${totInt}\n`;
+            text += `TOTAL PAYABLE: ₱${totalPay}\n`;
+            text += `-----------------------------------\n`;
+            text += `This is a system-generated computation.\nNot an official billing statement.`;
+            return text;
+        }
+
+        function downloadReceiptPDF() {
+            const { jsPDF } = window.jspdf;
+            var doc = new jsPDF({unit: 'pt', format: [320, 600]}); // Receipt size
+            
+            doc.setFontSize(18);
+            doc.setTextColor(0, 153, 90);
+            doc.text('MAYA', 120, 40);
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text('Mini Payments Computation', 95, 55);
+            doc.text('Ref: ' + document.getElementById('rcpt-ref').textContent, 110, 67);
+            doc.text('Date: ' + document.getElementById('rcpt-date').textContent, 105, 79);
+            
+            doc.setDrawColor(0);
+            doc.line(20, 90, 300, 90);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0);
+            doc.text('Principal:', 20, 110);
+            doc.text('₱' + document.getElementById('emi-principal').value, 200, 110, {align: 'right'});
+            doc.text('Monthly EIR:', 20, 125);
+            doc.text(document.getElementById('emi-rate').value + '%', 200, 125, {align: 'right'});
+            doc.text('Term:', 20, 140);
+            doc.text(document.getElementById('emi-months').value + ' months', 200, 140, {align: 'right'});
+            
+            doc.line(20, 155, 300, 155);
+            
+            // Table
+            var rows = [];
+            var mainTable = document.getElementById('emi-table-body');
+            for(var i=0; i<mainTable.rows.length; i++) {
+                var row = mainTable.rows[i];
+                rows.push([row.cells[0].innerText, row.cells[1].innerText, row.cells[6].innerText, row.cells[7].innerText]);
+            }
+            
+            doc.autoTable({
+                head: [['#', 'Due Date', 'Installment', 'Balance']],
+                body: rows,
+                startY: 165,
+                theme: 'plain',
+                styles: { fontSize: 8, cellPadding: 3, textColor: 0 },
+                headStyles: { fillColor: [255, 255, 255], textColor: 0, lineWidth: 0.1, lineColor: [0,0,0] },
+                columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } }
+            });
+            
+            var finalY = doc.lastAutoTable.finalY + 10;
+            doc.line(20, finalY, 300, finalY);
+            finalY += 20;
+            
+            doc.text('Monthly EMI:', 20, finalY);
+            doc.text('₱' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'});
+            finalY += 15;
+            doc.text('Total Interest:', 20, finalY);
+            doc.text('₱' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'});
+            finalY += 15;
+            doc.setFontSize(14);
+            doc.text('TOTAL PAYABLE:', 20, finalY);
+            doc.text('₱' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
+            
+            finalY += 20;
+            doc.line(20, finalY, 300, finalY);
+            finalY += 20;
+            doc.setFontSize(9);
+            doc.setTextColor(100);
+            doc.text('This is a system-generated computation.', 60, finalY);
+            finalY += 12;
+            doc.text('Not an official billing statement.', 75, finalY);
+            
+            doc.save('Maya_Receipt.pdf');
+            showToast('PDF Downloaded');
+        }
+
+        function sendReceiptEmail() {
+            var name = document.getElementById('send-cust-name').value;
+            var email = document.getElementById('send-cust-email').value;
+            if(!name || !email) { showToast('Please enter name and email'); return; }
+            
+            var text = buildTextReceipt();
+            var mailto = `mailto:${email}?subject=Maya Mini Payments Computation&body=Hi ${name},%0A%0AHere is your computation:%0A%0A${encodeURIComponent(text)}`;
+            window.open(mailto);
+            showToast('Email App Opened');
+        }
+
+        function sendReceiptWhatsApp() {
+            var phone = document.getElementById('send-cust-phone').value;
+            if(!phone) { showToast('Please enter mobile number'); return; }
+            
+            var text = buildTextReceipt();
+            var url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+            showToast('WhatsApp Opened');
+        }
+
+        function exportEMICSV(){
+            var rows=[["No","Due Date","Days","Principal Amt","Interest Amt","Principal Paid","Installment Amt","Remaining Prin"]];
+            var table=document.getElementById('emi-table-body');
+            if(!table.rows.length){showToast('No data to export');return;}
+            for(var i=0;i<table.rows.length;i++){
+                var cells=[];
+                for(var j=0;j<table.rows[i].cells.length;j++){cells.push(table.rows[i].cells[j].innerText);}
+                rows.push(cells);
+            }
+            var csv='';
+            rows.forEach(function(row){
+                csv+=row.join(',')+'\n';
+            });
+            var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+            var link=document.createElement('a');
+            link.href=URL.createObjectURL(blob);
+            link.download='Maya_EMI_Schedule.csv';
+            link.click();
+            showToast('CSV Exported');
+        }
+
         // ===== HISTORY FUNCTIONS =====
         function getHistory(){return JSON.parse(localStorage.getItem('maya_calc_history')||'[]');}
         function saveHistory(type, summary, inputs){
             var hist=getHistory();
             hist.unshift({id:Date.now(),type:type,summary:summary,inputs:inputs,date:new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})});
-            if(hist.length>20)hist=hist.slice(0,20); // Keep max 20 records
+            if(hist.length>20)hist=hist.slice(0,20);
             localStorage.setItem('maya_calc_history',JSON.stringify(hist));
             showToast('Saved to History');
         }
@@ -755,79 +1040,6 @@
             window.scrollTo({top:0,behavior:'smooth'});
         }
 
-        // ===== EXPORT FUNCTIONS =====
-        function copyEMIText(){
-            var P=document.getElementById('emi-principal').value,EIR=document.getElementById('emi-rate').value,N=document.getElementById('emi-months').value;
-            var emi=document.getElementById('emi-fixed-amount').textContent,totInt=document.getElementById('emi-total-interest').textContent;
-            var text=`Maya Mini Payments (EMI) Summary\n-------------------------\nPrincipal: ₱${P}\nMonthly EIR: ${EIR}%\nTerm: ${N} months\n-------------------------\nMonthly EMI: ₱${emi}\nTotal Interest: ₱${totInt}\nTotal Payable: ₱${(parseCurrency(emi)*N).toFixed(2)}`;
-            navigator.clipboard.writeText(text).then(function(){showToast('Summary Copied');});
-        }
-        function exportEMICSV(){
-            var rows=[["No","Due Date","Days","Principal Amt","Interest Amt","Principal Paid","Installment Amt","Remaining Prin"]];
-            var table=document.getElementById('emi-table-body');
-            if(!table.rows.length){showToast('No data to export');return;}
-            for(var i=0;i<table.rows.length;i++){
-                var cells=[];
-                for(var j=0;j<table.rows[i].cells.length;j++){cells.push(table.rows[i].cells[j].innerText);}
-                rows.push(cells);
-            }
-            var csv='';
-            rows.forEach(function(row){
-                csv+=row.join(',')+'\n';
-            });
-            var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-            var link=document.createElement('a');
-            link.href=URL.createObjectURL(blob);
-            link.download='Maya_EMI_Schedule.csv';
-            link.click();
-            showToast('CSV Exported');
-        }
-        function exportEMIPDF(){
-            const { jsPDF } = window.jspdf;
-            var doc=new jsPDF();
-            var P=document.getElementById('emi-principal').value,EIR=document.getElementById('emi-rate').value,N=document.getElementById('emi-months').value;
-            var emi=document.getElementById('emi-fixed-amount').textContent,totInt=document.getElementById('emi-total-interest').textContent;
-            
-            doc.setFontSize(18);
-            doc.setTextColor(0,209,122);
-            doc.text('Maya | Mini Payments (EMI)', 14, 22);
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text('Generated: '+new Date().toLocaleString(), 14, 28);
-            
-            doc.setFontSize(12);
-            doc.setTextColor(0);
-            doc.text('Loan Summary', 14, 40);
-            
-            doc.setFontSize(10);
-            doc.text('Principal Amount: ₱'+P, 14, 48);
-            doc.text('Monthly EIR: '+EIR+'%', 14, 54);
-            doc.text('Term: '+N+' months', 14, 60);
-            doc.text('Monthly EMI: ₱'+emi, 14, 66);
-            doc.text('Total Interest: ₱'+totInt, 14, 72);
-            
-            // Table
-            var rows=[];
-            var table=document.getElementById('emi-table-body');
-            for(var i=0;i<table.rows.length;i++){
-                var cells=[];
-                for(var j=0;j<table.rows[i].cells.length;j++){cells.push(table.rows[i].cells[j].innerText);}
-                rows.push(cells);
-            }
-            
-            doc.autoTable({
-                head: [["#", "Due Date", "Days", "Prin Amt", "Int Amt", "Prin Paid", "Installment", "Remain Prin"]],
-                body: rows,
-                startY: 80,
-                theme: 'striped',
-                headStyles: { fillColor: [0, 153, 90], textColor: 255 },
-                styles: { fontSize: 8, cellPadding: 2 }
-            });
-            
-            doc.save('Maya_EMI_Schedule.pdf');
-            showToast('PDF Exported');
-        }
-
         // ===== MAYA AI =====
         var mayaChat=document.getElementById('maya-chat'),mayaInput=document.getElementById('maya-input'),mayaSendBtn=document.getElementById('maya-send-btn');
         function toggleAIWindow(){var w=document.getElementById('ai-window');w.classList.toggle('hidden');if(!w.classList.contains('hidden')){mayaInput.focus();if(!mayaChat.children.length)addMayaMsg('ai','Hello! I\'m Maya AI. How can I help you today?');}}
@@ -840,6 +1052,8 @@
 
         document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
         document.getElementById('historyModal').addEventListener('click',function(e){if(e.target===this)toggleHistory();});
+        document.getElementById('receiptModal').addEventListener('click',function(e){if(e.target===this)closeReceiptModal();});
+        document.getElementById('sendReceiptModal').addEventListener('click',function(e){if(e.target===this)closeSendReceiptModal();});
     </script>
 </body>
 </html>
