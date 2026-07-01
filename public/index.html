@@ -11,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -537,13 +538,18 @@
         function validateNum(id, min=0, max=Infinity, integer=false, errMsg='') {
             const el = document.getElementById(id);
             if(!el) return true;
-            let val = parseCurrency(el.value);
+            let raw = el.value.trim();
+            let val = parseCurrency(raw);
             const errEl = document.getElementById(id+'-err');
             let valid = true; let msg = '';
-            if(el.value.trim() === '' || isNaN(val)) { valid = false; msg = 'Value cannot be empty.'; }
-            else if(val < min) { valid = false; msg = errMsg || `Value must be at least ${min}.`; }
+            
+            // If empty, treat value as 0 for validation purposes
+            if(raw === '') val = 0;
+            
+            if(val < min) { valid = false; msg = errMsg || `Value must be at least ${min}.`; }
             else if(val > max) { valid = false; msg = errMsg || `Value cannot exceed ${max}.`; }
             else if(integer && !Number.isInteger(val)) { valid = false; msg = 'Value must be a whole number.'; }
+            
             if(errEl) { errEl.style.display = valid ? 'none' : 'block'; errEl.textContent = msg; }
             el.classList.toggle('input-error', !valid);
             return valid;
@@ -561,7 +567,7 @@
         var spendInput=document.getElementById('spend-input'),multSelect=document.getElementById('multiplier-select'),customMult=document.getElementById('custom-multiplier'),milesInput=document.getElementById('miles-input');
         setupCurrencyInput('spend-input');
         function calculateMiles(){
-            if(!validateNum('spend-input', 0, Infinity, false, 'Spend must be greater than ₱0.')) return;
+            if(!validateNum('spend-input', 0.01, Infinity, false, 'Spend must be greater than ₱0.')) return;
             var v=parseCurrency(spendInput.value),ic=multSelect.value==='custom',m=ic?(parseFloat(customMult.value)||0):parseFloat(multSelect.value),mi=(v/40)*m;
             milesInput.value=formatCurrency(mi);document.getElementById('cash-value').textContent=formatCurrency(mi*0.16);document.getElementById('est-spend').textContent=formatCurrency(v);
         }
@@ -571,7 +577,7 @@
         // ===== FINANCE CALCULATOR =====
         setupCurrencyInput('loan-credit');setupCurrencyInput('partial-payment');
         function calcFinance(){
-            if(!validateNum('loan-credit', 0, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
+            if(!validateNum('loan-credit', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
             if(!validateNum('partial-payment', 0, Infinity, false, 'Payment cannot be negative.')) return;
             if(!validateNum('loan-term', 1, 365, true, 'Term must be a whole number of days.')) return;
             if(!validateNum('days-held', 0, 365, true, 'Days held must be a whole number.')) return;
@@ -584,7 +590,7 @@
         setupCurrencyInput('landers-spend');setupCurrencyInput('total-card-spend');
         var landersCat=document.getElementById('landers-category'),landersCustom=document.getElementById('landers-custom-group'),landersCustomRate=document.getElementById('landers-custom-rate');
         function calcLanders(){
-            if(!validateNum('landers-spend', 0, Infinity, false, 'Transaction must be greater than ₱0.')) return;
+            if(!validateNum('landers-spend', 0.01, Infinity, false, 'Transaction must be greater than ₱0.')) return;
             if(!validateNum('total-card-spend', 0, Infinity, false, 'Accumulated cannot be negative.')) return;
             var a=parseCurrency(document.getElementById('landers-spend').value),c=parseCurrency(document.getElementById('total-card-spend').value),cat=landersCat.value,rate=0,pts=0,breakdown='';
             if(cat==='landers'){var total=a+c;var t1=Math.min(total,3000)*0.01;var t2=total>3000?Math.min(total-3000,7000)*0.015:0;var t3=total>10000?Math.min(total-10000,40000)*0.02:0;var t4=total>50000?(total-50000)*0.025:0;pts=t1+t2+t3+t4;rate='Progressive';breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';}
@@ -600,7 +606,7 @@
         // ===== EMI CALCULATOR =====
         setupCurrencyInput('emi-principal');
         function calcEMI(){
-            if(!validateNum('emi-principal', 1, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
+            if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
             if(!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')) return;
             if(!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')) return;
             
