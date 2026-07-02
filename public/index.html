@@ -35,10 +35,6 @@
         .glass-panel { background: rgba(17, 17, 19, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(30, 30, 32, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
         .glass-panel:hover { border-color: rgba(0, 209, 122, 0.4); box-shadow: 0 0 30px rgba(0, 209, 122, 0.1); transform: translateY(-3px); }
         button:hover { transition: all 0.2s ease; }
-        .ai-quick-btn { transition: transform 0.2s ease, background 0.2s ease; }
-        .ai-quick-btn:hover { transform: scale(1.05); }
-        #ai-fab { animation: pulseGlow 2.5s infinite; }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(0, 209, 122, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 209, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 209, 122, 0); } }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #08090A; }
         ::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 4px; }
@@ -47,108 +43,34 @@
         .hidden-loader { opacity: 0; visibility: hidden; pointer-events: none; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .data-font { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
-        @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
-        .typing-dot { animation: typingBounce 1.4s infinite; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        #maya-chat::-webkit-scrollbar { width: 4px; }
-        #maya-chat::-webkit-scrollbar-track { background: transparent; }
-        #maya-chat::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .header-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; }
-        .logo-fallback { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #00D17A; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
-        .ai-window-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes spinRing { to { transform: rotate(360deg); } }
         @keyframes arcDash { 0% { stroke-dasharray: 1 210; stroke-dashoffset: 0; } 50% { stroke-dasharray: 120 210; stroke-dashoffset: -40; } 100% { stroke-dasharray: 120 210; stroke-dashoffset: -130; } }
         .module-d-alert { padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; display: none; align-items: center; gap: 8px; line-height: 1.45; }
         .module-d-alert.show { display: flex; }
         .module-d-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; }
         .module-d-alert-success { background: rgba(0, 209, 122, 0.1); border: 1px solid rgba(0, 209, 122, 0.2); color: #6ee7b7; }
-        .module-d-alert-info { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); color: #93c5fd; }
         .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #1f1f22; }
-        .user-table-wrap::-webkit-scrollbar { width: 4px; }
-        .user-table-wrap::-webkit-scrollbar-track { background: transparent; }
-        .user-table-wrap::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
         .user-row { transition: background 0.15s; cursor: pointer; }
         .user-row:hover { background: rgba(0, 209, 122, 0.08); }
         .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .role-tag-admin { background: rgba(0, 209, 122, 0.15); color: #00D17A; border: 1px solid rgba(0, 209, 122, 0.3); }
-        .role-tag-client { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .role-tag-om { background: rgba(0, 153, 90, 0.15); color: #34d399; border: 1px solid rgba(0, 153, 90, 0.3); }
-        .role-tag-tl { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .role-tag-agent { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.3); }
-        .role-tag-training { background: rgba(236, 72, 153, 0.15); color: #f9a8d4; border: 1px solid rgba(236, 72, 153, 0.3); }
         .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(0, 209, 122, 0.2); color: #00D17A; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
         .btn-action-user:hover { background: rgba(0, 209, 122, 0.1); border-color: rgba(0, 209, 122, 0.4); }
-        .btn-action-user:disabled { opacity: 0.3; cursor: not-allowed; }
-        .btn-delete-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-        .btn-delete-user:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
-        .btn-delete-user:disabled { opacity: 0.3; cursor: not-allowed; }
-        .modal-backdrop-module-d { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-backdrop-module-d.open { display: flex; }
-        .modal-card-module-d { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
+        .modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-backdrop.open { display: flex; }
+        .modal-card { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
         @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .modal-card-module-d::-webkit-scrollbar { width: 4px; }
-        .modal-card-module-d::-webkit-scrollbar-track { background: transparent; }
-        .modal-card-module-d::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .edit-field-input { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
-        .edit-field-input:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .edit-field-input:disabled { opacity: 0.5; cursor: not-allowed; }
-        .edit-field-input.mono { font-family: 'JetBrains Mono', monospace; }
-        .edit-field-select { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px; }
-        .edit-field-select:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .edit-field-select option { background: #08090A; color: #f4f4f5; }
-        .info-box { background: rgba(0, 209, 122, 0.06); border: 1px solid rgba(0, 209, 122, 0.15); border-radius: 10px; padding: 14px 16px; }
-        .info-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #00D17A; margin-bottom: 6px; font-weight: 600; }
-        .info-box-text { font-size: 14px; color: #f4f4f5; }
         .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .contact-textarea::placeholder { color: #3f3f46; }
-        .input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; background: rgba(239, 68, 68, 0.05) !important; }
-        .err-msg { color: #fca5a5; font-size: 10px; margin-top: 4px; display: none; font-family: 'Inter', sans-serif; }
         .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
         .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; outline: none; user-select: none; }
-        .formula-card summary:hover { color: #00F590; }
-        .formula-text { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a1a1aa; white-space: pre-wrap; line-height: 1.6; background: #08090A; padding: 12px; border-radius: 6px; border: 1px dashed #27272a; }
-        .formula-text span { color: #00D17A; font-weight: bold; }
         .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
         .hist-item:hover { background: #18181b; transform: translateX(4px); }
         .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
         .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
-        .receipt-container { width: 100%; max-width: 320px; margin: 0 auto; background: #fff; color: #000; font-family: 'Courier New', Courier, monospace; font-size: 12px; padding: 15px; line-height: 1.4; }
-        .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
-        .receipt-title { font-size: 18px; font-weight: bold; color: #00995A; text-transform: uppercase; letter-spacing: 1px; }
-        .receipt-sub { font-size: 10px; color: #555; }
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .receipt-label { font-weight: bold; color: #333; }
-        .receipt-val { color: #000; }
-        .receipt-divider { border-top: 1px dashed #000; margin: 10px 0; }
-        .receipt-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
-        .receipt-table th, .receipt-table td { border-bottom: 1px solid #eee; padding: 4px 2px; text-align: left; }
-        .receipt-table th { border-bottom: 2px solid #000; font-weight: bold; }
-        .receipt-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; background: #f0f0f0; padding: 8px; margin-top: 5px; border-radius: 4px; }
-        .receipt-footer { text-align: center; font-size: 10px; margin-top: 15px; color: #555; }
-        @media print {
-            body * { visibility: hidden; }
-            #receipt-print-area, #receipt-print-area * { visibility: visible; }
-            #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; }
-            .no-print { display: none !important; }
-        }
+        @media print { body * { visibility: hidden; } #receipt-print-area, #receipt-print-area * { visibility: visible; } #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; } .no-print { display: none !important; } }
         .tier-breakdown { white-space: pre-line; }
-
-        /* Email Receipt Modal Styles */
-        .email-modal-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; padding: 20px; }
-        .email-modal-overlay.open { display: flex; }
-        .email-modal-card { background: rgba(17,17,19,0.98); border: 1px solid rgba(30,30,32,0.8); border-radius: 20px; padding: 0; width: 100%; max-width: 700px; max-height: 92vh; overflow: hidden; box-shadow: 0 30px 70px -15px rgba(0,0,0,0.8); animation: modalSlideIn 0.35s ease-out; display: flex; flex-direction: column; }
-        .email-modal-header { padding: 20px 28px; border-bottom: 1px solid #1f1f22; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-        .email-modal-body { padding: 24px 28px; overflow-y: auto; flex-grow: 1; }
-        .email-modal-body::-webkit-scrollbar { width: 4px; }
-        .email-modal-body::-webkit-scrollbar-track { background: transparent; }
-        .email-modal-body::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .email-modal-footer { padding: 16px 28px; border-top: 1px solid #1f1f22; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
-        .email-preview-frame { background: #fff; border-radius: 10px; padding: 0; overflow: hidden; border: 1px solid #27272a; }
         .email-status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .email-status-idle { background: rgba(113,113,122,0.15); color: #a1a1aa; border: 1px solid rgba(113,113,122,0.2); }
         .email-status-sending { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
@@ -156,18 +78,6 @@
         .email-status-error { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
         @keyframes sendPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
         .sending-pulse { animation: sendPulse 1.2s ease-in-out infinite; }
-
-        /* Email Config Panel */
-        .email-config-panel { background: rgba(0,0,0,0.3); border: 1px solid #1f1f22; border-radius: 12px; padding: 16px; margin-top: 16px; }
-        .email-config-panel summary { cursor: pointer; color: #71717a; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; outline: none; user-select: none; transition: color 0.2s; }
-        .email-config-panel summary:hover { color: #a1a1aa; }
-        .email-config-field { width: 100%; background: rgba(8,9,10,0.8); border: 1px solid rgba(30,30,32,0.8); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #f4f4f5; font-family: 'JetBrains Mono', monospace; outline: none; transition: all 0.2s; }
-        .email-config-field:focus { border-color: rgba(168,85,247,0.5); box-shadow: 0 0 0 3px rgba(168,85,247,0.1); }
-        .email-config-field::placeholder { color: #3f3f46; }
-
-        /* Sent history log */
-        .email-log-item { background: rgba(0,0,0,0.2); border: 1px solid #1f1f22; border-radius: 8px; padding: 12px; margin-bottom: 8px; transition: border-color 0.2s; }
-        .email-log-item:hover { border-color: rgba(168,85,247,0.3); }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
@@ -179,7 +89,7 @@
                 <circle cx="25" cy="25" r="20" fill="none" stroke="#1f1f22" stroke-width="3.5"/>
                 <circle cx="25" cy="25" r="20" fill="none" stroke="url(#loaderGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="120 210" style="animation:arcDash 1.6s ease-in-out infinite"/>
             </svg>
-            <div class="absolute inset-0 flex items-center justify-center"><div class="logo-fallback w-12 h-12 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-sm">M</div></div>
+            <div class="absolute inset-0 flex items-center justify-center"><div class="w-12 h-12 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-sm font-bold text-emerald-400 flex items-center justify-center">M</div></div>
         </div>
         <p class="text-zinc-500 text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Maya Link...</p>
     </div>
@@ -191,67 +101,68 @@
 
     <header class="max-w-6xl mx-auto mb-10 border-b border-zinc-800 pb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
         <div class="flex items-center gap-4">
-            <div class="header-logo flex items-center justify-center overflow-hidden bg-zinc-800/50"><div class="logo-fallback w-10 h-10 rounded-[10px] bg-emerald-600/20 border border-emerald-500/30 text-sm">M</div></div>
+            <div class="w-10 h-10 flex items-center justify-center overflow-hidden bg-zinc-800/50 rounded-[10px]"><div class="w-10 h-10 rounded-[10px] bg-emerald-600/20 border border-emerald-500/30 text-sm font-bold text-emerald-400 flex items-center justify-center">M</div></div>
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online &bull; v2.4.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online &bull; v2.5.0</p>
                     <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
         </div>
         <div class="flex items-center gap-3">
+            <button onclick="openSettingsModal()" class="px-3 py-2 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all" title="System Settings">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            </button>
             <button onclick="toggleHistory()" class="px-3 py-2 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                History
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> History
             </button>
             <div id="user-info" class="hidden text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
                 <span id="user-name" class="text-xs font-medium text-zinc-300"></span><span class="text-zinc-600 mx-2">&bull;</span><span id="live-date-time" class="text-xs font-mono text-zinc-400">Syncing...</span>
             </div>
             <button onclick="handleLogout()" id="logout-btn" class="hidden px-3 py-2 bg-zinc-900/50 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-500 hover:text-red-400 text-[10px] uppercase font-bold rounded-full transition-all" title="Logout">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
             </button>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
-
-        <!-- ===== MODULE A: MILES CALCULATOR ===== -->
+        <!-- MODULE A: MILES CALCULATOR -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
             <div class="space-y-5 flex-grow">
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Customer Spend (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">&peso;</span><input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="spend-input-err"></div></div>
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Multiplier Rate</label><select id="multiplier-select" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="1">1x (Base)</option><option value="2">2x (Preferred)</option><option value="5">5x (Elite)</option><option value="10">10x (Max)</option><option value="custom">Custom Multiplier</option></select><input type="number" id="custom-multiplier" placeholder="Enter Multiplier (e.g. 3)" class="hidden mt-2 w-full bg-zinc-950/50 border border-emerald-500/50 rounded-lg py-2 px-3 text-emerald-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 animate-fade-in"></div>
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Spend (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700"></div></div>
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Multiplier Rate</label><select id="multiplier-select" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="1">1x (Base)</option><option value="2">2x (Preferred)</option><option value="5">5x (Elite)</option><option value="10">10x (Max)</option><option value="custom">Custom Multiplier</option></select><input type="number" id="custom-multiplier" placeholder="Enter Multiplier (e.g. 3)" class="hidden mt-2 w-full bg-zinc-950/50 border border-emerald-500/50 rounded-lg py-2 px-3 text-emerald-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 animate-fade-in"></div>
                 <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/50 mt-2"><label class="block text-[10px] uppercase tracking-wider text-zinc-600 mb-1">Miles Generated</label><div class="relative w-full"><input type="text" id="miles-input" readonly class="w-full bg-transparent border-none text-3xl font-mono font-bold text-emerald-400 focus:outline-none cursor-default data-font" value="0.00"><button onclick="copyToClipboard('miles-input')" class="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors p-1" title="Copy"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div></div>
             </div>
-            <div class="grid grid-cols-2 gap-4 pt-5 border-t border-zinc-800 mt-4"><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Est. Cash Value</p><p class="text-sm font-bold text-zinc-300 data-font">&peso;<span id="cash-value">0.00</span></p></div><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Processed Spend</p><p class="text-sm font-bold text-zinc-300 data-font">&peso;<span id="est-spend">0.00</span></p></div></div>
+            <div class="grid grid-cols-2 gap-4 pt-5 border-t border-zinc-800 mt-4"><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Est. Cash Value</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="cash-value">0.00</span></p></div><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Processed Spend</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="est-spend">0.00</span></p></div></div>
             <button onclick="saveMilesHistory()" class="mt-4 w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
         </div>
 
-        <!-- ===== MODULE B: FINANCE CHARGE ===== -->
+        <!-- MODULE B: FINANCE CHARGE -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-red-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span></div>
             <div class="space-y-5 flex-grow">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">&peso;</span><input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="loan-credit-err"></div></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">&peso;</span><input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="partial-payment-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label><input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="loan-term-err"></div></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label><input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="days-held-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label><input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label><input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"></div>
                 </div>
-                <div class="space-y-2"><div class="flex justify-between text-xs text-zinc-400"><span>Remaining Principal</span><span class="font-mono text-zinc-200" id="fb-principal">&peso;0.00</span></div><div class="flex justify-between text-xs text-zinc-400"><span>Interest Accrued (3%)</span><span class="font-mono text-zinc-200" id="fb-interest">&peso;0.00</span></div></div>
+                <div class="space-y-2"><div class="flex justify-between text-xs text-zinc-400"><span>Remaining Principal</span><span class="font-mono text-zinc-200" id="fb-principal">₱0.00</span></div><div class="flex justify-between text-xs text-zinc-400"><span>Interest Accrued (3%)</span><span class="font-mono text-zinc-200" id="fb-interest">₱0.00</span></div></div>
             </div>
-            <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-red-500/80 mb-1">Total Payable Amount</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('finance-charge-result')"><p class="text-3xl font-mono font-bold text-white group-hover:text-red-400 transition-colors data-font">&peso;<span id="finance-charge-result">0.00</span></p></div></div>
+            <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-red-500/80 mb-1">Total Payable Amount</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('finance-charge-result')"><p class="text-3xl font-mono font-bold text-white group-hover:text-red-400 transition-colors data-font">₱<span id="finance-charge-result">0.00</span></p></div></div>
             <button onclick="saveFinanceHistory()" class="mt-4 w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
         </div>
 
-        <!-- ===== MODULE C: LANDERS REWARDS ===== -->
+        <!-- MODULE C: LANDERS REWARDS -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">&peso;</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="landers-spend-err"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">&peso;</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="total-card-spend-err"></div></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label><select id="landers-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors"><option value="landers">Landers Superstore (Progressive)</option><option value="dining">Dining (2%)</option><option value="other">Other Retail (1%)</option><option value="excluded">Excluded Categories (0%)</option><option value="custom">Custom Percentage...</option></select><div id="landers-custom-group" class="hidden mt-3 animate-fade-in"><label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label><div class="relative"><input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all"><span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span></div></div></div>
                 <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em] tier-breakdown">Waiting for input...</p></div>
             </div>
@@ -259,34 +170,14 @@
                 <p class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Points Earned</p>
                 <div class="flex items-end justify-between mb-4"><p class="text-4xl md:text-5xl font-mono font-bold text-blue-400 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')"><span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span></p><button onclick="copyToClipboard('landers-result')" class="mb-2 p-2 hover:bg-blue-500/20 rounded-lg transition-colors text-blue-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div>
                 <div class="w-full h-px bg-zinc-800 my-4"></div>
-                <div class="flex justify-between items-center"><div><p class="text-[10px] uppercase text-zinc-500">Vouchers Earned</p><p class="text-[9px] text-zinc-600 mt-1">500 pts = 1 Voucher (&peso;500)</p></div><div class="text-right"><p class="text-2xl font-mono font-bold text-white" id="voucher-result">0</p><span class="text-[10px] text-zinc-500 uppercase">Vouchers</span></div></div>
+                <div class="flex justify-between items-center"><div><p class="text-[10px] uppercase text-zinc-500">Vouchers Earned</p><p class="text-[9px] text-zinc-600 mt-1">500 pts = 1 Voucher (₱500)</p></div><div class="text-right"><p class="text-2xl font-mono font-bold text-white" id="voucher-result">0</p><span class="text-[10px] text-zinc-500 uppercase">Vouchers</span></div></div>
             </div>
         </div>
 
-        <!-- ===== MODULE D: ACCOUNT MANAGEMENT ===== -->
-        <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
-            <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
-            <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
-                <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
-                    </div>
-                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
-                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
-                </div>
-            </div>
-            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
-        </div>
-
-        <!-- ===== MODULE E: MINI PAYMENTS (EMI) ===== -->
+        <!-- MODULE E: MINI PAYMENTS (EMI) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
 
-            <!-- Email alert area for Module E -->
             <div id="emi-email-alert" class="module-d-alert module-d-alert-error no-print" style="margin-bottom:16px"><span id="emi-email-alert-text"></span></div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 no-print">
@@ -295,25 +186,22 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
-                <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">&peso;</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="emi-principal-err"></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-rate-err"></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-months-err"></div></div>
+                <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
             </div>
 
             <div class="flex flex-wrap gap-2 mb-4 no-print">
                 <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    Generate Receipt
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> Generate Receipt
                 </button>
-                <!-- NEW: Send Receipt via Email button -->
                 <button onclick="openEmailReceiptModal()" id="btn-send-email-receipt" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    Send Receipt via Email
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> Send Receipt via Email
                 </button>
                 <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save History
                 </button>
                 <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export CSV
@@ -328,114 +216,15 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div>
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p></div>
-                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-amber-400 data-font">&peso;<span id="emi-fixed-amount">0.00</span></p></div>
-                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">&peso;<span id="emi-total-interest">0.00</span></p></div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-amber-400 data-font">₱<span id="emi-fixed-amount">0.00</span></p></div>
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p></div>
             </div>
             <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
-
-            <!-- Receipt Print Area (hidden by default) -->
             <div id="receipt-print-area" style="display:none;"></div>
-        </div>
-
-        <!-- ===== MODULE F: EMAIL RECEIPTS ===== -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-purple-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Email Receipts</h2></div>
-                <span class="px-2 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] uppercase font-bold rounded">Module F</span>
-            </div>
-            <p class="text-xs text-zinc-500 mb-4 leading-relaxed">Configure your EmailJS service to send computation receipts directly to customers. All email activity is logged below.</p>
-
-            <div id="module-f-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="module-f-alert-text"></span></div>
-
-            <!-- EmailJS Configuration -->
-            <details class="email-config-panel" id="email-config-details">
-                <summary>EmailJS Configuration</summary>
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Service ID</label>
-                        <input type="text" id="emailjs-service-id" placeholder="service_xxxxxxx" class="email-config-field" autocomplete="off">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Template ID</label>
-                        <input type="text" id="emailjs-template-id" placeholder="template_xxxxxxx" class="email-config-field" autocomplete="off">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Public Key</label>
-                        <input type="text" id="emailjs-public-key" placeholder="xxxxxxxxxxxxxxx" class="email-config-field" autocomplete="off">
-                    </div>
-                </div>
-                <div class="mt-4 p-3 bg-zinc-950/50 rounded-lg border border-zinc-800">
-                    <p class="text-[10px] uppercase tracking-wider text-purple-400 font-semibold mb-2">Template Variables Reference</p>
-                    <div class="text-[11px] font-mono text-zinc-400 leading-relaxed space-y-1">
-                        <p><span class="text-purple-300">{{to_email}}</span> &mdash; Customer email address</p>
-                        <p><span class="text-purple-300">{{to_name}}</span> &mdash; Customer full name</p>
-                        <p><span class="text-purple-300">{{from_name}}</span> &mdash; Agent / sender name</p>
-                        <p><span class="text-purple-300">{{subject}}</span> &mdash; Email subject line</p>
-                        <p><span class="text-purple-300">{{receipt_html}}</span> &mdash; Full HTML receipt content</p>
-                        <p><span class="text-purple-300">{{receipt_summary}}</span> &mdash; Plain-text computation summary</p>
-                        <p><span class="text-purple-300">{{total_amount}}</span> &mdash; Total payable amount</p>
-                        <p><span class="text-purple-300">{{principal}}</span> &mdash; Principal loan amount</p>
-                        <p><span class="text-purple-300">{{interest_total}}</span> &mdash; Total interest</p>
-                        <p><span class="text-purple-300">{{installments}}</span> &mdash; Number of installments</p>
-                    </div>
-                </div>
-                <div class="mt-4 flex gap-3">
-                    <button onclick="saveEmailConfig()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors">Save Configuration</button>
-                    <button onclick="testEmailConfig()" id="btn-test-email" class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        Test Connection
-                    </button>
-                </div>
-            </details>
-
-            <!-- Quick Send: Send any module's computation via email -->
-            <div class="mt-6 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5">
-                <p class="text-[10px] uppercase tracking-wider text-purple-400 font-semibold mb-3">Quick Send Receipt</p>
-                <p class="text-xs text-zinc-500 mb-4">Select a module computation and send it as a formatted receipt to any email address.</p>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Module Source</label>
-                        <select id="email-module-source" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors">
-                            <option value="emi">Mini Payments (EMI)</option>
-                            <option value="miles">Maya Miles</option>
-                            <option value="finance">Finance Charge</option>
-                            <option value="landers">Landers Rewards</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Name</label>
-                        <input type="text" id="quick-email-name" placeholder="Customer name" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Email</label>
-                        <input type="email" id="quick-email-addr" placeholder="customer@email.com" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="quickSendReceipt()" id="btn-quick-send" class="w-full px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                            Send Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Email Sent Log -->
-            <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                    <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Email Sent Log</p>
-                    <div class="flex items-center gap-3">
-                        <span id="email-log-count" class="text-[10px] font-mono text-zinc-600">0 sent</span>
-                        <button onclick="clearEmailLog()" class="text-[9px] uppercase text-zinc-600 hover:text-red-400 transition-colors font-bold tracking-wider">Clear</button>
-                    </div>
-                </div>
-                <div id="email-log-list" class="max-h-[300px] overflow-y-auto pr-1" style="scrollbar-width:thin; scrollbar-color: #1f1f22 transparent;">
-                    <div class="text-center text-zinc-600 text-xs py-8 font-sans">No emails sent yet. Configure EmailJS and send your first receipt.</div>
-                </div>
-            </div>
         </div>
     </main>
 
-    <!-- ===== CONTACT ADMIN SECTION ===== -->
+    <!-- CONTACT ADMIN SECTION -->
     <section class="max-w-6xl mx-auto mt-8 opacity-0 animate-fade-in no-print" style="animation-delay: 0.35s;">
         <div class="glass-panel rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between mb-5">
@@ -447,27 +236,63 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Role Change Request">Role Change Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Website Problem">Website Problem</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
             </div>
             <div class="mb-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Message</label><textarea id="contact-message" class="contact-textarea" placeholder="Describe your concern in detail..." rows="4"></textarea></div>
             <div class="flex items-center justify-between">
                 <p class="text-[10px] text-zinc-600">Messages are sent directly to the admin via email.</p>
                 <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
-                    Send Message
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message
                 </button>
             </div>
         </div>
     </section>
 
     <footer class="max-w-6xl mx-auto mt-12 mb-6 text-center opacity-0 animate-fade-in no-print" style="animation-delay:0.45s">
-        <p class="text-[10px] text-zinc-700 uppercase tracking-widest">Maya Internal Utility Terminal &bull; Secured &bull; v2.4.0</p>
+        <p class="text-[10px] text-zinc-700 uppercase tracking-widest">Maya Internal Utility Terminal &bull; Secured &bull; v2.5.0</p>
     </footer>
 
-    <!-- ===== EMAIL RECEIPT MODAL ===== -->
-    <div id="email-receipt-modal" class="email-modal-overlay">
-        <div class="email-modal-card">
-            <div class="email-modal-header">
+    <!-- SETTINGS MODAL (SECRETS) -->
+    <div id="settings-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold text-white">System Settings & Secrets</h3>
+                <button onclick="closeSettingsModal()" class="text-zinc-500 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+            </div>
+            <p class="text-xs text-zinc-500 mb-6 leading-relaxed">Configure your EmailJS credentials and Admin email. These are stored securely in your browser's local storage and are never exposed in the UI.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Admin Email (For Contact Form)</label>
+                    <input type="email" id="setting-admin-email" placeholder="admin@maya.ph" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
+                </div>
+                <div class="border-t border-zinc-800 pt-4">
+                    <p class="text-[10px] uppercase tracking-wider text-purple-400 font-semibold mb-3">EmailJS Configuration</p>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Service ID</label>
+                    <input type="text" id="setting-service-id" placeholder="service_xxxxxxx" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Template ID</label>
+                    <input type="text" id="setting-template-id" placeholder="template_xxxxxxx" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Public Key</label>
+                    <input type="text" id="setting-public-key" placeholder="xxxxxxxxxxxxxxx" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="saveSettings()" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Settings</button>
+                <button onclick="closeSettingsModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMAIL RECEIPT MODAL -->
+    <div id="email-receipt-modal" class="modal-backdrop" style="z-index: 250;">
+        <div class="modal-card" style="max-width: 700px;">
+            <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
@@ -477,87 +302,37 @@
                         <p class="text-zinc-500 text-[10px] mt-0.5">Review and send computation receipt to customer</p>
                     </div>
                 </div>
-                <button onclick="closeEmailReceiptModal()" class="text-zinc-500 hover:text-white transition-colors p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                <button onclick="closeEmailReceiptModal()" class="text-zinc-500 hover:text-white transition-colors p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Name</label><input type="text" id="modal-email-name" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Customer name"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Email</label><input type="email" id="modal-email-addr" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="customer@email.com"></div>
+            </div>
+            <div class="mb-4 flex items-center gap-3">
+                <span id="email-send-status" class="email-status-badge email-status-idle"><span class="w-1.5 h-1.5 rounded-full bg-current"></span> Ready</span>
+                <span id="email-send-time" class="text-[10px] text-zinc-600 font-mono"></span>
+            </div>
+            <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium mb-2">Receipt Preview</p>
+            <div style="background: #fff; border-radius: 10px; padding: 0; overflow: hidden; border: 1px solid #27272a; max-height: 400px; overflow-y: auto;" id="modal-receipt-preview"></div>
+            <div class="mt-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Additional Note (optional)</label><textarea id="modal-email-note" class="contact-textarea" rows="2" placeholder="Add a personal message to the customer..." style="min-height:60px"></textarea></div>
+            <div class="flex items-center justify-end gap-3 mt-6">
+                <button onclick="closeEmailReceiptModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
+                <button onclick="sendEmailReceipt()" id="btn-modal-send" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg> Send Email
                 </button>
             </div>
-            <div class="email-modal-body">
-                <!-- Recipient Info -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Name</label>
-                        <input type="text" id="modal-email-name" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Customer name">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Email</label>
-                        <input type="email" id="modal-email-addr" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="customer@email.com">
-                    </div>
-                </div>
-
-                <!-- Status Badge -->
-                <div class="mb-4 flex items-center gap-3">
-                    <span id="email-send-status" class="email-status-badge email-status-idle">
-                        <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                        Ready
-                    </span>
-                    <span id="email-send-time" class="text-[10px] text-zinc-600 font-mono"></span>
-                </div>
-
-                <!-- Receipt Preview -->
-                <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium mb-2">Receipt Preview</p>
-                <div class="email-preview-frame mb-4" id="modal-receipt-preview">
-                    <!-- Receipt HTML will be injected here -->
-                </div>
-
-                <!-- Additional note -->
-                <div class="mt-4">
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Additional Note (optional)</label>
-                    <textarea id="modal-email-note" class="contact-textarea" rows="2" placeholder="Add a personal message to the customer..." style="min-height:60px"></textarea>
-                </div>
-            </div>
-            <div class="email-modal-footer">
-                <button onclick="closeEmailReceiptModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
-                <div class="flex items-center gap-3">
-                    <button onclick="downloadReceiptPDF()" class="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                        Download PDF
-                    </button>
-                    <button onclick="sendEmailReceipt()" id="btn-modal-send" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                        Send Email
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- ===== HISTORY SIDEBAR ===== -->
-    <div id="history-sidebar" class="fixed inset-y-0 right-0 z-150 w-full max-w-sm bg-zinc-950/95 backdrop-blur-xl border-l border-zinc-800 transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto" style="z-index:150">
+    <!-- HISTORY SIDEBAR -->
+    <div id="history-sidebar" class="fixed inset-y-0 right-0 w-full max-w-sm bg-zinc-950/95 backdrop-blur-xl border-l border-zinc-800 transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto" style="z-index:150">
         <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Computation History</h3>
-                <button onclick="toggleHistory()" class="text-zinc-500 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            <div id="history-list" class="space-y-0">
-                <p class="text-center text-zinc-600 text-xs py-10">No history yet.</p>
-            </div>
-            <div class="mt-6 pt-4 border-t border-zinc-800">
-                <button onclick="clearHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-500 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear All History</button>
-            </div>
+            <div class="flex items-center justify-between mb-6"><h3 class="text-sm font-bold text-white uppercase tracking-wider">Computation History</h3><button onclick="toggleHistory()" class="text-zinc-500 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+            <div id="history-list" class="space-y-0"><p class="text-center text-zinc-600 text-xs py-10">No history yet.</p></div>
+            <div class="mt-6 pt-4 border-t border-zinc-800"><button onclick="clearHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-500 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear All History</button></div>
         </div>
     </div>
-    <div id="history-overlay" class="fixed inset-0 bg-black/50 z-140 hidden" style="z-index:140" onclick="toggleHistory()"></div>
-
-    <!-- ===== AI CHAT FAB ===== -->
-    <button id="ai-fab" onclick="toggleAI()" class="fixed bottom-6 right-6 w-14 h-14 bg-emerald-600 hover:bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/25 flex items-center justify-center transition-all no-print" style="z-index:90" title="Maya AI Assistant">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-    </button>
-
-    <div id="ai-window" class="fixed bottom-24 right-6 w-[380px] max-h-[520px] bg-zinc-900/95 backdrop-blur-xl border border-zinc-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden ai-window-slide-up no-print" style="z-index:90; display:none">
-        <div class="p-4 border-b border-zinc-800 flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-xs font-bold text-emerald-400">M</div><div><p class="text-sm font-bold text-white">Maya AI</p><p class="text-[9px] text-emerald-400 uppercase tracking-wider">Online</p></div></div>
-        <div id="maya-chat" class="flex-1 p-4 overflow-y-auto space-y-3" style="max-height:360px"></div>
-        <div class="p-3 border-t border-zinc-800 flex gap-2"><input type="text" id="ai-input" placeholder="Ask Maya anything..." class="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all" onkeydown="if(event.key==='Enter')sendAI()"><button onclick="sendAI()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg></button></div>
-    </div>
+    <div id="history-overlay" class="fixed inset-0 bg-black/50 hidden" style="z-index:140" onclick="toggleHistory()"></div>
 
 <script>
 // ========================================
@@ -566,32 +341,21 @@
 const fmt = (n, d=2) => parseFloat(n||0).toLocaleString('en-PH',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtN = (n) => parseFloat(String(n||'0').replace(/,/g,'')) || 0;
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2,5);
-
-// Current user session
 let currentUser = JSON.parse(localStorage.getItem('mayaCurrentUser') || 'null');
 
 // ========================================
-// LOADER
+// LOADER & INIT
 // ========================================
 window.addEventListener('load', () => {
-    setTimeout(() => {
-        document.getElementById('loader').classList.add('hidden-loader');
-    }, 1800);
+    setTimeout(() => { document.getElementById('loader').classList.add('hidden-loader'); }, 1800);
     initApp();
 });
 
-// ========================================
-// APP INITIALIZATION
-// ========================================
 function initApp() {
     updateLiveTime();
     setInterval(updateLiveTime, 1000);
     initEMI();
-    loadEmailConfig();
-    loadEmailLog();
-    if (currentUser) {
-        onLogin(currentUser);
-    }
+    if (currentUser) onLogin(currentUser);
 }
 
 function updateLiveTime() {
@@ -600,7 +364,7 @@ function updateLiveTime() {
 }
 
 // ========================================
-// LOGIN / LOGOUT
+// AUTH & SESSION
 // ========================================
 function onLogin(user) {
     currentUser = user;
@@ -611,9 +375,6 @@ function onLogin(user) {
     const badge = document.getElementById('role-badge');
     badge.classList.remove('hidden');
     badge.textContent = user.role;
-    if (['ADMIN','OPERATIONS MANAGER'].includes(user.role)) {
-        document.getElementById('module-d').style.display = 'flex';
-    }
     document.getElementById('contact-name').value = user.fullName || '';
     document.getElementById('contact-eid').value = user.employeeId || '';
 }
@@ -625,15 +386,12 @@ function handleLogout() {
 }
 
 // ========================================
-// COPY TO CLIPBOARD
+// UI HELPERS
 // ========================================
 function copyToClipboard(elId) {
     const el = document.getElementById(elId);
     if (!el) return;
-    const text = el.value || el.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-        showToast('Copied to clipboard');
-    });
+    navigator.clipboard.writeText(el.value || el.textContent).then(() => showToast('Copied to clipboard'));
 }
 
 function showToast(msg, type='success') {
@@ -642,6 +400,14 @@ function showToast(msg, type='success') {
     toast.textContent = msg;
     document.body.appendChild(toast);
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; setTimeout(() => toast.remove(), 400); }, 2500);
+}
+
+function show_alert(elId, textId, msg, type) {
+    const alertEl = document.getElementById(elId);
+    const textEl = document.getElementById(textId);
+    textEl.textContent = msg;
+    alertEl.className = 'module-d-alert module-d-alert-' + (type === 'success' ? 'success' : 'error') + ' show';
+    setTimeout(() => { alertEl.classList.remove('show'); }, 6000);
 }
 
 // ========================================
@@ -668,8 +434,7 @@ function saveMilesHistory() {
     const spend = fmtN(document.getElementById('spend-input').value);
     const miles = parseFloat(document.getElementById('miles-input').value) || 0;
     if (!spend) return showToast('Enter a spend amount first', 'error');
-    const entry = { id: uid(), type: 'Miles', date: new Date().toISOString(), spend, miles, cashValue: miles * 0.20 };
-    pushHistory(entry);
+    pushHistory({ id: uid(), type: 'Miles', date: new Date().toISOString(), spend, miles });
     showToast('Miles computation saved');
 }
 
@@ -695,9 +460,7 @@ function calcFinance() {
 function saveFinanceHistory() {
     const credit = fmtN(document.getElementById('loan-credit').value);
     if (!credit) return showToast('Enter loan credit first', 'error');
-    const result = parseFloat(document.getElementById('finance-charge-result').value) || 0;
-    const entry = { id: uid(), type: 'Finance', date: new Date().toISOString(), credit, result: fmtN(document.getElementById('finance-charge-result').textContent) };
-    pushHistory(entry);
+    pushHistory({ id: uid(), type: 'Finance', date: new Date().toISOString(), credit, result: fmtN(document.getElementById('finance-charge-result').textContent) });
     showToast('Finance charge saved');
 }
 
@@ -716,45 +479,17 @@ function calcLanders() {
     const spend = fmtN(document.getElementById('landers-spend').value);
     const prevAccum = fmtN(document.getElementById('total-card-spend').value);
     const cat = document.getElementById('landers-category').value;
-    let breakdown = '';
-    let totalPoints = 0;
+    let breakdown = '', totalPoints = 0;
 
     if (cat === 'landers') {
         const totalAccum = prevAccum + spend;
-        let rate1=0.03, rate2=0.04, rate3=0.05;
-        const t1=30000, t2=60000, t3=100000;
-        if (totalAccum <= t1) {
-            totalPoints = spend * rate1;
-            breakdown = `Total Accumulated: ₱${fmt(totalAccum)} (≤ ₱${fmt(t1)})\nRate: ${rate1*100}% → ${fmt(spend)} × ${rate1*100}% = ${totalPoints.toFixed(2)} pts`;
-        } else if (totalAccum <= t2) {
-            const room1 = Math.max(0, t1 - prevAccum);
-            const room2 = spend - room1;
-            const p1 = room1 * rate1;
-            const p2 = room2 * rate2;
-            totalPoints = p1 + p2;
-            breakdown = `Total Accumulated: ₱${fmt(totalAccum)} (₱${fmt(t1)}–₱${fmt(t2)})\nTier 1: ₱${fmt(room1)} × ${rate1*100}% = ${p1.toFixed(2)} pts\nTier 2: ₱${fmt(room2)} × ${rate2*100}% = ${p2.toFixed(2)} pts\nTotal: ${totalPoints.toFixed(2)} pts`;
-        } else {
-            const room1 = Math.max(0, t1 - prevAccum);
-            const room2 = Math.max(0, t2 - (prevAccum + room1));
-            const room3 = spend - room1 - room2;
-            const p1 = room1 * rate1; const p2 = room2 * rate2; const p3 = room3 * rate3;
-            totalPoints = p1 + p2 + p3;
-            breakdown = `Total Accumulated: ₱${fmt(totalAccum)} (> ₱${fmt(t3)})\nTier 1: ₱${fmt(room1)} × ${rate1*100}% = ${p1.toFixed(2)}\nTier 2: ₱${fmt(room2)} × ${rate2*100}% = ${p2.toFixed(2)}\nTier 3: ₱${fmt(room3)} × ${rate3*100}% = ${p3.toFixed(2)}\nTotal: ${totalPoints.toFixed(2)} pts`;
-        }
-    } else if (cat === 'dining') {
-        totalPoints = spend * 0.02;
-        breakdown = `Dining Rate: 2%\n₱${fmt(spend)} × 2% = ${totalPoints.toFixed(2)} pts`;
-    } else if (cat === 'other') {
-        totalPoints = spend * 0.01;
-        breakdown = `Other Retail Rate: 1%\n₱${fmt(spend)} × 1% = ${totalPoints.toFixed(2)} pts`;
-    } else if (cat === 'excluded') {
-        totalPoints = 0;
-        breakdown = `Excluded Category: 0%\nNo points earned.`;
-    } else if (cat === 'custom') {
-        const rate = fmtN(document.getElementById('landers-custom-rate').value) / 100;
-        totalPoints = spend * rate;
-        breakdown = `Custom Rate: ${(rate*100).toFixed(1)}%\n₱${fmt(spend)} × ${(rate*100).toFixed(1)}% = ${totalPoints.toFixed(2)} pts`;
-    }
+        if (totalAccum <= 30000) { totalPoints = spend * 0.03; breakdown = `Rate: 3% → ₱${fmt(spend)} × 3% = ${totalPoints.toFixed(2)} pts`; }
+        else if (totalAccum <= 60000) { const r1 = Math.max(0, 30000 - prevAccum), r2 = spend - r1; totalPoints = (r1*0.03)+(r2*0.04); breakdown = `Tier 1: ₱${fmt(r1)} × 3%\nTier 2: ₱${fmt(r2)} × 4%\nTotal: ${totalPoints.toFixed(2)} pts`; }
+        else { const r1 = Math.max(0, 30000 - prevAccum), r2 = Math.max(0, 30000 - (prevAccum+r1)), r3 = spend-r1-r2; totalPoints = (r1*0.03)+(r2*0.04)+(r3*0.05); breakdown = `Tier 1: ₱${fmt(r1)} × 3%\nTier 2: ₱${fmt(r2)} × 4%\nTier 3: ₱${fmt(r3)} × 5%\nTotal: ${totalPoints.toFixed(2)} pts`; }
+    } else if (cat === 'dining') { totalPoints = spend * 0.02; breakdown = `Dining Rate: 2%\n₱${fmt(spend)} × 2% = ${totalPoints.toFixed(2)} pts`; }
+    else if (cat === 'other') { totalPoints = spend * 0.01; breakdown = `Other Retail Rate: 1%\n₱${fmt(spend)} × 1% = ${totalPoints.toFixed(2)} pts`; }
+    else if (cat === 'excluded') { totalPoints = 0; breakdown = `Excluded Category: 0%`; }
+    else if (cat === 'custom') { const rate = fmtN(document.getElementById('landers-custom-rate').value)/100; totalPoints = spend*rate; breakdown = `Custom: ${(rate*100).toFixed(1)}%\n₱${fmt(spend)} × ${(rate*100).toFixed(1)}% = ${totalPoints.toFixed(2)} pts`; }
 
     document.getElementById('landers-result').textContent = totalPoints.toFixed(2);
     document.getElementById('tier-breakdown').textContent = breakdown || 'Waiting for input...';
@@ -762,22 +497,12 @@ function calcLanders() {
 }
 
 // ========================================
-// MODULE D: ACCOUNT MANAGEMENT (stub)
-// ========================================
-function toggleCreateForm() {
-    const f = document.getElementById('create-form');
-    f.classList.toggle('hidden');
-}
-function createAccount() { showToast('Account creation requires backend integration', 'error'); }
-
-// ========================================
 // MODULE E: EMI CALCULATOR
 // ========================================
 let emiSchedule = [];
 
 function initEMI() {
-    const today = new Date();
-    document.getElementById('emi-start-date').value = today.toISOString().split('T')[0];
+    document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0];
     calcEMI();
 }
 
@@ -789,18 +514,11 @@ function calcEMI() {
     const P = fmtN(document.getElementById('emi-principal').value);
     const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
     const n = parseInt(document.getElementById('emi-months').value) || 0;
-    const daysYear = parseInt(document.getElementById('emi-days-year').value) || 365;
-    const startDate = document.getElementById('emi-start-date').value;
 
     if (!P || !monthlyRate || !n) {
-        document.getElementById('emi-table-body').innerHTML = '<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';
-        document.getElementById('emi-nominal-rate').textContent = '0.00';
-        document.getElementById('emi-daily-rate').textContent = '0.000000';
-        document.getElementById('emi-fixed-amount').textContent = '0.00';
-        document.getElementById('emi-total-interest').textContent = '0.00';
-        document.getElementById('emi-breakdown').textContent = 'Enter loan details to generate formula breakdown...';
-        emiSchedule = [];
-        return;
+        document.getElementById('emi-table-body').innerHTML = '<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details...</td></tr>';
+        ['emi-nominal-rate','emi-daily-rate','emi-fixed-amount','emi-total-interest'].forEach(id => document.getElementById(id).textContent = '0.00');
+        emiSchedule = []; return;
     }
 
     const nominalAnnual = monthlyRate * 12 * 100;
@@ -811,686 +529,192 @@ function calcEMI() {
     document.getElementById('emi-daily-rate').textContent = dailyRate.toFixed(6);
     document.getElementById('emi-fixed-amount').textContent = fmt(emi);
 
-    let balance = P;
-    let totalInterest = 0;
+    let balance = P, totalInterest = 0;
     emiSchedule = [];
-    let dueDate = startDate ? new Date(startDate) : new Date();
-
+    let dueDate = document.getElementById('emi-start-date').value ? new Date(document.getElementById('emi-start-date').value) : new Date();
     let html = '';
+
     for (let i = 1; i <= n; i++) {
         dueDate.setMonth(dueDate.getMonth() + 1);
         const interestAmt = balance * monthlyRate;
         const principalPaid = emi - interestAmt;
-        balance -= principalPaid;
-        if (balance < 0) balance = 0;
+        balance -= principalPaid; if (balance < 0) balance = 0;
         totalInterest += interestAmt;
-
-        emiSchedule.push({
-            num: i,
-            dueDate: new Date(dueDate),
-            days: 30,
-            principalAmt: balance + principalPaid,
-            interestAmt,
-            principalPaid,
-            installmentAmt: emi,
-            remaining: balance
-        });
-
-        html += `<tr class="border-b border-zinc-800/50 hover:bg-zinc-900/30">
-            <td class="px-3 py-2 text-center text-zinc-500">${i}</td>
-            <td class="px-3 py-2">${dueDate.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})}</td>
-            <td class="px-3 py-2 text-right">30</td>
-            <td class="px-3 py-2 text-right">₱${fmt(balance + principalPaid)}</td>
-            <td class="px-3 py-2 text-right text-red-400">₱${fmt(interestAmt)}</td>
-            <td class="px-3 py-2 text-right text-emerald-400">₱${fmt(principalPaid)}</td>
-            <td class="px-3 py-2 text-right text-amber-400 font-bold">₱${fmt(emi)}</td>
-            <td class="px-3 py-2 text-right">₱${fmt(balance)}</td>
-        </tr>`;
+        emiSchedule.push({ num: i, dueDate: new Date(dueDate), days: 30, principalAmt: balance + principalPaid, interestAmt, principalPaid, installmentAmt: emi, remaining: balance });
+        html += `<tr class="border-b border-zinc-800/50 hover:bg-zinc-900/30"><td class="px-3 py-2 text-center text-zinc-500">${i}</td><td class="px-3 py-2">${dueDate.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})}</td><td class="px-3 py-2 text-right">30</td><td class="px-3 py-2 text-right">₱${fmt(balance + principalPaid)}</td><td class="px-3 py-2 text-right text-red-400">₱${fmt(interestAmt)}</td><td class="px-3 py-2 text-right text-emerald-400">₱${fmt(principalPaid)}</td><td class="px-3 py-2 text-right text-amber-400 font-bold">₱${fmt(emi)}</td><td class="px-3 py-2 text-right">₱${fmt(balance)}</td></tr>`;
     }
 
     document.getElementById('emi-total-interest').textContent = fmt(totalInterest);
     document.getElementById('emi-table-body').innerHTML = html;
-
-    // Breakdown
-    document.getElementById('emi-breakdown').innerHTML =
-        `<span>Principal (P):</span> ₱${fmt(P)}\n` +
-        `<span>Monthly EIR (r):</span> ${(monthlyRate*100).toFixed(2)}%\n` +
-        `<span>Installments (n):</span> ${n}\n` +
-        `<span>EMI Formula:</span> P × r × (1+r)^n / ((1+r)^n - 1)\n` +
-        `<span>EMI:</span> ₱${fmt(P)} × ${(monthlyRate).toFixed(6)} × (1+${(monthlyRate).toFixed(6)})^${n} / ((1+${(monthlyRate).toFixed(6)})^${n} - 1)\n` +
-        `<span>Monthly EMI:</span> ₱${fmt(emi)}\n` +
-        `<span>Total Amount Paid:</span> ₱${fmt(emi * n)}\n` +
-        `<span>Total Interest:</span> ₱${fmt(totalInterest)}`;
+    document.getElementById('emi-breakdown').innerHTML = `<span>Principal (P):</span> ₱${fmt(P)}\n<span>Monthly EIR (r):</span> ${(monthlyRate*100).toFixed(2)}%\n<span>Installments (n):</span> ${n}\n<span>EMI:</span> ₱${fmt(emi)}\n<span>Total Interest:</span> ₱${fmt(totalInterest)}`;
 }
 
 function saveEMIHistory() {
     const P = fmtN(document.getElementById('emi-principal').value);
     if (!P) return showToast('Enter principal amount first', 'error');
-    const emi = parseFloat(document.getElementById('emi-fixed-amount').textContent.replace(/,/g,'')) || 0;
-    const entry = { id: uid(), type: 'EMI', date: new Date().toISOString(), principal: P, emi, months: parseInt(document.getElementById('emi-months').value) };
-    pushHistory(entry);
+    pushHistory({ id: uid(), type: 'EMI', date: new Date().toISOString(), principal: P, emi: fmtN(document.getElementById('emi-fixed-amount').textContent), months: parseInt(document.getElementById('emi-months').value) });
     showToast('EMI computation saved');
 }
 
 function exportEMICSV() {
     if (!emiSchedule.length) return showToast('Generate schedule first', 'error');
     let csv = 'No,Due Date,Days,Principal Amount,Interest Amount,Principal Paid,Installment Amount,Remaining Principal\n';
-    emiSchedule.forEach(r => {
-        csv += `${r.num},${r.dueDate.toLocaleDateString('en-PH')},${r.days},${r.principalAmt.toFixed(2)},${r.interestAmt.toFixed(2)},${r.principalPaid.toFixed(2)},${r.installmentAmt.toFixed(2)},${r.remaining.toFixed(2)}\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `EMI_Schedule_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-    showToast('CSV exported');
+    emiSchedule.forEach(r => { csv += `${r.num},${r.dueDate.toLocaleDateString('en-PH')},${r.days},${r.principalAmt.toFixed(2)},${r.interestAmt.toFixed(2)},${r.principalPaid.toFixed(2)},${r.installmentAmt.toFixed(2)},${r.remaining.toFixed(2)}\n`; });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = `EMI_Schedule_${new Date().toISOString().slice(0,10)}.csv`; a.click();
 }
 
 // ========================================
-// RECEIPT GENERATION (existing)
+// RECEIPT GENERATION & EMAIL
 // ========================================
 function generateReceipt() {
     const P = fmtN(document.getElementById('emi-principal').value);
-    const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
-    const n = parseInt(document.getElementById('emi-months').value) || 0;
-    const customerName = document.getElementById('receipt-customer-name').value.trim();
-    const customerEmail = document.getElementById('receipt-customer-email').value.trim();
-
-    if (!P || !monthlyRate || !n) return showToast('Complete EMI fields first', 'error');
-
-    const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
-    const totalAmt = emi * n;
-    const totalInt = totalAmt - P;
-    const receiptNo = 'MAY-' + Date.now().toString(36).toUpperCase();
-    const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
-
-    let tableRows = '';
-    emiSchedule.forEach(r => {
-        tableRows += `<tr><td>${r.num}</td><td>${r.dueDate.toLocaleDateString('en-PH',{month:'short',day:'numeric'})}</td><td style="text-align:right">₱${fmt(r.installmentAmt)}</td><td style="text-align:right">₱${fmt(r.principalPaid)}</td><td style="text-align:right">₱${fmt(r.interestAmt)}</td><td style="text-align:right">₱${fmt(r.remaining)}</td></tr>`;
-    });
-
-    const receiptHTML = `
-        <div class="receipt-container" id="receipt-inner">
-            <div class="receipt-header">
-                <div class="receipt-title">Maya</div>
-                <div class="receipt-sub">Official Computation Receipt</div>
-                <div class="receipt-sub" style="margin-top:4px">Mini Payments (EMI)</div>
-            </div>
-            <div class="receipt-row"><span class="receipt-label">Receipt No:</span><span class="receipt-val">${receiptNo}</span></div>
-            <div class="receipt-row"><span class="receipt-label">Date:</span><span class="receipt-val">${dateStr}</span></div>
-            ${customerName ? `<div class="receipt-row"><span class="receipt-label">Customer:</span><span class="receipt-val">${customerName}</span></div>` : ''}
-            ${customerEmail ? `<div class="receipt-row"><span class="receipt-label">Email:</span><span class="receipt-val">${customerEmail}</span></div>` : ''}
-            <div class="receipt-divider"></div>
-            <div class="receipt-row"><span class="receipt-label">Principal:</span><span class="receipt-val">₱${fmt(P)}</span></div>
-            <div class="receipt-row"><span class="receipt-label">Monthly EIR:</span><span class="receipt-val">${(monthlyRate*100).toFixed(2)}%</span></div>
-            <div class="receipt-row"><span class="receipt-label">Installments:</span><span class="receipt-val">${n}</span></div>
-            <div class="receipt-row"><span class="receipt-label">Monthly EMI:</span><span class="receipt-val">₱${fmt(emi)}</span></div>
-            <div class="receipt-divider"></div>
-            <table class="receipt-table">
-                <tr><th>#</th><th>Due</th><th style="text-align:right">Installment</th><th style="text-align:right">Principal</th><th style="text-align:right">Interest</th><th style="text-align:right">Balance</th></tr>
-                ${tableRows}
-            </table>
-            <div class="receipt-total"><span>TOTAL</span><span>₱${fmt(totalAmt)}</span></div>
-            <div class="receipt-row" style="margin-top:8px"><span class="receipt-label">Total Interest:</span><span class="receipt-val" style="color:#c00">₱${fmt(totalInt)}</span></div>
-            <div class="receipt-footer">
-                This is a system-generated computation receipt.<br>
-                Maya Financial Services &bull; ${receiptNo}
-            </div>
-        </div>
-    `;
-
+    if (!P) return showToast('Complete EMI fields first', 'error');
     const printArea = document.getElementById('receipt-print-area');
-    printArea.innerHTML = receiptHTML;
+    printArea.innerHTML = buildReceiptHTML(document.getElementById('receipt-customer-name').value, document.getElementById('receipt-customer-email').value, '');
     printArea.style.display = 'block';
-    setTimeout(() => {
-        window.print();
-        setTimeout(() => { printArea.style.display = 'none'; }, 500);
-    }, 200);
+    setTimeout(() => { window.print(); setTimeout(() => { printArea.style.display = 'none'; }, 500); }, 200);
 }
 
-// ========================================
-// EMAIL RECEIPT SYSTEM (NEW - Module F)
-// ========================================
-
-// Generate receipt HTML for email (full styled version)
 function buildReceiptHTML(customerName, customerEmail, note) {
-    const P = fmtN(document.getElementById('emi-principal').value);
-    const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
-    const n = parseInt(document.getElementById('emi-months').value) || 0;
-    const daysYear = parseInt(document.getElementById('emi-days-year').value) || 365;
-    const startDate = document.getElementById('emi-start-date').value;
-
-    if (!P || !monthlyRate || !n) return null;
-
-    const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
-    const totalAmt = emi * n;
-    const totalInt = totalAmt - P;
-    const nominalAnnual = monthlyRate * 12 * 100;
-    const receiptNo = 'MAY-' + Date.now().toString(36).toUpperCase();
-    const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
-
-    let tableRows = '';
-    emiSchedule.forEach(r => {
-        tableRows += `<tr>
-            <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;color:#555;text-align:center">${r.num}</td>
-            <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;color:#333">${r.dueDate.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}</td>
-            <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;color:#333;text-align:right">₱${fmt(r.installmentAmt)}</td>
-            <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;color:#00995A;text-align:right">₱${fmt(r.principalPaid)}</td>
-            <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;color:#c00;text-align:right">₱${fmt(r.interestAmt)}</td>
-            <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;color:#333;text-align:right">₱${fmt(r.remaining)}</td>
-        </tr>`;
-    });
-
-    const noteSection = note ? `<div style="margin-top:20px;padding:12px;background:#f0fdf4;border-left:3px solid #00995A;border-radius:4px;font-size:13px;color:#333;"><strong>Note from Agent:</strong><br>${note}</div>` : '';
-
-    return `
-    <div style="max-width:600px;margin:0 auto;font-family:'Helvetica Neue',Arial,sans-serif;background:#fff;color:#333;">
-        <!-- Header -->
-        <div style="background:linear-gradient(135deg,#00995A 0%,#00D17A 100%);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
-            <h1 style="margin:0;color:#fff;font-size:28px;font-weight:800;letter-spacing:2px;">MAYA</h1>
-            <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;text-transform:uppercase;letter-spacing:1px;">Official Computation Receipt</p>
-            <p style="margin:4px 0 0;color:rgba(255,255,255,0.7);font-size:11px;">Mini Payments (EMI)</p>
-        </div>
-        <!-- Body -->
-        <div style="padding:28px;background:#fff;">
-            <table style="width:100%;font-size:13px;margin-bottom:20px;">
-                <tr><td style="color:#888;padding:3px 0;width:140px;">Receipt No:</td><td style="font-weight:600;color:#333;">${receiptNo}</td></tr>
-                <tr><td style="color:#888;padding:3px 0;">Date Issued:</td><td style="font-weight:600;color:#333;">${dateStr}</td></tr>
-                ${customerName ? `<tr><td style="color:#888;padding:3px 0;">Customer:</td><td style="font-weight:600;color:#333;">${customerName}</td></tr>` : ''}
-                ${customerEmail ? `<tr><td style="color:#888;padding:3px 0;">Email:</td><td style="font-weight:600;color:#333;">${customerEmail}</td></tr>` : ''}
-            </table>
-            <div style="height:1px;background:#e5e5e5;margin:20px 0;"></div>
-            <!-- Summary Cards -->
-            <div style="display:flex;gap:12px;margin-bottom:20px;">
-                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;">
-                    <div style="font-size:10px;text-transform:uppercase;color:#888;letter-spacing:0.5px;margin-bottom:4px;">Principal</div>
-                    <div style="font-size:18px;font-weight:700;color:#333;">₱${fmt(P)}</div>
-                </div>
-                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;">
-                    <div style="font-size:10px;text-transform:uppercase;color:#888;letter-spacing:0.5px;margin-bottom:4px;">Monthly EMI</div>
-                    <div style="font-size:18px;font-weight:700;color:#00995A;">₱${fmt(emi)}</div>
-                </div>
-                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;">
-                    <div style="font-size:10px;text-transform:uppercase;color:#888;letter-spacing:0.5px;margin-bottom:4px;">Total Interest</div>
-                    <div style="font-size:18px;font-weight:700;color:#c00;">₱${fmt(totalInt)}</div>
-                </div>
-            </div>
-            <!-- Loan Details -->
-            <table style="width:100%;font-size:13px;margin-bottom:20px;">
-                <tr><td style="color:#888;padding:3px 0;">Monthly EIR:</td><td style="font-weight:600;text-align:right;">${(monthlyRate*100).toFixed(2)}%</td></tr>
-                <tr><td style="color:#888;padding:3px 0;">Nominal Annual Rate:</td><td style="font-weight:600;text-align:right;">${nominalAnnual.toFixed(2)}%</td></tr>
-                <tr><td style="color:#888;padding:3px 0;">Number of Installments:</td><td style="font-weight:600;text-align:right;">${n}</td></tr>
-                <tr><td style="color:#888;padding:3px 0;">Total Amount Payable:</td><td style="font-weight:700;text-align:right;font-size:15px;color:#00995A;">₱${fmt(totalAmt)}</td></tr>
-            </table>
-            <div style="height:1px;background:#e5e5e5;margin:20px 0;"></div>
-            <!-- Amortization Table -->
-            <h3 style="margin:0 0 12px;font-size:14px;color:#333;text-transform:uppercase;letter-spacing:0.5px;">Amortization Schedule</h3>
-            <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                <thead>
-                    <tr style="background:#f0f0f0;">
-                        <th style="padding:8px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#666;">#</th>
-                        <th style="padding:8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#666;">Due Date</th>
-                        <th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#666;">Installment</th>
-                        <th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#666;">Principal</th>
-                        <th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#666;">Interest</th>
-                        <th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:#666;">Balance</th>
-                    </tr>
-                </thead>
-                <tbody>${tableRows}</tbody>
-            </table>
-            <!-- Total Row -->
-            <div style="background:#00995A;color:#fff;padding:12px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
-                <span style="font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;">Total Amount</span>
-                <span style="font-weight:800;font-size:20px;">₱${fmt(totalAmt)}</span>
-            </div>
-            ${noteSection}
-        </div>
-        <!-- Footer -->
-        <div style="background:#f8f9fa;padding:20px;text-align:center;border-radius:0 0 12px 12px;border-top:1px solid #e5e5e5;">
-            <p style="margin:0;font-size:11px;color:#888;">This is a system-generated computation receipt from Maya Financial Services.</p>
-            <p style="margin:4px 0 0;font-size:11px;color:#aaa;">Receipt No: ${receiptNo} &bull; Generated on ${dateStr}</p>
-            <p style="margin:8px 0 0;font-size:10px;color:#bbb;">Maya Internal Utility Terminal v2.4.0</p>
-        </div>
-    </div>`;
-}
-
-// Build a plain-text summary for email templates that don't support HTML
-function buildReceiptSummary(customerName) {
     const P = fmtN(document.getElementById('emi-principal').value);
     const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
     const n = parseInt(document.getElementById('emi-months').value) || 0;
     if (!P || !monthlyRate || !n) return '';
 
     const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
-    const totalAmt = emi * n;
-    const totalInt = totalAmt - P;
+    const totalAmt = emi * n, totalInt = totalAmt - P;
+    const receiptNo = 'MAY-' + Date.now().toString(36).toUpperCase();
+    const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
 
-    return `MAYA - EMI Computation Receipt\n${'='.repeat(40)}\nCustomer: ${customerName || 'N/A'}\nPrincipal: PHP ${fmt(P)}\nMonthly EIR: ${(monthlyRate*100).toFixed(2)}%\nInstallments: ${n}\nMonthly EMI: PHP ${fmt(emi)}\nTotal Interest: PHP ${fmt(totalInt)}\nTotal Amount: PHP ${fmt(totalAmt)}\n${'='.repeat(40)}`;
+    let rows = '';
+    emiSchedule.forEach(r => { rows += `<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:center">${r.num}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;">${r.dueDate.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right">₱${fmt(r.installmentAmt)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right;color:#00995A">₱${fmt(r.principalPaid)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right;color:#c00">₱${fmt(r.interestAmt)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right">₱${fmt(r.remaining)}</td></tr>`; });
+    const noteSection = note ? `<div style="margin-top:20px;padding:12px;background:#f0fdf4;border-left:3px solid #00995A;border-radius:4px;font-size:13px;"><strong>Note:</strong><br>${note}</div>` : '';
+
+    return `<div style="max-width:600px;margin:0 auto;font-family:'Helvetica Neue',Arial,sans-serif;background:#fff;color:#333;">
+        <div style="background:linear-gradient(135deg,#00995A 0%,#00D17A 100%);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+            <h1 style="margin:0;color:#fff;font-size:28px;font-weight:800;letter-spacing:2px;">MAYA</h1>
+            <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;text-transform:uppercase;letter-spacing:1px;">Official Computation Receipt</p>
+        </div>
+        <div style="padding:28px;background:#fff;">
+            <table style="width:100%;font-size:13px;margin-bottom:20px;">
+                <tr><td style="color:#888;padding:3px 0;width:140px;">Receipt No:</td><td style="font-weight:600;">${receiptNo}</td></tr>
+                <tr><td style="color:#888;padding:3px 0;">Date Issued:</td><td style="font-weight:600;">${dateStr}</td></tr>
+                ${customerName ? `<tr><td style="color:#888;padding:3px 0;">Customer:</td><td style="font-weight:600;">${customerName}</td></tr>` : ''}
+                ${customerEmail ? `<tr><td style="color:#888;padding:3px 0;">Email:</td><td style="font-weight:600;">${customerEmail}</td></tr>` : ''}
+            </table>
+            <div style="height:1px;background:#e5e5e5;margin:20px 0;"></div>
+            <div style="display:flex;gap:12px;margin-bottom:20px;">
+                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Principal</div><div style="font-size:18px;font-weight:700;">₱${fmt(P)}</div></div>
+                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Monthly EMI</div><div style="font-size:18px;font-weight:700;color:#00995A;">₱${fmt(emi)}</div></div>
+                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Total Interest</div><div style="font-size:18px;font-weight:700;color:#c00;">₱${fmt(totalInt)}</div></div>
+            </div>
+            <h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;">Amortization Schedule</h3>
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:center;font-size:10px;text-transform:uppercase;color:#666;">#</th><th style="padding:8px;text-align:left;font-size:10px;text-transform:uppercase;color:#666;">Due Date</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Installment</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Principal</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Interest</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Balance</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+            <div style="background:#00995A;color:#fff;padding:12px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+                <span style="font-weight:700;font-size:14px;text-transform:uppercase;">Total Amount</span><span style="font-weight:800;font-size:20px;">₱${fmt(totalAmt)}</span>
+            </div>
+            ${noteSection}
+        </div>
+        <div style="background:#f8f9fa;padding:20px;text-align:center;border-radius:0 0 12px 12px;border-top:1px solid #e5e5e5;">
+            <p style="margin:0;font-size:11px;color:#888;">System-generated receipt from Maya Financial Services.</p>
+            <p style="margin:4px 0 0;font-size:10px;color:#aaa;">${receiptNo} &bull; ${dateStr}</p>
+        </div>
+    </div>`;
 }
 
-// Open the Email Receipt Modal (from Module E button)
 function openEmailReceiptModal() {
     const P = fmtN(document.getElementById('emi-principal').value);
     if (!P) return showToast('Complete EMI computation first', 'error');
-
-    const customerName = document.getElementById('receipt-customer-name').value.trim();
-    const customerEmail = document.getElementById('receipt-customer-email').value.trim();
-
-    document.getElementById('modal-email-name').value = customerName;
-    document.getElementById('modal-email-addr').value = customerEmail;
+    document.getElementById('modal-email-name').value = document.getElementById('receipt-customer-name').value;
+    document.getElementById('modal-email-addr').value = document.getElementById('receipt-customer-email').value;
     document.getElementById('modal-email-note').value = '';
-
-    // Reset status
     setEmailStatus('idle', 'Ready');
-
-    // Build preview
-    const receiptHTML = buildReceiptHTML(customerName, customerEmail, '');
-    if (!receiptHTML) return showToast('Complete EMI computation first', 'error');
-
-    document.getElementById('modal-receipt-preview').innerHTML = receiptHTML;
-
+    document.getElementById('modal-receipt-preview').innerHTML = buildReceiptHTML(document.getElementById('receipt-customer-name').value, document.getElementById('receipt-customer-email').value, '');
     document.getElementById('email-receipt-modal').classList.add('open');
 }
 
-function closeEmailReceiptModal() {
-    document.getElementById('email-receipt-modal').classList.remove('open');
-}
+function closeEmailReceiptModal() { document.getElementById('email-receipt-modal').classList.remove('open'); }
 
-// Set email send status badge
 function setEmailStatus(status, text) {
     const badge = document.getElementById('email-send-status');
     badge.className = 'email-status-badge email-status-' + status;
-    const icons = { idle: '', sending: 'sending-pulse', sent: '', error: '' };
-    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current ${icons[status]||''}"></span>${text}`;
+    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current ${status==='sending'?'sending-pulse':''}"></span> ${text}`;
 }
 
-// Send email receipt via EmailJS
 async function sendEmailReceipt() {
     const name = document.getElementById('modal-email-name').value.trim();
     const email = document.getElementById('modal-email-addr').value.trim();
     const note = document.getElementById('modal-email-note').value.trim();
+    if (!name || !email) return showToast('Recipient name and email are required', 'error');
 
-    if (!name) return showToast('Enter recipient name', 'error');
-    if (!email || !email.includes('@')) return showToast('Enter valid email address', 'error');
-
-    const config = getEmailConfig();
+    const config = getSettings();
     if (!config.serviceId || !config.templateId || !config.publicKey) {
-        showModuleFAlert('EmailJS is not configured. Open Module F > EmailJS Configuration to set up.', 'error');
-        closeEmailReceiptModal();
-        document.getElementById('email-config-details').open = true;
-        return;
+        show_alert('emi-email-alert', 'emi-email-alert-text', 'EmailJS is not configured. Please update System Settings (gear icon).', 'error');
+        closeEmailReceiptModal(); return;
     }
 
     const P = fmtN(document.getElementById('emi-principal').value);
     const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
     const n = parseInt(document.getElementById('emi-months').value) || 0;
     const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
-    const totalAmt = emi * n;
-    const totalInt = totalAmt - P;
-
-    const receiptHTML = buildReceiptHTML(name, email, note);
-    const receiptSummary = buildReceiptSummary(name);
-
-    const senderName = currentUser ? currentUser.fullName : 'Maya Agent';
+    const totalAmt = emi * n, totalInt = totalAmt - P;
 
     const templateParams = {
-        to_email: email,
-        to_name: name,
-        from_name: senderName,
+        to_email: email, to_name: name, from_name: currentUser ? currentUser.fullName : 'Maya Agent',
         subject: `Maya EMI Computation Receipt - ₱${fmt(P)} Loan`,
-        receipt_html: receiptHTML,
-        receipt_summary: receiptSummary,
-        total_amount: fmt(totalAmt),
-        principal: fmt(P),
-        interest_total: fmt(totalInt),
-        installments: n
+        receipt_html: buildReceiptHTML(name, email, note),
+        receipt_summary: `Principal: ₱${fmt(P)}\nEMI: ₱${fmt(emi)}\nTotal: ₱${fmt(totalAmt)}`,
+        total_amount: fmt(totalAmt), principal: fmt(P), interest_total: fmt(totalInt), installments: n, note: note
     };
 
     const sendBtn = document.getElementById('btn-modal-send');
-    sendBtn.disabled = true;
-    setEmailStatus('sending', 'Sending...');
-
-    try {
-        await emailjs.send(config.serviceId, config.templateId, templateParams, config.publicKey);
-        setEmailStatus('sent', 'Sent Successfully');
-        document.getElementById('email-send-time').textContent = new Date().toLocaleTimeString('en-PH');
-        showToast('Receipt sent to ' + email);
-        logEmailSent({ to: email, name, module: 'EMI', amount: fmt(totalAmt), status: 'sent' });
-    } catch (err) {
-        setEmailStatus('error', 'Send Failed');
-        showToast('Email failed: ' + (err.text || err.message), 'error');
-        logEmailSent({ to: email, name, module: 'EMI', amount: fmt(totalAmt), status: 'failed', error: err.text || err.message });
-    } finally {
-        sendBtn.disabled = false;
-    }
-}
-
-// Download receipt as PDF
-async function downloadReceiptPDF() {
-    const previewEl = document.querySelector('#modal-receipt-preview > div');
-    if (!previewEl) return showToast('Generate receipt first', 'error');
-
-    showToast('Generating PDF...', 'success');
-
-    try {
-        const canvas = await html2canvas(previewEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgData = canvas.toDataURL('image/png');
-        const pdfW = pdf.internal.pageSize.getWidth();
-        const pdfH = (canvas.height * pdfW) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
-        pdf.save(`Maya_Receipt_${Date.now()}.pdf`);
-        showToast('PDF downloaded');
-    } catch (err) {
-        showToast('PDF generation failed: ' + err.message, 'error');
-    }
-}
-
-// ========================================
-// EMAIL CONFIG (Module F)
-// ========================================
-function getEmailConfig() {
-    return {
-        serviceId: localStorage.getItem('emailjs_service_id') || '',
-        templateId: localStorage.getItem('emailjs_template_id') || '',
-        publicKey: localStorage.getItem('emailjs_public_key') || ''
-    };
-}
-
-function loadEmailConfig() {
-    const config = getEmailConfig();
-    document.getElementById('emailjs-service-id').value = config.serviceId;
-    document.getElementById('emailjs-template-id').value = config.templateId;
-    document.getElementById('emailjs-public-key').value = config.publicKey;
-    if (config.serviceId && config.publicKey) {
-        try { emailjs.init(config.publicKey); } catch(e) {}
-    }
-}
-
-function saveEmailConfig() {
-    const serviceId = document.getElementById('emailjs-service-id').value.trim();
-    const templateId = document.getElementById('emailjs-template-id').value.trim();
-    const publicKey = document.getElementById('emailjs-public-key').value.trim();
-
-    localStorage.setItem('emailjs_service_id', serviceId);
-    localStorage.setItem('emailjs_template_id', templateId);
-    localStorage.setItem('emailjs_public_key', publicKey);
-
-    if (publicKey) {
-        try { emailjs.init(publicKey); } catch(e) {}
-    }
-
-    showModuleFAlert('EmailJS configuration saved successfully.', 'success');
-    showToast('Email config saved');
-}
-
-async function testEmailConfig() {
-    const config = getEmailConfig();
-    if (!config.serviceId || !config.templateId || !config.publicKey) {
-        return showModuleFAlert('Please fill in all three EmailJS fields before testing.', 'error');
-    }
-
-    const btn = document.getElementById('btn-test-email');
-    btn.disabled = true;
-    btn.innerHTML = '<svg class="h-3.5 w-3.5 sending-pulse" ...></svg> Testing...';
+    sendBtn.disabled = true; setEmailStatus('sending', 'Sending...');
 
     try {
         emailjs.init(config.publicKey);
-        // We try to send a test with invalid email to see if the service connects
-        // A better approach: just initialize and confirm
-        await emailjs.send(config.serviceId, config.templateId, {
-            to_email: 'test@maya.ph',
-            to_name: 'Test User',
-            from_name: 'Maya System',
-            subject: 'Connection Test',
-            receipt_html: '<p>Test</p>',
-            receipt_summary: 'Test connection',
-            total_amount: '0.00',
-            principal: '0.00',
-            interest_total: '0.00',
-            installments: '0'
-        });
-        showModuleFAlert('EmailJS connected successfully! Service is ready to send emails.', 'success');
-    } catch (err) {
-        showModuleFAlert('EmailJS connection failed: ' + (err.text || err.message), 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> Test Connection';
-    }
-}
-
-// Quick Send Receipt from Module F
-async function quickSendReceipt() {
-    const moduleSource = document.getElementById('email-module-source').value;
-    const name = document.getElementById('quick-email-name').value.trim();
-    const email = document.getElementById('quick-email-addr').value.trim();
-
-    if (!name || !email) return showToast('Please enter recipient name and email', 'error');
-    if (!email.includes('@')) return showToast('Please enter a valid email address', 'error');
-
-    const config = getEmailConfig();
-    if (!config.serviceId || !config.templateId || !config.publicKey) {
-        return showModuleFAlert('EmailJS is not configured. Please set up configuration above.', 'error');
-    }
-
-    const btn = document.getElementById('btn-quick-send');
-    btn.disabled = true;
-    btn.innerHTML = '<svg class="h-4 w-4 sending-pulse" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg> Sending...';
-
-    let htmlContent = '', summaryContent = '', subject = '';
-    let totalAmount = '0.00', principal = '0.00', interest = '0.00', installments = '0';
-
-    try {
-        if (moduleSource === 'emi') {
-            const P = fmtN(document.getElementById('emi-principal').value);
-            if (!P) throw new Error('Complete EMI computation first');
-            const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
-            const n = parseInt(document.getElementById('emi-months').value) || 0;
-            const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
-            htmlContent = buildReceiptHTML(name, email, '');
-            summaryContent = buildReceiptSummary(name);
-            totalAmount = fmt(emi * n);
-            principal = fmt(P);
-            interest = fmt((emi * n) - P);
-            installments = n;
-            subject = `Maya EMI Computation Receipt - ₱${fmt(P)} Loan`;
-        } else if (moduleSource === 'miles') {
-            const spend = fmtN(document.getElementById('spend-input').value);
-            if (!spend) throw new Error('Complete Miles computation first');
-            const miles = document.getElementById('miles-input').value;
-            totalAmount = fmt(spend);
-            summaryContent = `Maya Miles Computation\nSpend: PHP ${fmt(spend)}\nMiles Earned: ${miles}`;
-            htmlContent = `<div style="font-family:sans-serif;padding:20px;background:#fff;"><h2 style="color:#00995A;">Maya Miles Receipt</h2><p>Customer: ${name}</p><p>Spend: PHP ${fmt(spend)}</p><p>Miles: ${miles}</p></div>`;
-            subject = `Maya Miles Computation Receipt - ${miles} Miles`;
-        } else if (moduleSource === 'finance') {
-            const credit = fmtN(document.getElementById('loan-credit').value);
-            if (!credit) throw new Error('Complete Finance computation first');
-            totalAmount = document.getElementById('finance-charge-result').textContent;
-            summaryContent = `Finance Charge Computation\nCredit: PHP ${fmt(credit)}\nTotal Payable: PHP ${totalAmount}`;
-            htmlContent = `<div style="font-family:sans-serif;padding:20px;background:#fff;"><h2 style="color:#c00;">Finance Charge Receipt</h2><p>Customer: ${name}</p><p>Total Payable: PHP ${totalAmount}</p></div>`;
-            subject = `Maya Finance Charge Receipt - PHP ${totalAmount}`;
-        } else if (moduleSource === 'landers') {
-            const spend = fmtN(document.getElementById('landers-spend').value);
-            if (!spend) throw new Error('Complete Landers computation first');
-            const pts = document.getElementById('landers-result').textContent;
-            const vouchers = document.getElementById('voucher-result').textContent;
-            totalAmount = fmt(spend);
-            summaryContent = `Landers Rewards Computation\nSpend: PHP ${fmt(spend)}\nPoints: ${pts}\nVouchers: ${vouchers}`;
-            htmlContent = `<div style="font-family:sans-serif;padding:20px;background:#fff;"><h2 style="color:#3b82f6;">Landers Rewards Receipt</h2><p>Customer: ${name}</p><p>Points: ${pts}</p><p>Vouchers: ${vouchers}</p></div>`;
-            subject = `Maya Landers Rewards Receipt - ${pts} Points`;
-        }
-
-        const senderName = currentUser ? currentUser.fullName : 'Maya Agent';
-        const templateParams = {
-            to_email: email, to_name: name, from_name: senderName, subject: subject,
-            receipt_html: htmlContent, receipt_summary: summaryContent,
-            total_amount: totalAmount, principal: principal, interest_total: interest, installments: installments
-        };
-
-        await emailjs.send(config.serviceId, config.templateId, templateParams, config.publicKey);
+        await emailjs.send(config.serviceId, config.templateId, templateParams);
+        setEmailStatus('sent', 'Sent Successfully');
+        document.getElementById('email-send-time').textContent = new Date().toLocaleTimeString('en-PH');
         showToast('Receipt sent to ' + email);
-        logEmailSent({ to: email, name, module: moduleSource.toUpperCase(), amount: totalAmount, status: 'sent' });
-
     } catch (err) {
-        showToast(err.message || 'Failed to send email', 'error');
-        logEmailSent({ to: email, name, module: moduleSource.toUpperCase(), amount: totalAmount, status: 'failed', error: err.message });
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg> Send Now';
-    }
-}
-
-// Module F Alert
-function showModuleFAlert(msg, type) {
-    const alertEl = document.getElementById('module-f-alert');
-    const textEl = document.getElementById('module-f-alert-text');
-    textEl.textContent = msg;
-    alertEl.className = 'module-d-alert module-d-alert-' + (type === 'success' ? 'success' : 'error') + ' show';
-    setTimeout(() => { alertEl.classList.remove('show'); }, 6000);
+        setEmailStatus('error', 'Failed');
+        showToast('Email failed: ' + (err.text || err.message), 'error');
+    } finally { sendBtn.disabled = false; }
 }
 
 // ========================================
-// EMAIL LOG
+// SETTINGS / SECRETS MODAL
 // ========================================
-function logEmailSent(data) {
-    const logs = JSON.parse(localStorage.getItem('mayaEmailLog') || '[]');
-    data.date = new Date().toISOString();
-    logs.unshift(data);
-    if (logs.length > 50) logs.pop();
-    localStorage.setItem('mayaEmailLog', JSON.stringify(logs));
-    loadEmailLog();
+function getSettings() {
+    return {
+        adminEmail: localStorage.getItem('maya_admin_email') || '',
+        serviceId: localStorage.getItem('maya_emailjs_service') || '',
+        templateId: localStorage.getItem('maya_emailjs_template') || '',
+        publicKey: localStorage.getItem('maya_emailjs_key') || ''
+    };
 }
 
-function loadEmailLog() {
-    const logs = JSON.parse(localStorage.getItem('mayaEmailLog') || '[]');
-    const list = document.getElementById('email-log-list');
-    document.getElementById('email-log-count').textContent = logs.length + ' sent';
-
-    if (logs.length === 0) {
-        list.innerHTML = '<div class="text-center text-zinc-600 text-xs py-8 font-sans">No emails sent yet. Configure EmailJS and send your first receipt.</div>';
-        return;
-    }
-
-    list.innerHTML = logs.map(l => `
-        <div class="email-log-item">
-            <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-bold text-zinc-200">${l.name}</span>
-                <span class="text-[9px] font-mono ${l.status === 'sent' ? 'text-emerald-400' : 'text-red-400'} uppercase">${l.status}</span>
-            </div>
-            <div class="text-[10px] font-mono text-zinc-400 mb-1">${l.to}</div>
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] text-zinc-500">Module: ${l.module} &bull; ₱${l.amount}</span>
-                <span class="text-[9px] font-mono text-zinc-600">${new Date(l.date).toLocaleTimeString('en-PH')}</span>
-            </div>
-            ${l.error ? `<div class="text-[9px] text-red-400 mt-1">Error: ${l.error}</div>` : ''}
-        </div>
-    `).join('');
+function openSettingsModal() {
+    const config = getSettings();
+    document.getElementById('setting-admin-email').value = config.adminEmail;
+    document.getElementById('setting-service-id').value = config.serviceId;
+    document.getElementById('setting-template-id').value = config.templateId;
+    document.getElementById('setting-public-key').value = config.publicKey;
+    document.getElementById('settings-modal').classList.add('open');
 }
 
-function clearEmailLog() {
-    localStorage.removeItem('mayaEmailLog');
-    loadEmailLog();
-    showToast('Email log cleared');
-}
+function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('open'); }
 
-// ========================================
-// HISTORY
-// ========================================
-function pushHistory(entry) {
-    const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]');
-    history.unshift(entry);
-    if (history.length > 100) history.pop();
-    localStorage.setItem('mayaHistory', JSON.stringify(history));
-}
-
-function toggleHistory() {
-    const sidebar = document.getElementById('history-sidebar');
-    const overlay = document.getElementById('history-overlay');
-    const isOpen = !sidebar.classList.contains('translate-x-full');
-
-    if (isOpen) {
-        sidebar.classList.add('translate-x-full');
-        overlay.classList.add('hidden');
-    } else {
-        loadHistoryList();
-        sidebar.classList.remove('translate-x-full');
-        overlay.classList.remove('hidden');
-    }
-}
-
-function loadHistoryList() {
-    const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]');
-    const list = document.getElementById('history-list');
-    if (history.length === 0) {
-        list.innerHTML = '<p class="text-center text-zinc-600 text-xs py-10">No history yet.</p>';
-        return;
-    }
-    list.innerHTML = history.map(h => {
-        const date = new Date(h.date);
-        let summary = '';
-        if (h.type === 'Miles') summary = `Spend: ₱${fmt(h.spend)} → ${h.miles.toFixed(2)} miles`;
-        else if (h.type === 'Finance') summary = `Credit: ₱${fmt(h.credit)} → ₱${fmt(h.result)}`;
-        else if (h.type === 'EMI') summary = `Principal: ₱${fmt(h.principal)} / ${h.months}mo → ₱${fmt(h.emi)}/mo`;
-        return `<div class="hist-item">
-            <div class="hist-type">${h.type}</div>
-            <div class="hist-date">${date.toLocaleString('en-PH')}</div>
-            <div class="hist-summary">${summary}</div>
-        </div>`;
-    }).join('');
-}
-
-function clearHistory() {
-    localStorage.removeItem('mayaHistory');
-    loadHistoryList();
-    showToast('History cleared');
-}
-
-// ========================================
-// AI CHAT
-// ========================================
-function toggleAI() {
-    const w = document.getElementById('ai-window');
-    w.style.display = w.style.display === 'none' ? 'flex' : 'none';
-    if (w.style.display === 'flex' && !document.getElementById('maya-chat').hasChildNodes()) {
-        addAIMessage("Hello! I'm Maya AI. How can I help you today? You can ask me about Maya Miles, Finance Charges, Landers Rewards, or EMI calculations.");
-    }
-}
-
-function addAIMessage(text) {
-    const chat = document.getElementById('maya-chat');
-    const div = document.createElement('div');
-    div.className = 'flex gap-2 animate-fade-in';
-    div.innerHTML = `<div class="w-6 h-6 rounded-md bg-emerald-600/20 flex items-center justify-center text-[9px] font-bold text-emerald-400 flex-shrink-0 mt-1">M</div><div class="bg-zinc-800/50 rounded-lg rounded-tl-none px-3 py-2 text-xs text-zinc-200 leading-relaxed max-w-[280px]">${text}</div>`;
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-}
-
-function addUserMessage(text) {
-    const chat = document.getElementById('maya-chat');
-    const div = document.createElement('div');
-    div.className = 'flex gap-2 justify-end animate-fade-in';
-    div.innerHTML = `<div class="bg-emerald-600/20 rounded-lg rounded-tr-none px-3 py-2 text-xs text-emerald-100 leading-relaxed max-w-[280px]">${text}</div>`;
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-}
-
-function sendAI() {
-    const input = document.getElementById('ai-input');
-    const text = input.value.trim();
-    if (!text) return;
-    addUserMessage(text);
-    input.value = '';
-
-    setTimeout(() => {
-        const lower = text.toLowerCase();
-        if (lower.includes('miles')) addAIMessage('Maya Miles are calculated at 1 mile per ₱200 spend (base rate). You can use multipliers up to 10x for elite members. Use Module A to compute!');
-        else if (lower.includes('finance') || lower.includes('charge')) addAIMessage('Finance Charge is computed on the remaining principal at 3% pro-rated by days held. Check Module B for the exact calculation.');
-        else if (lower.includes('landers')) addAIMessage('Landers Rewards use a progressive tier system: up to ₱30k at 3%, ₱30k-₱60k at 4%, and above ₱60k at 5%. Use Module C to compute your points and vouchers!');
-        else if (lower.includes('emi') || lower.includes('mini payment') || lower.includes('loan')) addAIMessage('Mini Payments (EMI) uses the standard reducing balance method. Enter your principal, monthly EIR, and terms in Module E to get the full amortization schedule. You can also email the receipt directly to the customer!');
-        else if (lower.includes('email') || lower.includes('receipt')) addAIMessage('You can send computation receipts via email! Just configure your EmailJS credentials in Module F, then use the "Send Receipt via Email" button in Module E or the Quick Send feature.');
-        else addAIMessage("I'm here to help with Maya calculations! Try asking about Maya Miles, Finance Charges, Landers Rewards, or Mini Payments (EMI).");
-    }, 600);
+function saveSettings() {
+    localStorage.setItem('maya_admin_email', document.getElementById('setting-admin-email').value.trim());
+    localStorage.setItem('maya_emailjs_service', document.getElementById('setting-service-id').value.trim());
+    localStorage.setItem('maya_emailjs_template', document.getElementById('setting-template-id').value.trim());
+    localStorage.setItem('maya_emailjs_key', document.getElementById('setting-public-key').value.trim());
+    showToast('Settings saved securely');
+    closeSettingsModal();
 }
 
 // ========================================
@@ -1501,45 +725,59 @@ async function sendContactMessage() {
     const message = document.getElementById('contact-message').value.trim();
     const name = document.getElementById('contact-name').value;
     const eid = document.getElementById('contact-eid').value;
+    if (!subject || !message) return show_alert('contact-alert', 'contact-alert-text', 'Please select a subject and enter a message.', 'error');
 
-    if (!subject || !message) return showContactAlert('Please select a subject and enter a message.', 'error');
-
-    const config = getEmailConfig();
-    if (!config.serviceId || !config.templateId || !config.publicKey) {
-        return showContactAlert('Email service is not configured. Please set up EmailJS in Module F first.', 'error');
+    const config = getSettings();
+    if (!config.serviceId || !config.templateId || !config.publicKey || !config.adminEmail) {
+        return show_alert('contact-alert', 'contact-alert-text', 'Email service not configured. Ask Admin to update System Settings.', 'error');
     }
 
-    const btn = document.getElementById('contact-send-btn');
-    btn.disabled = true;
-
+    const btn = document.getElementById('contact-send-btn'); btn.disabled = true;
     try {
+        emailjs.init(config.publicKey);
         await emailjs.send(config.serviceId, config.templateId, {
-            to_email: 'admin@maya.ph',
-            to_name: 'Admin',
-            from_name: name + ' (' + eid + ')',
+            to_email: config.adminEmail, to_name: 'Admin', from_name: `${name} (${eid})`,
             subject: '[Contact Form] ' + subject,
-            receipt_html: `<div style="font-family:sans-serif;padding:20px;background:#fff;"><h2 style="color:#00995A;">Contact Form Submission</h2><p><strong>From:</strong> ${name} (${eid})</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong></p><p>${message}</p></div>`,
+            receipt_html: `<div style="font-family:sans-serif;padding:20px;background:#fff;"><h2 style="color:#00995A;">Contact Form</h2><p><strong>From:</strong> ${name} (${eid})</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong></p><p>${message}</p></div>`,
             receipt_summary: `From: ${name} (${eid})\nSubject: ${subject}\nMessage: ${message}`,
-            total_amount: 'N/A', principal: 'N/A', interest_total: 'N/A', installments: 'N/A'
-        }, config.publicKey);
-        showContactAlert('Message sent to admin successfully!', 'success');
-        document.getElementById('contact-message').value = '';
-        document.getElementById('contact-subject').value = '';
-    } catch(err) {
-        showContactAlert('Failed to send message: ' + (err.text || err.message), 'error');
-    } finally {
-        btn.disabled = false;
-    }
+            total_amount: 'N/A', principal: 'N/A', interest_total: 'N/A', installments: 'N/A', note: ''
+        });
+        show_alert('contact-alert', 'contact-alert-text', 'Message sent to admin successfully!', 'success');
+        document.getElementById('contact-message').value = ''; document.getElementById('contact-subject').value = '';
+    } catch(err) { show_alert('contact-alert', 'contact-alert-text', 'Failed to send message: ' + (err.text || err.message), 'error'); }
+    finally { btn.disabled = false; }
 }
 
-function showContactAlert(msg, type) {
-    const alertEl = document.getElementById('contact-alert');
-    const textEl = document.getElementById('contact-alert-text');
-    textEl.textContent = msg;
-    alertEl.className = 'module-d-alert module-d-alert-' + (type === 'success' ? 'success' : 'error') + ' show';
-    setTimeout(() => { alertEl.classList.remove('show'); }, 6000);
+// ========================================
+// HISTORY
+// ========================================
+function pushHistory(entry) {
+    const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]');
+    history.unshift(entry); if (history.length > 100) history.pop();
+    localStorage.setItem('mayaHistory', JSON.stringify(history));
 }
 
+function toggleHistory() {
+    const sidebar = document.getElementById('history-sidebar'), overlay = document.getElementById('history-overlay');
+    const isOpen = !sidebar.classList.contains('translate-x-full');
+    if (isOpen) { sidebar.classList.add('translate-x-full'); overlay.classList.add('hidden'); }
+    else { loadHistoryList(); sidebar.classList.remove('translate-x-full'); overlay.classList.remove('hidden'); }
+}
+
+function loadHistoryList() {
+    const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]');
+    const list = document.getElementById('history-list');
+    if (!history.length) { list.innerHTML = '<p class="text-center text-zinc-600 text-xs py-10">No history yet.</p>'; return; }
+    list.innerHTML = history.map(h => {
+        let summary = '';
+        if (h.type === 'Miles') summary = `Spend: ₱${fmt(h.spend)} → ${h.miles.toFixed(2)} miles`;
+        else if (h.type === 'Finance') summary = `Credit: ₱${fmt(h.credit)} → ₱${fmt(h.result)}`;
+        else if (h.type === 'EMI') summary = `Principal: ₱${fmt(h.principal)} / ${h.months}mo → ₱${fmt(h.emi)}/mo`;
+        return `<div class="hist-item"><div class="hist-type">${h.type}</div><div class="hist-date">${new Date(h.date).toLocaleString('en-PH')}</div><div class="hist-summary">${summary}</div></div>`;
+    }).join('');
+}
+
+function clearHistory() { localStorage.removeItem('mayaHistory'); loadHistoryList(); showToast('History cleared'); }
 </script>
 </body>
 </html>
