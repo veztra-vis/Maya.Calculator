@@ -245,6 +245,67 @@ app.get('/api/health', async function(req, res) {
     res.json({ status: 'online', database: dbStatus, groqKeySet: !!process.env.GROQ_API_KEY, authKeySet: !!process.env.RENDER_AUTH_KEY });
 });
 
+// ========================================
+// SECURE EMAIL API PROXY
+// ========================================
+app.post('/api/email/send', authMiddleware, async function(req, res) {
+    let { to_email, to_name, subject, receipt_html, receipt_summary, total_amount, principal, interest_total, installments, note, from_name, type } = req.body;
+
+    // If it's a contact form message, override the recipient to the Admin email
+    if (type === 'contact') {
+        to_email = process.env.ADMIN_EMAIL;
+        to_name = 'Admin';
+    }
+
+    if (!to_email || !subject) {
+        return res.status(400).json({ error: 'Recipient email and subject are required' });
+    }
+
+    const serviceId = process.env.EMAILJS_SERVICE_ID;
+    const templateId = process.env.EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+        console.error('Missing EmailJS environment variables on server');
+        return res.status(500).json({ error: 'Email service is not configured on the server.' });
+    }
+
+    try {
+        const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                service_id: serviceId,
+                template_id: templateId,
+                user_id: publicKey,
+                template_params: {
+                    to_email,
+                    to_name: to_name || 'Customer',
+                    from_name: from_name || req.user.name || 'Maya Agent',
+                    subject,
+                    receipt_html: receipt_html || '',
+                    receipt_summary: receipt_summary || '',
+                    total_amount: total_amount || 'N/A',
+                    principal: principal || 'N/A',
+                    interest_total: interest_total || 'N/A',
+                    installments: installments || 'N/A',
+                    note: note || ''
+                }
+            })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            console.error('EmailJS Error:', errData);
+            return res.status(500).json({ error: 'Failed to send email via provider' });
+        }
+
+        res.json({ message: 'Email sent successfully' });
+    } catch (err) {
+        console.error('Email Send Error:', err);
+        res.status(500).json({ error: 'Server error sending email' });
+    }
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 var PORT = process.env.PORT || 10000;
