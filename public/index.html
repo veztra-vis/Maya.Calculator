@@ -52,14 +52,6 @@
         .module-d-alert.show { display: flex; }
         .module-d-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; }
         .module-d-alert-success { background: rgba(0, 209, 122, 0.1); border: 1px solid rgba(0, 209, 122, 0.2); color: #6ee7b7; }
-        .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #1f1f22; }
-        .user-table-wrap::-webkit-scrollbar { width: 4px; }
-        .user-table-wrap::-webkit-scrollbar-track { background: transparent; }
-        .user-table-wrap::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .modal-backdrop-module-d { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-backdrop-module-d.open { display: flex; }
-        .modal-card-module-d { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
-        @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .contact-textarea::placeholder { color: #3f3f46; }
@@ -270,259 +262,272 @@
         <div class="receipt-modal-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="font-size: 18px; font-weight: bold; color: white;">Official Receipt</h3>
-                <button onclick="closeReceiptModal()" style="background: none; border: none; color: #71717a; cursor: pointer; font-size: 24px; padding: 4px 8px; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.color='#f4f4f5';this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#71717a';this.style.background='none'">&times;</button>
+                <button onclick="closeReceiptModal()" style="background: none; border: none; color: #71717a; cursor: pointer; font-size: 24px; padding: 4px 8px; border-radius: 8px;" onmouseover="this.style.color='#f4f4f5';this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#71717a';this.style.background='none'">&times;</button>
             </div>
             <div id="receipt-status-area"></div>
             <div id="receipt-print-area" style="background: white; border-radius: 12px; padding: 10px; margin-bottom: 20px; max-height: 500px; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);"></div>
             <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
-                <button onclick="printReceipt()" style="padding: 10px 16px; background: rgba(113, 113, 122, 0.2); border: 1px solid rgba(113, 113, 122, 0.3); color: #a1a1aa; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;">Print</button>
-                <button onclick="downloadReceiptPDF()" style="padding: 10px 16px; background: rgba(0, 209, 122, 0.15); border: 1px solid rgba(0, 209, 122, 0.3); color: #00D17A; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;">Download PDF</button>
-                <button onclick="closeReceiptModal()" style="padding: 10px 16px; background: transparent; border: 1px solid #27272a; color: #71717a; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;">Close</button>
+                <button onclick="printReceipt()" style="padding: 10px 16px; background: rgba(113, 113, 122, 0.2); border: 1px solid rgba(113, 113, 122, 0.3); color: #a1a1aa; font-size: 11px; font-weight: bold; text-transform: uppercase; border-radius: 10px; cursor: pointer; font-family: 'Inter', sans-serif;">Print</button>
+                <button onclick="downloadReceiptPDF()" style="padding: 10px 16px; background: rgba(0, 209, 122, 0.15); border: 1px solid rgba(0, 209, 122, 0.3); color: #00D17A; font-size: 11px; font-weight: bold; text-transform: uppercase; border-radius: 10px; cursor: pointer; font-family: 'Inter', sans-serif;">Download PDF</button>
+                <button onclick="closeReceiptModal()" style="padding: 10px 16px; background: transparent; border: 1px solid #27272a; color: #71717a; font-size: 11px; font-weight: bold; text-transform: uppercase; border-radius: 10px; cursor: pointer; font-family: 'Inter', sans-serif;">Close</button>
             </div>
         </div>
     </div>
-
-    <!-- Hidden Print Area -->
     <div id="hidden-print-area" style="position: fixed; left: -9999px; top: -9999px;"></div>
 
     <script>
     // =====================================================
-    // EMAILJS CONFIGURATION
+    // 1. CONFIG & INITIALIZATION
     // =====================================================
     const EMAILJS_PUBLIC_KEY = 'EqpvSEszjMBtqUSBd';
     const EMAILJS_SERVICE_ID = 'service_1zm2s7c';
-    const EMAILJS_RECEIPT_TEMPLATE_ID = 'template_h7keskr';
-    const EMAILJS_CONTACT_TEMPLATE_ID = 'template_4dibrxf';
+    const EMAILJS_RECEIPT_TEMPLATE_ID = 'template_4dibrxf';
+    const EMAILJS_CONTACT_TEMPLATE_ID = 'template_h7keskr';
+    const isPlaceholder = str => !str || str.includes('YOUR_');
 
     let isEmailJsReady = false;
-    try {
-        if (typeof emailjs !== 'undefined') {
-            emailjs.init(EMAILJS_PUBLIC_KEY);
-            isEmailJsReady = true;
-        }
-    } catch (e) { console.error('EmailJS Init Error:', e); }
+    try { if (typeof emailjs !== 'undefined') { emailjs.init(EMAILJS_PUBLIC_KEY); isEmailJsReady = true; } } catch (e) {}
+
+    function initApp() {
+        const userData = JSON.parse(localStorage.getItem('maya_user')) || { name: 'Agent Smith', eid: 'asmith', role: 'AGENT' };
+        document.getElementById('user-name').textContent = userData.name;
+        document.getElementById('contact-name').value = userData.name;
+        document.getElementById('contact-eid').value = userData.eid;
+        document.getElementById('user-info').classList.remove('hidden');
+        document.getElementById('logout-btn').classList.remove('hidden');
+        const roleBadge = document.getElementById('role-badge');
+        roleBadge.textContent = userData.role; roleBadge.classList.remove('hidden');
+        updateClock(); setInterval(updateClock, 1000);
+    }
+
+    function updateClock() {
+        const el = document.getElementById('live-date-time');
+        if(el) el.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function handleLogout() { if(confirm('Logout?')) { localStorage.removeItem('maya_user'); window.location.reload(); } }
+    function toggleHistory() { alert("History toggled."); }
+    function saveMilesHistory() { alert("Saved to history."); }
+    function saveFinanceHistory() { alert("Saved to history."); }
+    function saveEMIHistory() { alert("Saved to history."); }
+    function exportEMICSV() { alert("CSV Exported."); }
+    function copyToClipboard(id) { const el = document.getElementById(id); if(el) { navigator.clipboard.writeText(el.value || el.textContent); el.style.color='#00D17A'; setTimeout(()=>el.style.color='', 300); } }
 
     // =====================================================
-    // CORE APP FUNCTIONS (Logout, History, etc.)
+    // 2. MAYA MILES CALCULATOR
     // =====================================================
-    function handleLogout() {
-        if(confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('maya_user');
-            window.location.href = 'index.html'; // Adjust if your login page is different
-        }
-    }
+    document.getElementById('spend-input')?.addEventListener('input', calculateMiles);
+    document.getElementById('multiplier-select')?.addEventListener('change', function() {
+        document.getElementById('custom-multiplier').classList.toggle('hidden', this.value !== 'custom');
+        calculateMiles();
+    });
+    document.getElementById('custom-multiplier')?.addEventListener('input', calculateMiles);
 
-    function toggleHistory() { alert("History panel toggled."); /* Link to your history logic */ }
-    function saveMilesHistory() { alert("Miles saved to history."); /* Link to your miles logic */ }
-    function saveFinanceHistory() { alert("Finance saved to history."); /* Link to your finance logic */ }
-    function saveEMIHistory() { alert("EMI saved to history."); /* Link to your EMI logic */ }
-    function exportEMICSV() { alert("CSV Export triggered."); /* Link to your CSV logic */ }
-    
-    function copyToClipboard(elementId) {
-        const element = document.getElementById(elementId);
-        if (element) {
-            const text = element.value || element.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                const originalColor = element.style.color;
-                element.style.color = '#00D17A';
-                setTimeout(() => { element.style.color = originalColor; }, 300);
-            }).catch(err => console.error('Copy failed:', err));
-        }
-    }
-
-    // =====================================================
-    // RECEIPT GENERATION & EMAIL SENDING
-    // =====================================================
-    async function generateAndSendReceipt() {
-        const customerName = document.getElementById('receipt-customer-name').value.trim();
-        const customerEmail = document.getElementById('receipt-customer-email').value.trim();
-        clearError('receipt-customer-name'); clearError('receipt-customer-email');
-        
-        let hasError = false;
-        if (!customerName) { showError('receipt-customer-name', 'Customer name is required'); hasError = true; }
-        if (!customerEmail || !isValidEmail(customerEmail)) { showError('receipt-customer-email', 'Valid email is required'); hasError = true; }
-        if (hasError) return;
-        
-        const principal = parseFloat(document.getElementById('emi-principal').value.replace(/,/g, '')) || 0;
-        const rate = parseFloat(document.getElementById('emi-rate').value) || 0;
-        const months = parseInt(document.getElementById('emi-months').value) || 0;
-        const startDate = document.getElementById('emi-start-date').value;
-        const emiAmount = parseFloat(document.getElementById('emi-fixed-amount').textContent.replace(/,/g, '')) || 0;
-        const totalInterest = parseFloat(document.getElementById('emi-total-interest').textContent.replace(/,/g, '')) || 0;
-        const totalAmount = principal + totalInterest;
-        
-        if (principal === 0 || months === 0 || emiAmount === 0) {
-            showContactAlert('Please calculate the EMI first before generating a receipt.', 'error'); return;
-        }
-        
-        const userNameEl = document.getElementById('user-name');
-        const receiptData = {
-            customerName, customerEmail, principal, rate, months, startDate, emiAmount, totalInterest, totalAmount,
-            receiptNumber: 'MAYA-' + Date.now().toString().slice(-8),
-            date: new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-            processedBy: userNameEl ? userNameEl.textContent.trim() : 'System'
-        };
-        
-        const receiptHTML = generateReceiptHTML(receiptData);
-        showReceiptModal(receiptHTML, 'loading');
-        
-        if (!isEmailJsReady) { showReceiptModal(receiptHTML, 'error', 'EmailJS is not configured.'); return; }
-        
-        try {
-            const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_TEMPLATE_ID, {
-                to_email: customerEmail, to_name: customerName, receipt_number: receiptData.receiptNumber,
-                principal_amount: principal.toFixed(2), monthly_emi: emiAmount.toFixed(2),
-                total_interest: totalInterest.toFixed(2), total_amount: totalAmount.toFixed(2),
-                tenure: months, start_date: startDate, processed_by: receiptData.processedBy
-            });
-            showReceiptModal(receiptHTML, 'success', customerEmail);
-        } catch (error) {
-            showReceiptModal(receiptHTML, 'error', error.text || 'Unknown error');
-        }
-    }
-
-    function generateReceiptHTML(data) {
-        return `<div class="receipt-container">
-            <div class="receipt-header"><div class="receipt-title">MAYA</div><div class="receipt-sub">Utility Terminal</div><div style="margin-top: 10px;"><span class="receipt-status">OFFICIAL RECEIPT</span></div></div>
-            <div style="margin-bottom: 15px;">
-                <div class="receipt-row"><span class="receipt-label">Receipt No:</span><span class="receipt-val">${data.receiptNumber}</span></div>
-                <div class="receipt-row"><span class="receipt-label">Date:</span><span class="receipt-val">${data.date}</span></div>
-                <div class="receipt-row"><span class="receipt-label">Customer:</span><span class="receipt-val">${data.customerName}</span></div>
-                <div class="receipt-row"><span class="receipt-label">Email:</span><span class="receipt-val">${data.customerEmail}</span></div>
-                <div class="receipt-row"><span class="receipt-label">Processed By:</span><span class="receipt-val">${data.processedBy}</span></div>
-            </div>
-            <div class="receipt-divider"></div>
-            <div style="margin-bottom: 15px;">
-                <div style="font-weight: bold; margin-bottom: 10px; text-transform: uppercase; font-size: 11px; color: #00995A;">Loan Details</div>
-                <div class="receipt-row"><span>Principal:</span><span>₱${data.principal.toFixed(2)}</span></div>
-                <div class="receipt-row"><span>Monthly EIR:</span><span>${data.rate}%</span></div>
-                <div class="receipt-row"><span>Tenure:</span><span>${data.months} months</span></div>
-                <div class="receipt-row"><span>Start Date:</span><span>${data.startDate}</span></div>
-                <div class="receipt-row"><span>Monthly EMI:</span><span style="font-weight: bold;">₱${data.emiAmount.toFixed(2)}</span></div>
-            </div>
-            <div class="receipt-divider"></div>
-            <div style="background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-                <div class="receipt-row"><span>Total Interest:</span><span>₱${data.totalInterest.toFixed(2)}</span></div>
-                <div class="receipt-total" style="margin-top: 10px;"><span>TOTAL PAYABLE:</span><span>₱${data.totalAmount.toFixed(2)}</span></div>
-            </div>
-            <div class="receipt-footer"><p style="margin: 0 0 5px;">Computer-generated receipt.</p><p style="margin: 10px 0 0; font-weight: bold; color: #00995A;">Thank you for choosing Maya!</p></div>
-        </div>`;
-    }
-
-    function showReceiptModal(receiptHTML, status, extraInfo) {
-        const modal = document.getElementById('receiptModal');
-        const printArea = document.getElementById('receipt-print-area');
-        const statusArea = document.getElementById('receipt-status-area');
-        if (!modal || !printArea || !statusArea) return;
-        printArea.innerHTML = receiptHTML;
-        
-        if (status === 'loading') statusArea.innerHTML = `<div class="receipt-loading"><div class="receipt-spinner"></div><span style="font-size: 12px; color: #a1a1aa;">Sending receipt...</span></div>`;
-        else if (status === 'success') statusArea.innerHTML = `<div class="receipt-success"><span style="font-size: 12px;">Sent to ${extraInfo}</span></div>`;
-        else if (status === 'error') statusArea.innerHTML = `<div class="receipt-error"><span style="font-size: 12px;">Error: ${extraInfo}</span></div>`;
-        
-        modal.classList.add('open'); modal.style.display = 'flex';
-    }
-
-    function closeReceiptModal() {
-        const modal = document.getElementById('receiptModal');
-        if (modal) { modal.classList.remove('open'); modal.style.display = 'none'; }
-    }
-
-    function printReceipt() {
-        const receiptContent = document.getElementById('receipt-print-area').innerHTML;
-        const hiddenArea = document.getElementById('hidden-print-area');
-        if(!hiddenArea) return;
-        hiddenArea.innerHTML = receiptContent;
-        hiddenArea.style.position = 'fixed'; hiddenArea.style.left = '0'; hiddenArea.style.top = '0';
-        hiddenArea.style.width = '100%'; hiddenArea.style.height = '100%';
-        hiddenArea.style.zIndex = '99999'; hiddenArea.style.background = 'white'; hiddenArea.style.padding = '20px';
-        window.print();
-        setTimeout(() => { hiddenArea.style.left = '-9999px'; hiddenArea.style.top = '-9999px'; }, 500);
-    }
-
-    async function downloadReceiptPDF() {
-        const receiptElement = document.querySelector('#receipt-print-area .receipt-container');
-        if (!receiptElement) return alert('No receipt to download');
-        if (typeof html2canvas === 'undefined') return alert('PDF library failed to load.');
-        try {
-            const canvas = await html2canvas(receiptElement, { scale: 2, backgroundColor: '#ffffff', logging: false, useCORS: true });
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgWidth = 190; const pageHeight = 277;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let heightLeft = imgHeight; let position = 10;
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= (pageHeight - 20);
-            while (heightLeft > 0) { position = heightLeft - imgHeight + 10; pdf.addPage(); pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight); heightLeft -= (pageHeight - 20); }
-            pdf.save(`Maya_Receipt_${Date.now()}.pdf`);
-        } catch (error) { console.error(error); alert('Failed to generate PDF.'); }
+    function calculateMiles() {
+        const spend = parseFloat(document.getElementById('spend-input').value.replace(/,/g, '')) || 0;
+        let mult = document.getElementById('multiplier-select').value === 'custom' ? (parseFloat(document.getElementById('custom-multiplier').value) || 1) : parseFloat(document.getElementById('multiplier-select').value);
+        const miles = spend * mult;
+        document.getElementById('miles-input').value = miles.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('cash-value').textContent = (miles * 0.50).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('est-spend').textContent = spend.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     // =====================================================
-    // CONTACT ADMIN EMAIL SENDING
+    // 3. FINANCE CHARGE CALCULATOR
     // =====================================================
-    async function sendContactMessage() {
-        const name = document.getElementById('contact-name')?.value.trim() || 'Unknown';
-        const eid = document.getElementById('contact-eid')?.value.trim() || 'Unknown';
-        const subject = document.getElementById('contact-subject')?.value || '';
-        const message = document.getElementById('contact-message')?.value.trim() || '';
-        const btn = document.getElementById('contact-send-btn');
+    ['loan-credit', 'partial-payment', 'loan-term', 'days-held'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', calculateFinance);
+    });
 
-        if (!subject) { showContactAlert('Please select a subject.', 'error'); return; }
-        if (!message) { showContactAlert('Please enter a message.', 'error'); return; }
-        if (!isEmailJsReady) { showContactAlert('Email system offline.', 'error'); return; }
-
-        if(btn) { btn.disabled = true; btn.innerHTML = `<div class="receipt-spinner" style="border-top-color: white; width: 14px; height: 14px; border-width: 2px;"></div> Sending...`; }
-        showContactAlert('Sending message...', 'loading');
-
-        try {
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONTACT_TEMPLATE_ID, { from_name: name, from_eid: eid, subject: subject, message: message });
-            showContactAlert('Message sent successfully!', 'success');
-            document.getElementById('contact-subject').value = '';
-            document.getElementById('contact-message').value = '';
-        } catch (error) {
-            showContactAlert(`Failed: ${error.text || 'Check connection.'}`, 'error');
-        } finally {
-            if(btn) { btn.disabled = false; btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message`; }
-        }
+    function calculateFinance() {
+        const loan = parseFloat(document.getElementById('loan-credit').value.replace(/,/g, '')) || 0;
+        const partial = parseFloat(document.getElementById('partial-payment').value.replace(/,/g, '')) || 0;
+        const term = parseFloat(document.getElementById('loan-term').value) || 30;
+        const daysHeld = parseFloat(document.getElementById('days-held').value) || 0;
+        const remaining = Math.max(0, loan - partial);
+        const interest = remaining * 0.03 * (daysHeld / term);
+        const total = remaining + interest;
+        document.getElementById('fb-principal').textContent = '₱' + remaining.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('fb-interest').textContent = '₱' + interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('finance-charge-result').textContent = total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    function showContactAlert(message, type) {
-        const alert = document.getElementById('contact-alert');
-        const alertText = document.getElementById('contact-alert-text');
-        if (!alert || !alertText) return;
-        if (type === 'loading') {
-            alert.className = 'module-d-alert show'; alert.style.background = 'rgba(0, 209, 122, 0.05)'; alert.style.border = '1px solid rgba(0, 209, 122, 0.15)'; alert.style.color = '#a1a1aa';
+    // =====================================================
+    // 4. LANDERS REWARDS CALCULATOR
+    // =====================================================
+    ['landers-spend', 'total-card-spend'].forEach(id => document.getElementById(id)?.addEventListener('input', calculateLanders));
+    document.getElementById('landers-category')?.addEventListener('change', calculateLanders);
+    document.getElementById('landers-custom-rate')?.addEventListener('input', calculateLanders);
+
+    function calculateLanders() {
+        const txSpend = parseFloat(document.getElementById('landers-spend').value.replace(/,/g, '')) || 0;
+        const category = document.getElementById('landers-category').value;
+        let points = 0, breakdown = "";
+
+        if (category === 'custom') {
+            document.getElementById('landers-custom-group').classList.remove('hidden');
+            const rate = parseFloat(document.getElementById('landers-custom-rate').value) || 0;
+            points = txSpend * (rate / 100); breakdown = `Custom: ${rate}% of ₱${txSpend.toFixed(2)}`;
         } else {
-            alert.style.background = ''; alert.style.border = ''; alert.style.color = ''; alert.className = `module-d-alert module-d-alert-${type} show`;
+            document.getElementById('landers-custom-group').classList.add('hidden');
+            if (category === 'landers') {
+                let rem = txSpend, t1=0, t2=0, t3=0;
+                if(rem > 0) { t1 = Math.min(rem, 3000); points += t1 * 0.01; rem -= t1; }
+                if(rem > 0) { t2 = Math.min(rem, 3000); points += t2 * 0.02; rem -= t2; }
+                if(rem > 0) { t3 = rem; points += rem * 0.03; }
+                breakdown = `0-3k (1%): ₱${t1.toFixed(2)}\n3k-6k (2%): ₱${t2.toFixed(2)}\n6k+ (3%): ₱${t3.toFixed(2)}`;
+            } else if (category === 'dining') { points = txSpend * 0.02; breakdown = `Dining 2%`; }
+            else if (category === 'other') { points = txSpend * 0.01; breakdown = `Other 1%`; }
+            else { points = 0; breakdown = `Excluded 0%`; }
         }
-        alertText.textContent = message;
-        if (type === 'success') setTimeout(() => { alert.classList.remove('show'); }, 6000);
+        document.getElementById('landers-result').textContent = points.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('voucher-result').textContent = Math.floor(points / 500);
+        document.getElementById('tier-breakdown').textContent = breakdown;
     }
 
     // =====================================================
-    // VALIDATIONS & EVENT LISTENERS
+    // 5. MINI PAYMENTS (EMI) CALCULATOR
     // =====================================================
-    function showError(inputId, message) { const input = document.getElementById(inputId); const err = document.getElementById(inputId + '-err'); if(input) input.classList.add('input-error'); if(err) { err.textContent = message; err.style.display = 'block'; } }
-    function clearError(inputId) { const input = document.getElementById(inputId); const err = document.getElementById(inputId + '-err'); if(input) input.classList.remove('input-error'); if(err) err.style.display = 'none'; }
-    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    ['emi-principal', 'emi-rate', 'emi-months', 'emi-days-year', 'emi-start-date'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', calculateEMI);
+    });
 
-    document.getElementById('receiptModal')?.addEventListener('click', function(e) { if (e.target === this) closeReceiptModal(); });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeReceiptModal(); });
-    document.getElementById('receipt-customer-name')?.addEventListener('input', function() { clearError('receipt-customer-name'); });
-    document.getElementById('receipt-customer-email')?.addEventListener('input', function() { clearError('receipt-customer-email'); });
-    document.getElementById('contact-message')?.addEventListener('input', function() { document.getElementById('contact-alert')?.classList.remove('show'); });
-    document.getElementById('contact-subject')?.addEventListener('change', function() { document.getElementById('contact-alert')?.classList.remove('show'); });
+    function calculateEMI() {
+        const P = parseFloat(document.getElementById('emi-principal').value.replace(/,/g, '')) || 0;
+        const monthlyEIR = parseFloat(document.getElementById('emi-rate').value) || 0;
+        const n = parseInt(document.getElementById('emi-months').value) || 0;
+        const daysInYear = parseInt(document.getElementById('emi-days-year').value) || 365;
+        const startDateStr = document.getElementById('emi-start-date').value;
+        
+        const nominalAnnual = monthlyEIR * 12;
+        const dailyRate = (monthlyEIR / 100) / daysInYear;
+        document.getElementById('emi-nominal-rate').textContent = nominalAnnual.toFixed(2);
+        document.getElementById('emi-daily-rate').textContent = dailyRate.toFixed(6);
+
+        if (P === 0 || n === 0 || monthlyEIR === 0) {
+            document.getElementById('emi-fixed-amount').textContent = '0.00';
+            document.getElementById('emi-total-interest').textContent = '0.00';
+            document.getElementById('emi-table-body').innerHTML = `<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter valid loan details to generate schedule...</td></tr>`;
+            document.getElementById('emi-breakdown').textContent = 'Enter loan details to generate formula breakdown...';
+            return;
+        }
+
+        const r = monthlyEIR / 100;
+        const emiFixed = P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+        let balance = P, totalInterest = 0, tableHTML = '';
+        const startDate = new Date(startDateStr);
+
+        for (let i = 1; i <= n; i++) {
+            const curDate = new Date(startDate); curDate.setMonth(curDate.getMonth() + i);
+            const prevDate = new Date(startDate); prevDate.setMonth(prevDate.getMonth() + i - 1);
+            const days = Math.round((curDate - prevDate) / (1000 * 60 * 60 * 24));
+            const interestAmt = balance * dailyRate * days;
+            let principalPaid = emiFixed - interestAmt;
+            let startBalance = balance;
+
+            if (i === n) principalPaid = balance; // Last month clears balance
+            balance -= principalPaid;
+            if (balance < 0) balance = 0;
+            totalInterest += interestAmt;
+
+            const dateStr = curDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+            tableHTML += `<tr class="border-b border-zinc-800/50 hover:bg-zinc-900/30"><td class="px-3 py-2.5 text-center text-zinc-500">${i}</td><td class="px-3 py-2.5">${dateStr}</td><td class="px-3 py-2.5 text-right">${days}</td><td class="px-3 py-2.5 text-right">₱${startBalance.toFixed(2)}</td><td class="px-3 py-2.5 text-right text-red-400">₱${interestAmt.toFixed(2)}</td><td class="px-3 py-2.5 text-right text-emerald-400">₱${principalPaid.toFixed(2)}</td><td class="px-3 py-2.5 text-right font-semibold text-white">₱${(i===n ? principalPaid+interestAmt : emiFixed).toFixed(2)}</td><td class="px-3 py-2.5 text-right">₱${balance.toFixed(2)}</td></tr>`;
+        }
+
+        document.getElementById('emi-fixed-amount').textContent = emiFixed.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('emi-total-interest').textContent = totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('emi-table-body').innerHTML = tableHTML;
+        document.getElementById('emi-breakdown').textContent = `EMI = P × r × (1+r)^n / ((1+r)^n - 1)\nP = ₱${P.toFixed(2)}\nr = ${monthlyEIR}% / 100\nn = ${n} months\n\nFixed EMI = ₱${emiFixed.toFixed(2)}\nDaily Rate = ${dailyRate.toFixed(6)}`;
+    }
 
     // =====================================================
-    // LOADER REMOVAL
+    // 6. RECEIPT & CONTACT SYSTEM
     // =====================================================
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            const loader = document.getElementById('loader');
-            if(loader) { loader.classList.add('hidden-loader'); setTimeout(() => loader.remove(), 600); }
-        }, 2000);
+    function showError(id, msg) { const el = document.getElementById(id); const err = document.getElementById(id+'-err'); if(el) el.classList.add('input-error'); if(err) { err.textContent=msg; err.style.display='block'; } }
+    function clearError(id) { const el = document.getElementById(id); const err = document.getElementById(id+'-err'); if(el) el.classList.remove('input-error'); if(err) err.style.display='none'; }
+    function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+    async function generateAndSendReceipt() {
+        const cName = document.getElementById('receipt-customer-name').value.trim();
+        const cEmail = document.getElementById('receipt-customer-email').value.trim();
+        clearError('receipt-customer-name'); clearError('receipt-customer-email');
+        if(!cName) { showError('receipt-customer-name', 'Required'); return; }
+        if(!cEmail || !isValidEmail(cEmail)) { showError('receipt-customer-email', 'Valid email required'); return; }
+        
+        const P = parseFloat(document.getElementById('emi-principal').value.replace(/,/g, '')) || 0;
+        const emi = parseFloat(document.getElementById('emi-fixed-amount').textContent.replace(/,/g, '')) || 0;
+        const int = parseFloat(document.getElementById('emi-total-interest').textContent.replace(/,/g, '')) || 0;
+        if(P===0||emi===0) { showContactAlert('Calculate EMI first.', 'error'); return; }
+
+        const data = { cName, cEmail, P, int, total: P+int, emi, num: 'MAYA-'+Date.now().toString().slice(-8), date: new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}) };
+        const html = `<div class="receipt-container"><div class="receipt-header"><div class="receipt-title">MAYA</div><div class="receipt-sub">Utility Terminal</div><div style="margin-top:10px"><span class="receipt-status">OFFICIAL RECEIPT</span></div></div><div style="margin-bottom:15px"><div class="receipt-row"><span class="receipt-label">Receipt No:</span><span>${data.num}</span></div><div class="receipt-row"><span class="receipt-label">Date:</span><span>${data.date}</span></div><div class="receipt-row"><span class="receipt-label">Customer:</span><span>${data.cName}</span></div><div class="receipt-row"><span class="receipt-label">Email:</span><span>${data.cEmail}</span></div></div><div class="receipt-divider"></div><div style="margin-bottom:15px"><div class="receipt-row"><span>Principal:</span><span>₱${data.P.toFixed(2)}</span></div><div class="receipt-row"><span>Monthly EMI:</span><span>₱${data.emi.toFixed(2)}</span></div><div class="receipt-row"><span>Total Interest:</span><span>₱${data.int.toFixed(2)}</span></div></div><div class="receipt-total"><span>TOTAL:</span><span>₱${data.total.toFixed(2)}</span></div><div class="receipt-footer"><p style="margin:10px 0 0;font-weight:bold;color:#00995A;">Thank you!</p></div></div>`;
+        
+        showReceiptModal(html, 'loading');
+        if (!isPlaceholder(EMAILJS_SERVICE_ID)) {
+            try {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_TEMPLATE_ID, { to_email: cEmail, to_name: cName, receipt_number: data.num, principal_amount: P.toFixed(2), monthly_emi: emi.toFixed(2), total_interest: int.toFixed(2), total_amount: data.total.toFixed(2), tenure: document.getElementById('emi-months').value });
+                showReceiptModal(html, 'success', cEmail);
+            } catch (e) { showReceiptModal(html, 'error', e.text); }
+        } else {
+            await new Promise(r => setTimeout(r, 1500));
+            showReceiptModal(html, 'success', cEmail + ' (Demo Mode)');
+        }
+    }
+
+    function showReceiptModal(html, status, info) {
+        const m = document.getElementById('receiptModal'), p = document.getElementById('receipt-print-area'), s = document.getElementById('receipt-status-area');
+        p.innerHTML = html;
+        if(status==='loading') s.innerHTML = `<div class="receipt-loading"><div class="receipt-spinner"></div><span style="font-size:12px;color:#a1a1aa">Sending...</span></div>`;
+        else if(status==='success') s.innerHTML = `<div class="receipt-success"><span style="font-size:12px">Sent to ${info}</span></div>`;
+        else s.innerHTML = `<div class="receipt-error"><span style="font-size:12px">Error: ${info}</span></div>`;
+        m.classList.add('open'); m.style.display='flex';
+    }
+    function closeReceiptModal() { const m=document.getElementById('receiptModal'); m.classList.remove('open'); m.style.display='none'; }
+    function printReceipt() { const h=document.getElementById('hidden-print-area'); h.innerHTML=document.getElementById('receipt-print-area').innerHTML; h.style.cssText='position:fixed;left:0;top:0;width:100%;z-index:99999;background:white;padding:20px'; window.print(); setTimeout(()=>h.style.left='-9999px',500); }
+    async function downloadReceiptPDF() { if(typeof html2canvas==='undefined') return alert('PDF library missing'); const c=await html2canvas(document.querySelector('#receipt-print-area .receipt-container'),{scale:2,backgroundColor:'#fff'}); const p=new window.jspdf.jsPDF(); p.addImage(c.toDataURL('image/png'),'PNG',10,10,190,c.height*190/c.width); p.save(`Maya_Receipt.pdf`); }
+
+    async function sendContactMessage() {
+        const name = document.getElementById('contact-name').value, eid = document.getElementById('contact-eid').value, subj = document.getElementById('contact-subject').value, msg = document.getElementById('contact-message').value.trim(), btn = document.getElementById('contact-send-btn');
+        if(!subj) { showContactAlert('Select a subject.','error'); return; }
+        if(!msg) { showContactAlert('Enter a message.','error'); return; }
+        
+        btn.disabled = true; btn.innerHTML = `<div class="receipt-spinner" style="border-top-color:white;width:14px;height:14px;border-width:2px"></div> Sending...`;
+        showContactAlert('Connecting...', 'loading');
+
+        if (!isPlaceholder(EMAILJS_SERVICE_ID)) {
+            try {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONTACT_TEMPLATE_ID, { from_name: name, from_eid: eid, subject: subj, message: msg });
+                showContactAlert('Message sent successfully!', 'success');
+                document.getElementById('contact-subject').value = ''; document.getElementById('contact-message').value = '';
+            } catch (e) { showContactAlert(`Failed: ${e.text}`, 'error'); }
+        } else {
+            await new Promise(r => setTimeout(r, 1500)); // Simulate network
+            showContactAlert('Message sent successfully! (Demo Mode - Configure EmailJS for live emails)', 'success');
+            document.getElementById('contact-subject').value = ''; document.getElementById('contact-message').value = '';
+        }
+        btn.disabled = false; btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message`;
+    }
+
+    function showContactAlert(msg, type) {
+        const a = document.getElementById('contact-alert'), t = document.getElementById('contact-alert-text');
+        if(type==='loading') { a.className='module-d-alert show'; a.style.cssText='background:rgba(0,209,122,0.05);border:1px solid rgba(0,209,122,0.15);color:#a1a1aa'; }
+        else { a.style.cssText=''; a.className=`module-d-alert module-d-alert-${type} show`; }
+        t.textContent = msg; if(type==='success') setTimeout(()=>a.classList.remove('show'), 6000);
+    }
+
+    // =====================================================
+    // 7. EVENTS & LOADER
+    // =====================================================
+    document.getElementById('receiptModal')?.addEventListener('click', function(e) { if(e.target===this) closeReceiptModal(); });
+    document.addEventListener('keydown', e => { if(e.key==='Escape') closeReceiptModal(); });
+    document.getElementById('receipt-customer-name')?.addEventListener('input', () => clearError('receipt-customer-name'));
+    document.getElementById('receipt-customer-email')?.addEventListener('input', () => clearError('receipt-customer-email'));
+    document.getElementById('contact-message')?.addEventListener('input', () => document.getElementById('contact-alert')?.classList.remove('show'));
+    document.getElementById('contact-subject')?.addEventListener('change', () => document.getElementById('contact-alert')?.classList.remove('show'));
+
+    window.addEventListener('load', () => {
+        initApp();
+        setTimeout(() => { const l = document.getElementById('loader'); l.classList.add('hidden-loader'); setTimeout(()=>l.remove(), 600); }, 2000);
     });
     </script>
 </body>
