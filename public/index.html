@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
@@ -38,7 +37,6 @@
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #08090A; }
         ::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
         .loader-overlay { transition: opacity 0.6s ease-out, visibility 0.6s; }
         .hidden-loader { opacity: 0; visibility: hidden; pointer-events: none; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -49,13 +47,6 @@
         .module-d-alert.show { display: flex; }
         .module-d-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; }
         .module-d-alert-success { background: rgba(0, 209, 122, 0.1); border: 1px solid rgba(0, 209, 122, 0.2); color: #6ee7b7; }
-        .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #1f1f22; }
-        .user-row { transition: background 0.15s; cursor: pointer; }
-        .user-row:hover { background: rgba(0, 209, 122, 0.08); }
-        .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-        .role-tag-admin { background: rgba(0, 209, 122, 0.15); color: #00D17A; border: 1px solid rgba(0, 209, 122, 0.3); }
-        .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(0, 209, 122, 0.2); color: #00D17A; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-        .btn-action-user:hover { background: rgba(0, 209, 122, 0.1); border-color: rgba(0, 209, 122, 0.4); }
         .modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-backdrop.open { display: flex; }
         .modal-card { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
@@ -63,13 +54,13 @@
         .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
-        .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; outline: none; user-select: none; }
-        .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
+        .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; outline: none; user-select: none; }
+        .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; transition: all 0.2s; }
         .hist-item:hover { background: #18181b; transform: translateX(4px); }
         .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
         .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
-        @media print { body * { visibility: hidden; } #receipt-print-area, #receipt-print-area * { visibility: visible; } #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; } .no-print { display: none !important; } }
+        @media print { body * { visibility: hidden; } #receipt-print-area, #receipt-print-area * { visibility: visible; } #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; background: white !important; } .no-print { display: none !important; } }
         .tier-breakdown { white-space: pre-line; }
         .email-status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .email-status-idle { background: rgba(113,113,122,0.15); color: #a1a1aa; border: 1px solid rgba(113,113,122,0.2); }
@@ -106,15 +97,12 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online &bull; v2.5.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online &bull; v2.6.0</p>
                     <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="openSettingsModal()" class="px-3 py-2 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all" title="System Settings">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            </button>
             <button onclick="toggleHistory()" class="px-3 py-2 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> History
             </button>
@@ -128,7 +116,7 @@
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
-        <!-- MODULE A: MILES CALCULATOR -->
+        <!-- MODULE A -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
             <div class="space-y-5 flex-grow">
@@ -140,7 +128,7 @@
             <button onclick="saveMilesHistory()" class="mt-4 w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
         </div>
 
-        <!-- MODULE B: FINANCE CHARGE -->
+        <!-- MODULE B -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-red-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span></div>
             <div class="space-y-5 flex-grow">
@@ -158,7 +146,7 @@
             <button onclick="saveFinanceHistory()" class="mt-4 w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
         </div>
 
-        <!-- MODULE C: LANDERS REWARDS -->
+        <!-- MODULE C -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
@@ -168,23 +156,20 @@
             </div>
             <div class="md:w-1/2 bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center border border-dashed border-zinc-800 relative">
                 <p class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Points Earned</p>
-                <div class="flex items-end justify-between mb-4"><p class="text-4xl md:text-5xl font-mono font-bold text-blue-400 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')"><span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span></p><button onclick="copyToClipboard('landers-result')" class="mb-2 p-2 hover:bg-blue-500/20 rounded-lg transition-colors text-blue-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div>
+                <div class="flex items-end justify-between mb-4"><p class="text-4xl md:text-5xl font-mono font-bold text-blue-400 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')"><span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span></p></div>
                 <div class="w-full h-px bg-zinc-800 my-4"></div>
                 <div class="flex justify-between items-center"><div><p class="text-[10px] uppercase text-zinc-500">Vouchers Earned</p><p class="text-[9px] text-zinc-600 mt-1">500 pts = 1 Voucher (₱500)</p></div><div class="text-right"><p class="text-2xl font-mono font-bold text-white" id="voucher-result">0</p><span class="text-[10px] text-zinc-500 uppercase">Vouchers</span></div></div>
             </div>
         </div>
 
-        <!-- MODULE E: MINI PAYMENTS (EMI) -->
+        <!-- MODULE E -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
-
             <div id="emi-email-alert" class="module-d-alert module-d-alert-error no-print" style="margin-bottom:16px"><span id="emi-email-alert-text"></span></div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 no-print">
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Name <span class="text-red-400">*</span></label><input type="text" id="receipt-customer-name" placeholder="Juan Dela Cruz" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Email <span class="text-red-400">*</span></label><input type="email" id="receipt-customer-email" placeholder="customer@email.com" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div>
             </div>
-
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
                 <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
@@ -192,46 +177,29 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
             </div>
-
             <div class="flex flex-wrap gap-2 mb-4 no-print">
-                <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> Generate Receipt
-                </button>
-                <button onclick="openEmailReceiptModal()" id="btn-send-email-receipt" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> Send Receipt via Email
-                </button>
-                <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save History
-                </button>
-                <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export CSV
-                </button>
+                <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> Generate Receipt</button>
+                <button onclick="openEmailReceiptModal()" id="btn-send-email-receipt" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> Send Receipt via Email</button>
+                <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save History</button>
+                <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export CSV</button>
             </div>
-
-            <details class="formula-card mb-4 no-print">
-                <summary>Show Calculation Breakdown</summary>
-                <div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div>
-            </details>
-
+            <details class="formula-card mb-4 no-print"><summary>Show Calculation Breakdown</summary><div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div></details>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div>
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p></div>
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-amber-400 data-font">₱<span id="emi-fixed-amount">0.00</span></p></div>
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p></div>
             </div>
-            <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
+            <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details...</td></tr></tbody></table></div>
             <div id="receipt-print-area" style="display:none;"></div>
         </div>
     </main>
 
-    <!-- CONTACT ADMIN SECTION -->
+    <!-- CONTACT ADMIN -->
     <section class="max-w-6xl mx-auto mt-8 opacity-0 animate-fade-in no-print" style="animation-delay: 0.35s;">
         <div class="glass-panel rounded-2xl p-6 shadow-2xl">
-            <div class="flex items-center justify-between mb-5">
-                <div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Contact Admin</h2></div>
-                <span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Support</span>
-            </div>
-            <p class="text-xs text-zinc-500 mb-5 leading-relaxed">Having issues with your account or the website? Send a message directly to the admin. All fields are required.</p>
+            <div class="flex items-center justify-between mb-5"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Contact Admin</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Support</span></div>
+            <p class="text-xs text-zinc-500 mb-5 leading-relaxed">Having issues with your account or the website? Send a message directly to the admin.</p>
             <div id="contact-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="contact-alert-text"></span></div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
@@ -241,85 +209,28 @@
             <div class="mb-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Message</label><textarea id="contact-message" class="contact-textarea" placeholder="Describe your concern in detail..." rows="4"></textarea></div>
             <div class="flex items-center justify-between">
                 <p class="text-[10px] text-zinc-600">Messages are sent directly to the admin via email.</p>
-                <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message
-                </button>
+                <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message</button>
             </div>
         </div>
     </section>
 
-    <footer class="max-w-6xl mx-auto mt-12 mb-6 text-center opacity-0 animate-fade-in no-print" style="animation-delay:0.45s">
-        <p class="text-[10px] text-zinc-700 uppercase tracking-widest">Maya Internal Utility Terminal &bull; Secured &bull; v2.5.0</p>
-    </footer>
-
-    <!-- SETTINGS MODAL (SECRETS) -->
-    <div id="settings-modal" class="modal-backdrop">
-        <div class="modal-card">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-lg font-bold text-white">System Settings & Secrets</h3>
-                <button onclick="closeSettingsModal()" class="text-zinc-500 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            <p class="text-xs text-zinc-500 mb-6 leading-relaxed">Configure your EmailJS credentials and Admin email. These are stored securely in your browser's local storage and are never exposed in the UI.</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Admin Email (For Contact Form)</label>
-                    <input type="email" id="setting-admin-email" placeholder="admin@maya.ph" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
-                </div>
-                <div class="border-t border-zinc-800 pt-4">
-                    <p class="text-[10px] uppercase tracking-wider text-purple-400 font-semibold mb-3">EmailJS Configuration</p>
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Service ID</label>
-                    <input type="text" id="setting-service-id" placeholder="service_xxxxxxx" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Template ID</label>
-                    <input type="text" id="setting-template-id" placeholder="template_xxxxxxx" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Public Key</label>
-                    <input type="text" id="setting-public-key" placeholder="xxxxxxxxxxxxxxx" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-600">
-                </div>
-            </div>
-            <div class="flex gap-3 mt-6">
-                <button onclick="saveSettings()" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Settings</button>
-                <button onclick="closeSettingsModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
-            </div>
-        </div>
-    </div>
+    <footer class="max-w-6xl mx-auto mt-12 mb-6 text-center opacity-0 animate-fade-in no-print" style="animation-delay:0.45s"><p class="text-[10px] text-zinc-700 uppercase tracking-widest">Maya Internal Utility Terminal &bull; Secured &bull; v2.6.0</p></footer>
 
     <!-- EMAIL RECEIPT MODAL -->
     <div id="email-receipt-modal" class="modal-backdrop" style="z-index: 250;">
         <div class="modal-card" style="max-width: 700px;">
-            <div class="flex items-center justify-between mb-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-bold text-sm">Send Receipt via Email</h3>
-                        <p class="text-zinc-500 text-[10px] mt-0.5">Review and send computation receipt to customer</p>
-                    </div>
-                </div>
-                <button onclick="closeEmailReceiptModal()" class="text-zinc-500 hover:text-white transition-colors p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
+            <div class="flex items-center justify-between mb-5"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div><div><h3 class="text-white font-bold text-sm">Send Receipt via Email</h3><p class="text-zinc-500 text-[10px] mt-0.5">Review and send computation receipt to customer</p></div></div><button onclick="closeEmailReceiptModal()" class="text-zinc-500 hover:text-white transition-colors p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Name</label><input type="text" id="modal-email-name" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Customer name"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Email</label><input type="email" id="modal-email-addr" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="customer@email.com"></div>
             </div>
-            <div class="mb-4 flex items-center gap-3">
-                <span id="email-send-status" class="email-status-badge email-status-idle"><span class="w-1.5 h-1.5 rounded-full bg-current"></span> Ready</span>
-                <span id="email-send-time" class="text-[10px] text-zinc-600 font-mono"></span>
-            </div>
+            <div class="mb-4 flex items-center gap-3"><span id="email-send-status" class="email-status-badge email-status-idle"><span class="w-1.5 h-1.5 rounded-full bg-current"></span> Ready</span><span id="email-send-time" class="text-[10px] text-zinc-600 font-mono"></span></div>
             <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium mb-2">Receipt Preview</p>
-            <div style="background: #fff; border-radius: 10px; padding: 0; overflow: hidden; border: 1px solid #27272a; max-height: 400px; overflow-y: auto;" id="modal-receipt-preview"></div>
+            <div style="background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #27272a; max-height: 400px; overflow-y: auto;" id="modal-receipt-preview"></div>
             <div class="mt-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Additional Note (optional)</label><textarea id="modal-email-note" class="contact-textarea" rows="2" placeholder="Add a personal message to the customer..." style="min-height:60px"></textarea></div>
             <div class="flex items-center justify-end gap-3 mt-6">
                 <button onclick="closeEmailReceiptModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
-                <button onclick="sendEmailReceipt()" id="btn-modal-send" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg> Send Email
-                </button>
+                <button onclick="sendEmailReceipt()" id="btn-modal-send" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg> Send Email</button>
             </div>
         </div>
     </div>
@@ -335,314 +246,56 @@
     <div id="history-overlay" class="fixed inset-0 bg-black/50 hidden" style="z-index:140" onclick="toggleHistory()"></div>
 
 <script>
-// ========================================
-// GLOBAL UTILITIES
-// ========================================
 const fmt = (n, d=2) => parseFloat(n||0).toLocaleString('en-PH',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtN = (n) => parseFloat(String(n||'0').replace(/,/g,'')) || 0;
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2,5);
 let currentUser = JSON.parse(localStorage.getItem('mayaCurrentUser') || 'null');
 
-// ========================================
-// LOADER & INIT
-// ========================================
-window.addEventListener('load', () => {
-    setTimeout(() => { document.getElementById('loader').classList.add('hidden-loader'); }, 1800);
-    initApp();
-});
+window.addEventListener('load', () => { setTimeout(() => { document.getElementById('loader').classList.add('hidden-loader'); }, 1800); initApp(); });
+function initApp() { updateLiveTime(); setInterval(updateLiveTime, 1000); initEMI(); if (currentUser) onLogin(currentUser); }
+function updateLiveTime() { const el = document.getElementById('live-date-time'); if (el) el.textContent = new Date().toLocaleString('en-PH', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' }); }
 
-function initApp() {
-    updateLiveTime();
-    setInterval(updateLiveTime, 1000);
-    initEMI();
-    if (currentUser) onLogin(currentUser);
-}
+function onLogin(user) { currentUser = user; localStorage.setItem('mayaCurrentUser', JSON.stringify(user)); document.getElementById('user-info').classList.remove('hidden'); document.getElementById('logout-btn').classList.remove('hidden'); document.getElementById('user-name').textContent = user.fullName || user.employeeId; const badge = document.getElementById('role-badge'); badge.classList.remove('hidden'); badge.textContent = user.role; document.getElementById('contact-name').value = user.fullName || ''; document.getElementById('contact-eid').value = user.employeeId || ''; }
+function handleLogout() { currentUser = null; localStorage.removeItem('mayaCurrentUser'); localStorage.removeItem('mayaToken'); window.location.href = '/'; }
 
-function updateLiveTime() {
-    const el = document.getElementById('live-date-time');
-    if (el) el.textContent = new Date().toLocaleString('en-PH', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
-}
+function copyToClipboard(elId) { const el = document.getElementById(elId); if (!el) return; navigator.clipboard.writeText(el.value || el.textContent).then(() => showToast('Copied to clipboard')); }
+function showToast(msg, type='success') { const toast = document.createElement('div'); toast.className = `fixed top-6 right-6 z-[500] px-5 py-3 rounded-xl text-sm font-semibold shadow-2xl animate-fade-in ${type==='success'?'bg-emerald-600 text-white':'bg-red-600 text-white'}`; toast.textContent = msg; document.body.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; setTimeout(() => toast.remove(), 400); }, 2500); }
+function show_alert(elId, textId, msg, type) { const alertEl = document.getElementById(elId); const textEl = document.getElementById(textId); textEl.textContent = msg; alertEl.className = 'module-d-alert module-d-alert-' + (type === 'success' ? 'success' : 'error') + ' show'; setTimeout(() => { alertEl.classList.remove('show'); }, 6000); }
 
-// ========================================
-// AUTH & SESSION
-// ========================================
-function onLogin(user) {
-    currentUser = user;
-    localStorage.setItem('mayaCurrentUser', JSON.stringify(user));
-    document.getElementById('user-info').classList.remove('hidden');
-    document.getElementById('logout-btn').classList.remove('hidden');
-    document.getElementById('user-name').textContent = user.fullName || user.employeeId;
-    const badge = document.getElementById('role-badge');
-    badge.classList.remove('hidden');
-    badge.textContent = user.role;
-    document.getElementById('contact-name').value = user.fullName || '';
-    document.getElementById('contact-eid').value = user.employeeId || '';
-}
+async function secureFetch(url, options = {}) { const token = localStorage.getItem('mayaToken'); if (!token) { showToast('Session expired. Please login again.', 'error'); setTimeout(() => handleLogout(), 1500); throw new Error('No token'); } options.headers = { ...options.headers, 'Content-Type': 'application/json', 'x-maya-token': token }; const response = await fetch(url, options); if (response.status === 401) { showToast('Session expired. Please login again.', 'error'); setTimeout(() => handleLogout(), 1500); throw new Error('Unauthorized'); } return response; }
 
-function handleLogout() {
-    currentUser = null;
-    localStorage.removeItem('mayaCurrentUser');
-    location.reload();
-}
-
-// ========================================
-// UI HELPERS
-// ========================================
-function copyToClipboard(elId) {
-    const el = document.getElementById(elId);
-    if (!el) return;
-    navigator.clipboard.writeText(el.value || el.textContent).then(() => showToast('Copied to clipboard'));
-}
-
-function showToast(msg, type='success') {
-    const toast = document.createElement('div');
-    toast.className = `fixed top-6 right-6 z-[500] px-5 py-3 rounded-xl text-sm font-semibold shadow-2xl animate-fade-in ${type==='success'?'bg-emerald-600 text-white':'bg-red-600 text-white'}`;
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; setTimeout(() => toast.remove(), 400); }, 2500);
-}
-
-function show_alert(elId, textId, msg, type) {
-    const alertEl = document.getElementById(elId);
-    const textEl = document.getElementById(textId);
-    textEl.textContent = msg;
-    alertEl.className = 'module-d-alert module-d-alert-' + (type === 'success' ? 'success' : 'error') + ' show';
-    setTimeout(() => { alertEl.classList.remove('show'); }, 6000);
-}
-
-// ========================================
-// MODULE A: MILES CALCULATOR
-// ========================================
+// MODULE A
 document.getElementById('spend-input')?.addEventListener('input', calcMiles);
-document.getElementById('multiplier-select')?.addEventListener('change', function() {
-    document.getElementById('custom-multiplier').classList.toggle('hidden', this.value !== 'custom');
-    calcMiles();
-});
+document.getElementById('multiplier-select')?.addEventListener('change', function() { document.getElementById('custom-multiplier').classList.toggle('hidden', this.value !== 'custom'); calcMiles(); });
 document.getElementById('custom-multiplier')?.addEventListener('input', calcMiles);
+function calcMiles() { const spend = fmtN(document.getElementById('spend-input').value); const sel = document.getElementById('multiplier-select').value; const mult = sel === 'custom' ? (fmtN(document.getElementById('custom-multiplier').value) || 1) : parseFloat(sel); const miles = spend * mult * 0.005; document.getElementById('miles-input').value = miles.toFixed(2); document.getElementById('cash-value').textContent = fmt(miles * 0.20); document.getElementById('est-spend').textContent = fmt(spend); }
+function saveMilesHistory() { const spend = fmtN(document.getElementById('spend-input').value); const miles = parseFloat(document.getElementById('miles-input').value) || 0; if (!spend) return showToast('Enter a spend amount first', 'error'); pushHistory({ id: uid(), type: 'Miles', date: new Date().toISOString(), spend, miles }); showToast('Miles computation saved'); }
 
-function calcMiles() {
-    const spend = fmtN(document.getElementById('spend-input').value);
-    const sel = document.getElementById('multiplier-select').value;
-    const mult = sel === 'custom' ? (fmtN(document.getElementById('custom-multiplier').value) || 1) : parseFloat(sel);
-    const miles = spend * mult * 0.005;
-    document.getElementById('miles-input').value = miles.toFixed(2);
-    document.getElementById('cash-value').textContent = fmt(miles * 0.20);
-    document.getElementById('est-spend').textContent = fmt(spend);
-}
+// MODULE B
+['loan-credit','partial-payment','loan-term','days-held'].forEach(id => { document.getElementById(id)?.addEventListener('input', calcFinance); });
+function calcFinance() { const credit = fmtN(document.getElementById('loan-credit').value); const partial = fmtN(document.getElementById('partial-payment').value); const term = fmtN(document.getElementById('loan-term').value); const held = fmtN(document.getElementById('days-held').value); const remaining = Math.max(0, credit - partial); const interest = remaining * 0.03 * (held / term); document.getElementById('fb-principal').textContent = '₱' + fmt(remaining); document.getElementById('fb-interest').textContent = '₱' + fmt(interest); document.getElementById('finance-charge-result').textContent = fmt(remaining + interest); }
+function saveFinanceHistory() { const credit = fmtN(document.getElementById('loan-credit').value); if (!credit) return showToast('Enter loan credit first', 'error'); pushHistory({ id: uid(), type: 'Finance', date: new Date().toISOString(), credit, result: fmtN(document.getElementById('finance-charge-result').textContent) }); showToast('Finance charge saved'); }
 
-function saveMilesHistory() {
-    const spend = fmtN(document.getElementById('spend-input').value);
-    const miles = parseFloat(document.getElementById('miles-input').value) || 0;
-    if (!spend) return showToast('Enter a spend amount first', 'error');
-    pushHistory({ id: uid(), type: 'Miles', date: new Date().toISOString(), spend, miles });
-    showToast('Miles computation saved');
-}
+// MODULE C
+document.getElementById('landers-spend')?.addEventListener('input', calcLanders); document.getElementById('total-card-spend')?.addEventListener('input', calcLanders); document.getElementById('landers-category')?.addEventListener('change', function() { document.getElementById('landers-custom-group').classList.toggle('hidden', this.value !== 'custom'); calcLanders(); }); document.getElementById('landers-custom-rate')?.addEventListener('input', calcLanders);
+function calcLanders() { const spend = fmtN(document.getElementById('landers-spend').value); const prevAccum = fmtN(document.getElementById('total-card-spend').value); const cat = document.getElementById('landers-category').value; let breakdown = '', totalPoints = 0; if (cat === 'landers') { const totalAccum = prevAccum + spend; if (totalAccum <= 30000) { totalPoints = spend * 0.03; breakdown = `Rate: 3% → ₱${fmt(spend)} × 3% = ${totalPoints.toFixed(2)} pts`; } else if (totalAccum <= 60000) { const r1 = Math.max(0, 30000 - prevAccum), r2 = spend - r1; totalPoints = (r1*0.03)+(r2*0.04); breakdown = `Tier 1: ₱${fmt(r1)} × 3%\nTier 2: ₱${fmt(r2)} × 4%\nTotal: ${totalPoints.toFixed(2)} pts`; } else { const r1 = Math.max(0, 30000 - prevAccum), r2 = Math.max(0, 30000 - (prevAccum+r1)), r3 = spend-r1-r2; totalPoints = (r1*0.03)+(r2*0.04)+(r3*0.05); breakdown = `Tier 1: ₱${fmt(r1)} × 3%\nTier 2: ₱${fmt(r2)} × 4%\nTier 3: ₱${fmt(r3)} × 5%\nTotal: ${totalPoints.toFixed(2)} pts`; } } else if (cat === 'dining') { totalPoints = spend * 0.02; breakdown = `Dining Rate: 2%\n₱${fmt(spend)} × 2% = ${totalPoints.toFixed(2)} pts`; } else if (cat === 'other') { totalPoints = spend * 0.01; breakdown = `Other Retail Rate: 1%\n₱${fmt(spend)} × 1% = ${totalPoints.toFixed(2)} pts`; } else if (cat === 'excluded') { totalPoints = 0; breakdown = `Excluded Category: 0%`; } else if (cat === 'custom') { const rate = fmtN(document.getElementById('landers-custom-rate').value)/100; totalPoints = spend*rate; breakdown = `Custom: ${(rate*100).toFixed(1)}%\n₱${fmt(spend)} × ${(rate*100).toFixed(1)}% = ${totalPoints.toFixed(2)} pts`; } document.getElementById('landers-result').textContent = totalPoints.toFixed(2); document.getElementById('tier-breakdown').textContent = breakdown || 'Waiting for input...'; document.getElementById('voucher-result').textContent = Math.floor(totalPoints / 500); }
 
-// ========================================
-// MODULE B: FINANCE CHARGE
-// ========================================
-['loan-credit','partial-payment','loan-term','days-held'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', calcFinance);
-});
-
-function calcFinance() {
-    const credit = fmtN(document.getElementById('loan-credit').value);
-    const partial = fmtN(document.getElementById('partial-payment').value);
-    const term = fmtN(document.getElementById('loan-term').value);
-    const held = fmtN(document.getElementById('days-held').value);
-    const remaining = Math.max(0, credit - partial);
-    const interest = remaining * 0.03 * (held / term);
-    document.getElementById('fb-principal').textContent = '₱' + fmt(remaining);
-    document.getElementById('fb-interest').textContent = '₱' + fmt(interest);
-    document.getElementById('finance-charge-result').textContent = fmt(remaining + interest);
-}
-
-function saveFinanceHistory() {
-    const credit = fmtN(document.getElementById('loan-credit').value);
-    if (!credit) return showToast('Enter loan credit first', 'error');
-    pushHistory({ id: uid(), type: 'Finance', date: new Date().toISOString(), credit, result: fmtN(document.getElementById('finance-charge-result').textContent) });
-    showToast('Finance charge saved');
-}
-
-// ========================================
-// MODULE C: LANDERS REWARDS
-// ========================================
-document.getElementById('landers-spend')?.addEventListener('input', calcLanders);
-document.getElementById('total-card-spend')?.addEventListener('input', calcLanders);
-document.getElementById('landers-category')?.addEventListener('change', function() {
-    document.getElementById('landers-custom-group').classList.toggle('hidden', this.value !== 'custom');
-    calcLanders();
-});
-document.getElementById('landers-custom-rate')?.addEventListener('input', calcLanders);
-
-function calcLanders() {
-    const spend = fmtN(document.getElementById('landers-spend').value);
-    const prevAccum = fmtN(document.getElementById('total-card-spend').value);
-    const cat = document.getElementById('landers-category').value;
-    let breakdown = '', totalPoints = 0;
-
-    if (cat === 'landers') {
-        const totalAccum = prevAccum + spend;
-        if (totalAccum <= 30000) { totalPoints = spend * 0.03; breakdown = `Rate: 3% → ₱${fmt(spend)} × 3% = ${totalPoints.toFixed(2)} pts`; }
-        else if (totalAccum <= 60000) { const r1 = Math.max(0, 30000 - prevAccum), r2 = spend - r1; totalPoints = (r1*0.03)+(r2*0.04); breakdown = `Tier 1: ₱${fmt(r1)} × 3%\nTier 2: ₱${fmt(r2)} × 4%\nTotal: ${totalPoints.toFixed(2)} pts`; }
-        else { const r1 = Math.max(0, 30000 - prevAccum), r2 = Math.max(0, 30000 - (prevAccum+r1)), r3 = spend-r1-r2; totalPoints = (r1*0.03)+(r2*0.04)+(r3*0.05); breakdown = `Tier 1: ₱${fmt(r1)} × 3%\nTier 2: ₱${fmt(r2)} × 4%\nTier 3: ₱${fmt(r3)} × 5%\nTotal: ${totalPoints.toFixed(2)} pts`; }
-    } else if (cat === 'dining') { totalPoints = spend * 0.02; breakdown = `Dining Rate: 2%\n₱${fmt(spend)} × 2% = ${totalPoints.toFixed(2)} pts`; }
-    else if (cat === 'other') { totalPoints = spend * 0.01; breakdown = `Other Retail Rate: 1%\n₱${fmt(spend)} × 1% = ${totalPoints.toFixed(2)} pts`; }
-    else if (cat === 'excluded') { totalPoints = 0; breakdown = `Excluded Category: 0%`; }
-    else if (cat === 'custom') { const rate = fmtN(document.getElementById('landers-custom-rate').value)/100; totalPoints = spend*rate; breakdown = `Custom: ${(rate*100).toFixed(1)}%\n₱${fmt(spend)} × ${(rate*100).toFixed(1)}% = ${totalPoints.toFixed(2)} pts`; }
-
-    document.getElementById('landers-result').textContent = totalPoints.toFixed(2);
-    document.getElementById('tier-breakdown').textContent = breakdown || 'Waiting for input...';
-    document.getElementById('voucher-result').textContent = Math.floor(totalPoints / 500);
-}
-
-// ========================================
-// MODULE E: EMI CALCULATOR
-// ========================================
+// MODULE E
 let emiSchedule = [];
+function initEMI() { document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0]; calcEMI(); }
+['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(id => { document.getElementById(id)?.addEventListener('input', calcEMI); });
+function calcEMI() { const P = fmtN(document.getElementById('emi-principal').value); const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100; const n = parseInt(document.getElementById('emi-months').value) || 0; if (!P || !monthlyRate || !n) { document.getElementById('emi-table-body').innerHTML = '<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details...</td></tr>'; ['emi-nominal-rate','emi-daily-rate','emi-fixed-amount','emi-total-interest'].forEach(id => document.getElementById(id).textContent = '0.00'); emiSchedule = []; return; } const nominalAnnual = monthlyRate * 12 * 100; const dailyRate = monthlyRate / 30; const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1); document.getElementById('emi-nominal-rate').textContent = nominalAnnual.toFixed(2); document.getElementById('emi-daily-rate').textContent = dailyRate.toFixed(6); document.getElementById('emi-fixed-amount').textContent = fmt(emi); let balance = P, totalInterest = 0; emiSchedule = []; let dueDate = document.getElementById('emi-start-date').value ? new Date(document.getElementById('emi-start-date').value) : new Date(); let html = ''; for (let i = 1; i <= n; i++) { dueDate.setMonth(dueDate.getMonth() + 1); const interestAmt = balance * monthlyRate; const principalPaid = emi - interestAmt; balance -= principalPaid; if (balance < 0) balance = 0; totalInterest += interestAmt; emiSchedule.push({ num: i, dueDate: new Date(dueDate), days: 30, principalAmt: balance + principalPaid, interestAmt, principalPaid, installmentAmt: emi, remaining: balance }); html += `<tr class="border-b border-zinc-800/50 hover:bg-zinc-900/30"><td class="px-3 py-2 text-center text-zinc-500">${i}</td><td class="px-3 py-2">${dueDate.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})}</td><td class="px-3 py-2 text-right">30</td><td class="px-3 py-2 text-right">₱${fmt(balance + principalPaid)}</td><td class="px-3 py-2 text-right text-red-400">₱${fmt(interestAmt)}</td><td class="px-3 py-2 text-right text-emerald-400">₱${fmt(principalPaid)}</td><td class="px-3 py-2 text-right text-amber-400 font-bold">₱${fmt(emi)}</td><td class="px-3 py-2 text-right">₱${fmt(balance)}</td></tr>`; } document.getElementById('emi-total-interest').textContent = fmt(totalInterest); document.getElementById('emi-table-body').innerHTML = html; document.getElementById('emi-breakdown').innerHTML = `<span>Principal (P):</span> ₱${fmt(P)}\n<span>Monthly EIR (r):</span> ${(monthlyRate*100).toFixed(2)}%\n<span>Installments (n):</span> ${n}\n<span>EMI:</span> ₱${fmt(emi)}\n<span>Total Interest:</span> ₱${fmt(totalInterest)}`; }
+function saveEMIHistory() { const P = fmtN(document.getElementById('emi-principal').value); if (!P) return showToast('Enter principal amount first', 'error'); pushHistory({ id: uid(), type: 'EMI', date: new Date().toISOString(), principal: P, emi: fmtN(document.getElementById('emi-fixed-amount').textContent), months: parseInt(document.getElementById('emi-months').value) }); showToast('EMI computation saved'); }
+function exportEMICSV() { if (!emiSchedule.length) return showToast('Generate schedule first', 'error'); let csv = 'No,Due Date,Days,Principal Amount,Interest Amount,Principal Paid,Installment Amount,Remaining Principal\n'; emiSchedule.forEach(r => { csv += `${r.num},${r.dueDate.toLocaleDateString('en-PH')},${r.days},${r.principalAmt.toFixed(2)},${r.interestAmt.toFixed(2)},${r.principalPaid.toFixed(2)},${r.installmentAmt.toFixed(2)},${r.remaining.toFixed(2)}\n`; }); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = `EMI_Schedule_${new Date().toISOString().slice(0,10)}.csv`; a.click(); }
 
-function initEMI() {
-    document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0];
-    calcEMI();
-}
+// RECEIPTS & EMAIL
+function generateReceipt() { const P = fmtN(document.getElementById('emi-principal').value); if (!P) return showToast('Complete EMI fields first', 'error'); const printArea = document.getElementById('receipt-print-area'); printArea.innerHTML = buildReceiptHTML(document.getElementById('receipt-customer-name').value, document.getElementById('receipt-customer-email').value, ''); printArea.style.display = 'block'; setTimeout(() => { window.print(); setTimeout(() => { printArea.style.display = 'none'; }, 500); }, 200); }
 
-['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', calcEMI);
-});
+function buildReceiptHTML(customerName, customerEmail, note) { const P = fmtN(document.getElementById('emi-principal').value); const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100; const n = parseInt(document.getElementById('emi-months').value) || 0; if (!P || !monthlyRate || !n) return ''; const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1); const totalAmt = emi * n, totalInt = totalAmt - P; const receiptNo = 'MAY-' + Date.now().toString(36).toUpperCase(); const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' }); let rows = ''; emiSchedule.forEach(r => { rows += `<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:center">${r.num}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;">${r.dueDate.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right">₱${fmt(r.installmentAmt)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right;color:#00995A">₱${fmt(r.principalPaid)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right;color:#c00">₱${fmt(r.interestAmt)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right">₱${fmt(r.remaining)}</td></tr>`; }); const noteSection = note ? `<div style="margin-top:20px;padding:12px;background:#f0fdf4;border-left:3px solid #00995A;border-radius:4px;font-size:13px;"><strong>Note:</strong><br>${note}</div>` : ''; return `<div style="max-width:600px;margin:0 auto;font-family:'Helvetica Neue',Arial,sans-serif;background:#fff;color:#333;"><div style="background:linear-gradient(135deg,#00995A 0%,#00D17A 100%);padding:30px;text-align:center;border-radius:12px 12px 0 0;"><h1 style="margin:0;color:#fff;font-size:28px;font-weight:800;letter-spacing:2px;">MAYA</h1><p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;text-transform:uppercase;letter-spacing:1px;">Official Computation Receipt</p></div><div style="padding:28px;background:#fff;"><table style="width:100%;font-size:13px;margin-bottom:20px;"><tr><td style="color:#888;padding:3px 0;width:140px;">Receipt No:</td><td style="font-weight:600;">${receiptNo}</td></tr><tr><td style="color:#888;padding:3px 0;">Date Issued:</td><td style="font-weight:600;">${dateStr}</td></tr>${customerName ? `<tr><td style="color:#888;padding:3px 0;">Customer:</td><td style="font-weight:600;">${customerName}</td></tr>` : ''}${customerEmail ? `<tr><td style="color:#888;padding:3px 0;">Email:</td><td style="font-weight:600;">${customerEmail}</td></tr>` : ''}</table><div style="height:1px;background:#e5e5e5;margin:20px 0;"></div><div style="display:flex;gap:12px;margin-bottom:20px;"><div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Principal</div><div style="font-size:18px;font-weight:700;">₱${fmt(P)}</div></div><div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Monthly EMI</div><div style="font-size:18px;font-weight:700;color:#00995A;">₱${fmt(emi)}</div></div><div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Total Interest</div><div style="font-size:18px;font-weight:700;color:#c00;">₱${fmt(totalInt)}</div></div></div><h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;">Amortization Schedule</h3><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:center;font-size:10px;text-transform:uppercase;color:#666;">#</th><th style="padding:8px;text-align:left;font-size:10px;text-transform:uppercase;color:#666;">Due Date</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Installment</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Principal</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Interest</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Balance</th></tr></thead><tbody>${rows}</tbody></table><div style="background:#00995A;color:#fff;padding:12px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:16px;"><span style="font-weight:700;font-size:14px;text-transform:uppercase;">Total Amount</span><span style="font-weight:800;font-size:20px;">₱${fmt(totalAmt)}</span></div>${noteSection}</div><div style="background:#f8f9fa;padding:20px;text-align:center;border-radius:0 0 12px 12px;border-top:1px solid #e5e5e5;"><p style="margin:0;font-size:11px;color:#888;">System-generated receipt from Maya Financial Services.</p><p style="margin:4px 0 0;font-size:10px;color:#aaa;">${receiptNo} &bull; ${dateStr}</p></div></div>`; }
 
-function calcEMI() {
-    const P = fmtN(document.getElementById('emi-principal').value);
-    const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
-    const n = parseInt(document.getElementById('emi-months').value) || 0;
-
-    if (!P || !monthlyRate || !n) {
-        document.getElementById('emi-table-body').innerHTML = '<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details...</td></tr>';
-        ['emi-nominal-rate','emi-daily-rate','emi-fixed-amount','emi-total-interest'].forEach(id => document.getElementById(id).textContent = '0.00');
-        emiSchedule = []; return;
-    }
-
-    const nominalAnnual = monthlyRate * 12 * 100;
-    const dailyRate = monthlyRate / 30;
-    const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
-
-    document.getElementById('emi-nominal-rate').textContent = nominalAnnual.toFixed(2);
-    document.getElementById('emi-daily-rate').textContent = dailyRate.toFixed(6);
-    document.getElementById('emi-fixed-amount').textContent = fmt(emi);
-
-    let balance = P, totalInterest = 0;
-    emiSchedule = [];
-    let dueDate = document.getElementById('emi-start-date').value ? new Date(document.getElementById('emi-start-date').value) : new Date();
-    let html = '';
-
-    for (let i = 1; i <= n; i++) {
-        dueDate.setMonth(dueDate.getMonth() + 1);
-        const interestAmt = balance * monthlyRate;
-        const principalPaid = emi - interestAmt;
-        balance -= principalPaid; if (balance < 0) balance = 0;
-        totalInterest += interestAmt;
-        emiSchedule.push({ num: i, dueDate: new Date(dueDate), days: 30, principalAmt: balance + principalPaid, interestAmt, principalPaid, installmentAmt: emi, remaining: balance });
-        html += `<tr class="border-b border-zinc-800/50 hover:bg-zinc-900/30"><td class="px-3 py-2 text-center text-zinc-500">${i}</td><td class="px-3 py-2">${dueDate.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})}</td><td class="px-3 py-2 text-right">30</td><td class="px-3 py-2 text-right">₱${fmt(balance + principalPaid)}</td><td class="px-3 py-2 text-right text-red-400">₱${fmt(interestAmt)}</td><td class="px-3 py-2 text-right text-emerald-400">₱${fmt(principalPaid)}</td><td class="px-3 py-2 text-right text-amber-400 font-bold">₱${fmt(emi)}</td><td class="px-3 py-2 text-right">₱${fmt(balance)}</td></tr>`;
-    }
-
-    document.getElementById('emi-total-interest').textContent = fmt(totalInterest);
-    document.getElementById('emi-table-body').innerHTML = html;
-    document.getElementById('emi-breakdown').innerHTML = `<span>Principal (P):</span> ₱${fmt(P)}\n<span>Monthly EIR (r):</span> ${(monthlyRate*100).toFixed(2)}%\n<span>Installments (n):</span> ${n}\n<span>EMI:</span> ₱${fmt(emi)}\n<span>Total Interest:</span> ₱${fmt(totalInterest)}`;
-}
-
-function saveEMIHistory() {
-    const P = fmtN(document.getElementById('emi-principal').value);
-    if (!P) return showToast('Enter principal amount first', 'error');
-    pushHistory({ id: uid(), type: 'EMI', date: new Date().toISOString(), principal: P, emi: fmtN(document.getElementById('emi-fixed-amount').textContent), months: parseInt(document.getElementById('emi-months').value) });
-    showToast('EMI computation saved');
-}
-
-function exportEMICSV() {
-    if (!emiSchedule.length) return showToast('Generate schedule first', 'error');
-    let csv = 'No,Due Date,Days,Principal Amount,Interest Amount,Principal Paid,Installment Amount,Remaining Principal\n';
-    emiSchedule.forEach(r => { csv += `${r.num},${r.dueDate.toLocaleDateString('en-PH')},${r.days},${r.principalAmt.toFixed(2)},${r.interestAmt.toFixed(2)},${r.principalPaid.toFixed(2)},${r.installmentAmt.toFixed(2)},${r.remaining.toFixed(2)}\n`; });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = `EMI_Schedule_${new Date().toISOString().slice(0,10)}.csv`; a.click();
-}
-
-// ========================================
-// RECEIPT GENERATION & EMAIL
-// ========================================
-function generateReceipt() {
-    const P = fmtN(document.getElementById('emi-principal').value);
-    if (!P) return showToast('Complete EMI fields first', 'error');
-    const printArea = document.getElementById('receipt-print-area');
-    printArea.innerHTML = buildReceiptHTML(document.getElementById('receipt-customer-name').value, document.getElementById('receipt-customer-email').value, '');
-    printArea.style.display = 'block';
-    setTimeout(() => { window.print(); setTimeout(() => { printArea.style.display = 'none'; }, 500); }, 200);
-}
-
-function buildReceiptHTML(customerName, customerEmail, note) {
-    const P = fmtN(document.getElementById('emi-principal').value);
-    const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
-    const n = parseInt(document.getElementById('emi-months').value) || 0;
-    if (!P || !monthlyRate || !n) return '';
-
-    const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
-    const totalAmt = emi * n, totalInt = totalAmt - P;
-    const receiptNo = 'MAY-' + Date.now().toString(36).toUpperCase();
-    const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
-
-    let rows = '';
-    emiSchedule.forEach(r => { rows += `<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:center">${r.num}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;">${r.dueDate.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right">₱${fmt(r.installmentAmt)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right;color:#00995A">₱${fmt(r.principalPaid)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right;color:#c00">₱${fmt(r.interestAmt)}</td><td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;text-align:right">₱${fmt(r.remaining)}</td></tr>`; });
-    const noteSection = note ? `<div style="margin-top:20px;padding:12px;background:#f0fdf4;border-left:3px solid #00995A;border-radius:4px;font-size:13px;"><strong>Note:</strong><br>${note}</div>` : '';
-
-    return `<div style="max-width:600px;margin:0 auto;font-family:'Helvetica Neue',Arial,sans-serif;background:#fff;color:#333;">
-        <div style="background:linear-gradient(135deg,#00995A 0%,#00D17A 100%);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
-            <h1 style="margin:0;color:#fff;font-size:28px;font-weight:800;letter-spacing:2px;">MAYA</h1>
-            <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;text-transform:uppercase;letter-spacing:1px;">Official Computation Receipt</p>
-        </div>
-        <div style="padding:28px;background:#fff;">
-            <table style="width:100%;font-size:13px;margin-bottom:20px;">
-                <tr><td style="color:#888;padding:3px 0;width:140px;">Receipt No:</td><td style="font-weight:600;">${receiptNo}</td></tr>
-                <tr><td style="color:#888;padding:3px 0;">Date Issued:</td><td style="font-weight:600;">${dateStr}</td></tr>
-                ${customerName ? `<tr><td style="color:#888;padding:3px 0;">Customer:</td><td style="font-weight:600;">${customerName}</td></tr>` : ''}
-                ${customerEmail ? `<tr><td style="color:#888;padding:3px 0;">Email:</td><td style="font-weight:600;">${customerEmail}</td></tr>` : ''}
-            </table>
-            <div style="height:1px;background:#e5e5e5;margin:20px 0;"></div>
-            <div style="display:flex;gap:12px;margin-bottom:20px;">
-                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Principal</div><div style="font-size:18px;font-weight:700;">₱${fmt(P)}</div></div>
-                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Monthly EMI</div><div style="font-size:18px;font-weight:700;color:#00995A;">₱${fmt(emi)}</div></div>
-                <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px;">Total Interest</div><div style="font-size:18px;font-weight:700;color:#c00;">₱${fmt(totalInt)}</div></div>
-            </div>
-            <h3 style="margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;">Amortization Schedule</h3>
-            <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                <thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:center;font-size:10px;text-transform:uppercase;color:#666;">#</th><th style="padding:8px;text-align:left;font-size:10px;text-transform:uppercase;color:#666;">Due Date</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Installment</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Principal</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Interest</th><th style="padding:8px;text-align:right;font-size:10px;text-transform:uppercase;color:#666;">Balance</th></tr></thead>
-                <tbody>${rows}</tbody>
-            </table>
-            <div style="background:#00995A;color:#fff;padding:12px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
-                <span style="font-weight:700;font-size:14px;text-transform:uppercase;">Total Amount</span><span style="font-weight:800;font-size:20px;">₱${fmt(totalAmt)}</span>
-            </div>
-            ${noteSection}
-        </div>
-        <div style="background:#f8f9fa;padding:20px;text-align:center;border-radius:0 0 12px 12px;border-top:1px solid #e5e5e5;">
-            <p style="margin:0;font-size:11px;color:#888;">System-generated receipt from Maya Financial Services.</p>
-            <p style="margin:4px 0 0;font-size:10px;color:#aaa;">${receiptNo} &bull; ${dateStr}</p>
-        </div>
-    </div>`;
-}
-
-function openEmailReceiptModal() {
-    const P = fmtN(document.getElementById('emi-principal').value);
-    if (!P) return showToast('Complete EMI computation first', 'error');
-    document.getElementById('modal-email-name').value = document.getElementById('receipt-customer-name').value;
-    document.getElementById('modal-email-addr').value = document.getElementById('receipt-customer-email').value;
-    document.getElementById('modal-email-note').value = '';
-    setEmailStatus('idle', 'Ready');
-    document.getElementById('modal-receipt-preview').innerHTML = buildReceiptHTML(document.getElementById('receipt-customer-name').value, document.getElementById('receipt-customer-email').value, '');
-    document.getElementById('email-receipt-modal').classList.add('open');
-}
-
+function openEmailReceiptModal() { const P = fmtN(document.getElementById('emi-principal').value); if (!P) return showToast('Complete EMI computation first', 'error'); document.getElementById('modal-email-name').value = document.getElementById('receipt-customer-name').value; document.getElementById('modal-email-addr').value = document.getElementById('receipt-customer-email').value; document.getElementById('modal-email-note').value = ''; setEmailStatus('idle', 'Ready'); document.getElementById('modal-receipt-preview').innerHTML = buildReceiptHTML(document.getElementById('receipt-customer-name').value, document.getElementById('receipt-customer-email').value, ''); document.getElementById('email-receipt-modal').classList.add('open'); }
 function closeEmailReceiptModal() { document.getElementById('email-receipt-modal').classList.remove('open'); }
-
-function setEmailStatus(status, text) {
-    const badge = document.getElementById('email-send-status');
-    badge.className = 'email-status-badge email-status-' + status;
-    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current ${status==='sending'?'sending-pulse':''}"></span> ${text}`;
-}
+function setEmailStatus(status, text) { const badge = document.getElementById('email-send-status'); badge.className = 'email-status-badge email-status-' + status; badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current ${status==='sending'?'sending-pulse':''}"></span> ${text}`; }
 
 async function sendEmailReceipt() {
     const name = document.getElementById('modal-email-name').value.trim();
@@ -650,20 +303,16 @@ async function sendEmailReceipt() {
     const note = document.getElementById('modal-email-note').value.trim();
     if (!name || !email) return showToast('Recipient name and email are required', 'error');
 
-    const config = getSettings();
-    if (!config.serviceId || !config.templateId || !config.publicKey) {
-        show_alert('emi-email-alert', 'emi-email-alert-text', 'EmailJS is not configured. Please update System Settings (gear icon).', 'error');
-        closeEmailReceiptModal(); return;
-    }
-
     const P = fmtN(document.getElementById('emi-principal').value);
     const monthlyRate = fmtN(document.getElementById('emi-rate').value) / 100;
     const n = parseInt(document.getElementById('emi-months').value) || 0;
     const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
     const totalAmt = emi * n, totalInt = totalAmt - P;
+    const senderName = currentUser ? currentUser.fullName : 'Maya Agent';
 
-    const templateParams = {
-        to_email: email, to_name: name, from_name: currentUser ? currentUser.fullName : 'Maya Agent',
+    const payload = {
+        type: 'receipt',
+        to_email: email, to_name: name, from_name: senderName,
         subject: `Maya EMI Computation Receipt - ₱${fmt(P)} Loan`,
         receipt_html: buildReceiptHTML(name, email, note),
         receipt_summary: `Principal: ₱${fmt(P)}\nEMI: ₱${fmt(emi)}\nTotal: ₱${fmt(totalAmt)}`,
@@ -674,52 +323,19 @@ async function sendEmailReceipt() {
     sendBtn.disabled = true; setEmailStatus('sending', 'Sending...');
 
     try {
-        emailjs.init(config.publicKey);
-        await emailjs.send(config.serviceId, config.templateId, templateParams);
+        const response = await secureFetch('/api/email/send', { method: 'POST', body: JSON.stringify(payload) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to send email');
         setEmailStatus('sent', 'Sent Successfully');
         document.getElementById('email-send-time').textContent = new Date().toLocaleTimeString('en-PH');
         showToast('Receipt sent to ' + email);
     } catch (err) {
         setEmailStatus('error', 'Failed');
-        showToast('Email failed: ' + (err.text || err.message), 'error');
+        showToast('Email failed: ' + err.message, 'error');
     } finally { sendBtn.disabled = false; }
 }
 
-// ========================================
-// SETTINGS / SECRETS MODAL
-// ========================================
-function getSettings() {
-    return {
-        adminEmail: localStorage.getItem('maya_admin_email') || '',
-        serviceId: localStorage.getItem('maya_emailjs_service') || '',
-        templateId: localStorage.getItem('maya_emailjs_template') || '',
-        publicKey: localStorage.getItem('maya_emailjs_key') || ''
-    };
-}
-
-function openSettingsModal() {
-    const config = getSettings();
-    document.getElementById('setting-admin-email').value = config.adminEmail;
-    document.getElementById('setting-service-id').value = config.serviceId;
-    document.getElementById('setting-template-id').value = config.templateId;
-    document.getElementById('setting-public-key').value = config.publicKey;
-    document.getElementById('settings-modal').classList.add('open');
-}
-
-function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('open'); }
-
-function saveSettings() {
-    localStorage.setItem('maya_admin_email', document.getElementById('setting-admin-email').value.trim());
-    localStorage.setItem('maya_emailjs_service', document.getElementById('setting-service-id').value.trim());
-    localStorage.setItem('maya_emailjs_template', document.getElementById('setting-template-id').value.trim());
-    localStorage.setItem('maya_emailjs_key', document.getElementById('setting-public-key').value.trim());
-    showToast('Settings saved securely');
-    closeSettingsModal();
-}
-
-// ========================================
 // CONTACT ADMIN
-// ========================================
 async function sendContactMessage() {
     const subject = document.getElementById('contact-subject').value;
     const message = document.getElementById('contact-message').value.trim();
@@ -727,56 +343,32 @@ async function sendContactMessage() {
     const eid = document.getElementById('contact-eid').value;
     if (!subject || !message) return show_alert('contact-alert', 'contact-alert-text', 'Please select a subject and enter a message.', 'error');
 
-    const config = getSettings();
-    if (!config.serviceId || !config.templateId || !config.publicKey || !config.adminEmail) {
-        return show_alert('contact-alert', 'contact-alert-text', 'Email service not configured. Ask Admin to update System Settings.', 'error');
-    }
-
     const btn = document.getElementById('contact-send-btn'); btn.disabled = true;
     try {
-        emailjs.init(config.publicKey);
-        await emailjs.send(config.serviceId, config.templateId, {
-            to_email: config.adminEmail, to_name: 'Admin', from_name: `${name} (${eid})`,
-            subject: '[Contact Form] ' + subject,
-            receipt_html: `<div style="font-family:sans-serif;padding:20px;background:#fff;"><h2 style="color:#00995A;">Contact Form</h2><p><strong>From:</strong> ${name} (${eid})</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong></p><p>${message}</p></div>`,
-            receipt_summary: `From: ${name} (${eid})\nSubject: ${subject}\nMessage: ${message}`,
-            total_amount: 'N/A', principal: 'N/A', interest_total: 'N/A', installments: 'N/A', note: ''
+        const response = await secureFetch('/api/email/send', {
+            method: 'POST',
+            body: JSON.stringify({
+                type: 'contact',
+                to_name: 'Admin',
+                from_name: `${name} (${eid})`,
+                subject: '[Contact Form] ' + subject,
+                receipt_html: `<div style="font-family:sans-serif;padding:20px;background:#fff;"><h2 style="color:#00995A;">Contact Form</h2><p><strong>From:</strong> ${name} (${eid})</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong></p><p>${message}</p></div>`,
+                receipt_summary: `From: ${name} (${eid})\nSubject: ${subject}\nMessage: ${message}`,
+                total_amount: 'N/A', principal: 'N/A', interest_total: 'N/A', installments: 'N/A', note: ''
+            })
         });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to send message');
         show_alert('contact-alert', 'contact-alert-text', 'Message sent to admin successfully!', 'success');
         document.getElementById('contact-message').value = ''; document.getElementById('contact-subject').value = '';
-    } catch(err) { show_alert('contact-alert', 'contact-alert-text', 'Failed to send message: ' + (err.text || err.message), 'error'); }
+    } catch(err) { show_alert('contact-alert', 'contact-alert-text', err.message, 'error'); }
     finally { btn.disabled = false; }
 }
 
-// ========================================
 // HISTORY
-// ========================================
-function pushHistory(entry) {
-    const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]');
-    history.unshift(entry); if (history.length > 100) history.pop();
-    localStorage.setItem('mayaHistory', JSON.stringify(history));
-}
-
-function toggleHistory() {
-    const sidebar = document.getElementById('history-sidebar'), overlay = document.getElementById('history-overlay');
-    const isOpen = !sidebar.classList.contains('translate-x-full');
-    if (isOpen) { sidebar.classList.add('translate-x-full'); overlay.classList.add('hidden'); }
-    else { loadHistoryList(); sidebar.classList.remove('translate-x-full'); overlay.classList.remove('hidden'); }
-}
-
-function loadHistoryList() {
-    const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]');
-    const list = document.getElementById('history-list');
-    if (!history.length) { list.innerHTML = '<p class="text-center text-zinc-600 text-xs py-10">No history yet.</p>'; return; }
-    list.innerHTML = history.map(h => {
-        let summary = '';
-        if (h.type === 'Miles') summary = `Spend: ₱${fmt(h.spend)} → ${h.miles.toFixed(2)} miles`;
-        else if (h.type === 'Finance') summary = `Credit: ₱${fmt(h.credit)} → ₱${fmt(h.result)}`;
-        else if (h.type === 'EMI') summary = `Principal: ₱${fmt(h.principal)} / ${h.months}mo → ₱${fmt(h.emi)}/mo`;
-        return `<div class="hist-item"><div class="hist-type">${h.type}</div><div class="hist-date">${new Date(h.date).toLocaleString('en-PH')}</div><div class="hist-summary">${summary}</div></div>`;
-    }).join('');
-}
-
+function pushHistory(entry) { const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]'); history.unshift(entry); if (history.length > 100) history.pop(); localStorage.setItem('mayaHistory', JSON.stringify(history)); }
+function toggleHistory() { const sidebar = document.getElementById('history-sidebar'), overlay = document.getElementById('history-overlay'); const isOpen = !sidebar.classList.contains('translate-x-full'); if (isOpen) { sidebar.classList.add('translate-x-full'); overlay.classList.add('hidden'); } else { loadHistoryList(); sidebar.classList.remove('translate-x-full'); overlay.classList.remove('hidden'); } }
+function loadHistoryList() { const history = JSON.parse(localStorage.getItem('mayaHistory') || '[]'); const list = document.getElementById('history-list'); if (!history.length) { list.innerHTML = '<p class="text-center text-zinc-600 text-xs py-10">No history yet.</p>'; return; } list.innerHTML = history.map(h => { let summary = ''; if (h.type === 'Miles') summary = `Spend: ₱${fmt(h.spend)} → ${h.miles.toFixed(2)} miles`; else if (h.type === 'Finance') summary = `Credit: ₱${fmt(h.credit)} → ₱${fmt(h.result)}`; else if (h.type === 'EMI') summary = `Principal: ₱${fmt(h.principal)} / ${h.months}mo → ₱${fmt(h.emi)}/mo`; return `<div class="hist-item"><div class="hist-type">${h.type}</div><div class="hist-date">${new Date(h.date).toLocaleString('en-PH')}</div><div class="hist-summary">${summary}</div></div>`; }).join(''); }
 function clearHistory() { localStorage.removeItem('mayaHistory'); loadHistoryList(); showToast('History cleared'); }
 </script>
 </body>
