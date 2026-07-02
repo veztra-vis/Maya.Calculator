@@ -11,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -104,26 +105,20 @@
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .contact-textarea::placeholder { color: #3f3f46; }
 
-        /* --- NEW FEATURE STYLES --- */
-        /* 1. Validation */
         .input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; background: rgba(239, 68, 68, 0.05) !important; }
         .err-msg { color: #fca5a5; font-size: 10px; margin-top: 4px; display: none; font-family: 'Inter', sans-serif; }
-        
-        /* 2. Formula Breakdown */
         .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
         .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; outline: none; user-select: none; }
         .formula-card summary:hover { color: #00F590; }
         .formula-text { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a1a1aa; white-space: pre-wrap; line-height: 1.6; background: #08090A; padding: 12px; border-radius: 6px; border: 1px dashed #27272a; }
         .formula-text span { color: #00D17A; font-weight: bold; }
 
-        /* 3. History */
         .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
         .hist-item:hover { background: #18181b; transform: translateX(4px); }
         .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
         .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
 
-        /* 4. Receipt Styles */
         .receipt-container { width: 100%; max-width: 320px; margin: 0 auto; background: #fff; color: #000; font-family: 'Courier New', Courier, monospace; font-size: 12px; padding: 15px; line-height: 1.4; }
         .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
         .receipt-title { font-size: 18px; font-weight: bold; color: #00995A; text-transform: uppercase; letter-spacing: 1px; }
@@ -138,13 +133,13 @@
         .receipt-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; background: #f0f0f0; padding: 8px; margin-top: 5px; border-radius: 4px; }
         .receipt-footer { text-align: center; font-size: 10px; margin-top: 15px; color: #555; }
         
-        /* 5. Print Styles */
         @media print {
             body * { visibility: hidden; }
             #receipt-print-area, #receipt-print-area * { visibility: visible; }
             #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; }
             .no-print { display: none !important; }
         }
+        .tier-breakdown { white-space: pre-line; }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
@@ -229,7 +224,7 @@
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="landers-spend-err"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="total-card-spend-err"></div></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label><select id="landers-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors"><option value="landers">Landers Superstore (Progressive)</option><option value="dining">Dining (2%)</option><option value="other">Other Retail (1%)</option><option value="excluded">Excluded Categories (0%)</option><option value="custom">Custom Percentage...</option></select><div id="landers-custom-group" class="hidden mt-3 animate-fade-in"><label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label><div class="relative"><input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all"><span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span></div></div></div>
-                <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em]">Waiting for input...</p></div>
+                <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em] tier-breakdown">Waiting for input...</p></div>
             </div>
             <div class="md:w-1/2 bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center border border-dashed border-zinc-800 relative">
                 <p class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Points Earned</p>
@@ -261,15 +256,20 @@
         <!-- MINI PAYMENTS CALCULATOR (EMI) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 no-print">
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Name <span class="text-red-400">*</span></label><input type="text" id="receipt-customer-name" placeholder="Juan Dela Cruz" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Email <span class="text-red-400">*</span></label><input type="email" id="receipt-customer-email" placeholder="customer@email.com" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div>
+            </div>
+
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
                 <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="emi-principal-err"></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-rate-err"></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-months-err"></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" value="2026-01-02" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
             </div>
             
-            <!-- Export Toolkit -->
             <div class="flex flex-wrap gap-2 mb-4 no-print">
                 <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
@@ -283,7 +283,6 @@
                 </button>
             </div>
 
-            <!-- Formula Breakdown -->
             <details class="formula-card mb-4 no-print">
                 <summary>Show Calculation Breakdown</summary>
                 <div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div>
@@ -491,11 +490,14 @@
         var allUsersCache = [];
 
         // =============================================
-        // EMAILJS CONFIG - REPLACE THESE 3 VALUES
+        // EMAILJS CONFIG
         // =============================================
         var EMAILJS_SERVICE_ID = 'service_1zm2s7c';
-        var EMAILJS_TEMPLATE_ID = 'template_h7keskr';
+        var EMAILJS_CONTACT_TEMPLATE_ID = 'template_h7keskr';
+        var EMAILJS_RECEIPT_TEMPLATE_ID = 'template_4dibrxf';
         var EMAILJS_PUBLIC_KEY  = 'EqpvSEszjMBtqUSBd';
+
+        try { if (typeof emailjs !== 'undefined') emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e) {}
 
         function getToken(){return localStorage.getItem('maya_token')||sessionStorage.getItem('maya_token');}
 
@@ -518,8 +520,20 @@
                 var rb=document.getElementById('role-badge');rb.textContent=data.user.role;rb.classList.remove('hidden');
                 var ar=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'];
                 if(ar.indexOf(data.user.role)!==-1){document.getElementById('module-d').style.display='flex';renderUserTable();}
+                
+                // Set default date
+                var today = new Date().toISOString().split('T')[0];
+                var startDateInput = document.getElementById('emi-start-date');
+                if(startDateInput && !startDateInput.value) startDateInput.value = today;
+
+                // Init Calcs
+                calculateMiles(); calcFinance(); calcLanders(); calcEMI();
             })
-            .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');});
+            .catch(function(){
+                localStorage.removeItem('maya_token');
+                sessionStorage.clear();
+                window.location.replace('/');
+            });
         })();
 
         function handleLogout(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');}
@@ -542,7 +556,7 @@
                 to_email:'ancel.claudio1@gmail.com',
                 sent_at:new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'})
             };
-            emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,templateParams,EMAILJS_PUBLIC_KEY)
+            emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_CONTACT_TEMPLATE_ID,templateParams,EMAILJS_PUBLIC_KEY)
             .then(function(){
                 showContactAlert('Message sent successfully! The admin will respond to your concern.','success');
                 document.getElementById('contact-subject').value='';
@@ -633,7 +647,6 @@
         function showToast(m){var t=document.getElementById('toast');document.getElementById('toast-message').innerText=m||"Value Copied";t.classList.remove('opacity-0','translate-y-4','pointer-events:none');setTimeout(function(){t.classList.add('opacity-0','translate-y-4','pointer-events-none');},2000);}
         window.copyToClipboard=function(id){var t=document.getElementById(id).innerText||document.getElementById(id).value;navigator.clipboard.writeText(t).then(function(){showToast("Value Copied");});};
 
-        // ===== VALIDATION FUNCTIONS =====
         function validateNum(id, min=0, max=Infinity, integer=false, errMsg='') {
             const el = document.getElementById(id);
             if(!el) return true;
@@ -642,7 +655,6 @@
             const errEl = document.getElementById(id+'-err');
             let valid = true; let msg = '';
             
-            // If empty, treat value as 0 for validation purposes
             if(raw === '') val = 0;
             
             if(val < min) { valid = false; msg = errMsg || `Value must be at least ${min}.`; }
@@ -660,7 +672,8 @@
 
         // ===== LOADER =====
         function hideLoader(){var e=document.getElementById('loader');if(e)e.classList.add('hidden-loader');}
-        window.addEventListener('load',function(){setTimeout(hideLoader,1200);});setTimeout(hideLoader,5000);
+        setTimeout(hideLoader, 1500); // Fallback timer
+        window.addEventListener('load',function(){setTimeout(hideLoader,500);});
         
         // ===== MILES CALCULATOR =====
         var spendInput=document.getElementById('spend-input'),multSelect=document.getElementById('multiplier-select'),customMult=document.getElementById('custom-multiplier'),milesInput=document.getElementById('miles-input');
@@ -691,13 +704,35 @@
         function calcLanders(){
             if(!validateNum('landers-spend', 0.01, Infinity, false, 'Transaction must be greater than ₱0.')) return;
             if(!validateNum('total-card-spend', 0, Infinity, false, 'Accumulated cannot be negative.')) return;
-            var a=parseCurrency(document.getElementById('landers-spend').value),c=parseCurrency(document.getElementById('total-card-spend').value),cat=landersCat.value,rate=0,pts=0,breakdown='';
-            if(cat==='landers'){var total=a+c;var t1=Math.min(total,3000)*0.01;var t2=total>3000?Math.min(total-3000,7000)*0.015:0;var t3=total>10000?Math.min(total-10000,40000)*0.02:0;var t4=total>50000?(total-50000)*0.025:0;pts=t1+t2+t3+t4;rate='Progressive';breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';}
+            var a=parseCurrency(document.getElementById('landers-spend').value);
+            var c=parseCurrency(document.getElementById('total-card-spend').value);
+            var cat=landersCat.value,rate=0,pts=0,breakdown='';
+
+            if(cat==='landers'){
+                var total=a+c;
+                // FIX: Correctly calculate marginal points for the current transaction
+                var t1_total = Math.min(total,3000)*0.01;
+                var t2_total = total>3000 ? Math.min(total-3000,7000)*0.015 : 0;
+                var t3_total = total>10000 ? Math.min(total-10000,40000)*0.02 : 0;
+                var t4_total = total>50000 ? (total-50000)*0.025 : 0;
+
+                var t1_prev = Math.min(c,3000)*0.01;
+                var t2_prev = c>3000 ? Math.min(c-3000,7000)*0.015 : 0;
+                var t3_prev = c>10000 ? Math.min(c-10000,40000)*0.02 : 0;
+                var t4_prev = c>50000 ? (c-50000)*0.025 : 0;
+
+                pts = (t1_total + t2_total + t3_total + t4_total) - (t1_prev + t2_prev + t3_prev + t4_prev);
+                rate='Progressive';
+                breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';
+            }
             else if(cat==='dining'){rate=2;pts=a*0.02;breakdown='Flat 2% on dining';}
             else if(cat==='other'){rate=1;pts=a*0.01;breakdown='Flat 1% on other retail';}
             else if(cat==='excluded'){rate=0;pts=0;breakdown='Excluded - 0%';}
             else if(cat==='custom'){rate=parseFloat(landersCustomRate.value)||0;pts=a*(rate/100);breakdown='Custom rate: '+rate+'%';}
-            document.getElementById('landers-result').textContent=formatCurrency(pts);document.getElementById('voucher-result').textContent=Math.floor(pts/500);document.getElementById('tier-breakdown').textContent=breakdown||'Select category';
+            
+            document.getElementById('landers-result').textContent=formatCurrency(pts);
+            document.getElementById('voucher-result').textContent=Math.floor(pts/500);
+            document.getElementById('tier-breakdown').textContent=breakdown||'Select category';
         }
         landersCat.addEventListener('change',function(){if(landersCat.value==='custom'){landersCustom.classList.remove('hidden');landersCustomRate.focus();}else{landersCustom.classList.add('hidden');}calcLanders();});landersCustomRate.addEventListener('input',calcLanders);
         ['landers-spend','total-card-spend'].forEach(function(id){document.getElementById(id).addEventListener('calculate',calcLanders);document.getElementById(id).addEventListener('input',calcLanders);});
@@ -735,7 +770,6 @@
             }
             document.getElementById('emi-table-body').innerHTML=html;
 
-            // Update Formula Breakdown
             document.getElementById('emi-breakdown').innerHTML = 
             `Assumptions:\n`+
             `  - 1 Month = ${D}/12 days = ${(D/12).toFixed(2)} days\n`+
@@ -791,17 +825,14 @@
             document.getElementById('receiptModal').classList.add('open');
         }
 
-        function closeReceiptModal() {
-            document.getElementById('receiptModal').classList.remove('open');
-        }
-
+        function closeReceiptModal() { document.getElementById('receiptModal').classList.remove('open'); }
         function openSendReceiptModal() {
+            // Auto-fill from EMI form
+            document.getElementById('send-cust-name').value = document.getElementById('receipt-customer-name').value;
+            document.getElementById('send-cust-email').value = document.getElementById('receipt-customer-email').value;
             document.getElementById('sendReceiptModal').classList.add('open');
         }
-
-        function closeSendReceiptModal() {
-            document.getElementById('sendReceiptModal').classList.remove('open');
-        }
+        function closeSendReceiptModal() { document.getElementById('sendReceiptModal').classList.remove('open'); }
 
         function buildTextReceipt() {
             var P = document.getElementById('emi-principal').value;
@@ -828,93 +859,47 @@
             return text;
         }
 
-        function downloadReceiptPDF() {
-            const { jsPDF } = window.jspdf;
-            var doc = new jsPDF({unit: 'pt', format: [320, 600]}); // Receipt size
-            
-            doc.setFontSize(18);
-            doc.setTextColor(0, 153, 90);
-            doc.text('MAYA', 120, 40);
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text('Mini Payments Computation', 95, 55);
-            doc.text('Ref: ' + document.getElementById('rcpt-ref').textContent, 110, 67);
-            doc.text('Date: ' + document.getElementById('rcpt-date').textContent, 105, 79);
-            
-            doc.setDrawColor(0);
-            doc.line(20, 90, 300, 90);
-            
-            doc.setFontSize(12);
-            doc.setTextColor(0);
-            doc.text('Principal:', 20, 110);
-            doc.text('₱' + document.getElementById('emi-principal').value, 200, 110, {align: 'right'});
-            doc.text('Monthly EIR:', 20, 125);
-            doc.text(document.getElementById('emi-rate').value + '%', 200, 125, {align: 'right'});
-            doc.text('Term:', 20, 140);
-            doc.text(document.getElementById('emi-months').value + ' months', 200, 140, {align: 'right'});
-            
-            doc.line(20, 155, 300, 155);
-            
-            // Table
-            var rows = [];
-            var mainTable = document.getElementById('emi-table-body');
-            for(var i=0; i<mainTable.rows.length; i++) {
-                var row = mainTable.rows[i];
-                rows.push([row.cells[0].innerText, row.cells[1].innerText, row.cells[6].innerText, row.cells[7].innerText]);
+        async function downloadReceiptPDF() {
+            if(typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+                showToast('PDF library still loading, try again.'); return;
             }
-            
-            doc.autoTable({
-                head: [['#', 'Due Date', 'Installment', 'Balance']],
-                body: rows,
-                startY: 165,
-                theme: 'plain',
-                styles: { fontSize: 8, cellPadding: 3, textColor: 0 },
-                headStyles: { fillColor: [255, 255, 255], textColor: 0, lineWidth: 0.1, lineColor: [0,0,0] },
-                columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } }
-            });
-            
-            var finalY = doc.lastAutoTable.finalY + 10;
-            doc.line(20, finalY, 300, finalY);
-            finalY += 20;
-            
-            doc.text('Monthly EMI:', 20, finalY);
-            doc.text('₱' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'});
-            finalY += 15;
-            doc.text('Total Interest:', 20, finalY);
-            doc.text('₱' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'});
-            finalY += 15;
-            doc.setFontSize(14);
-            doc.text('TOTAL PAYABLE:', 20, finalY);
-            doc.text('₱' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
-            
-            finalY += 20;
-            doc.line(20, finalY, 300, finalY);
-            finalY += 20;
-            doc.setFontSize(9);
-            doc.setTextColor(100);
-            doc.text('This is a system-generated computation.', 60, finalY);
-            finalY += 12;
-            doc.text('Not an official billing statement.', 75, finalY);
-            
-            doc.save('Maya_Receipt.pdf');
+            const container = document.querySelector('#receipt-print-area');
+            const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#fff' });
+            const pdf = new window.jspdf.jsPDF({ unit: 'pt', format: [320, canvas.height * 320 / canvas.width] });
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 320, canvas.height * 320 / canvas.width);
+            pdf.save('Maya_Receipt.pdf');
             showToast('PDF Downloaded');
         }
 
         function sendReceiptEmail() {
-            var name = document.getElementById('send-cust-name').value;
-            var email = document.getElementById('send-cust-email').value;
+            var name = document.getElementById('send-cust-name').value.trim();
+            var email = document.getElementById('send-cust-email').value.trim();
             if(!name || !email) { showToast('Please enter name and email'); return; }
+            if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Invalid email format'); return; }
             
             var text = buildTextReceipt();
-            var mailto = `mailto:${email}?subject=Maya Mini Payments Computation&body=Hi ${name},%0A%0AHere is your computation:%0A%0A${encodeURIComponent(text)}`;
-            window.open(mailto);
-            showToast('Email App Opened');
+
+            if (typeof emailjs !== 'undefined') {
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_TEMPLATE_ID, {
+                    to_email: email, to_name: name, message: text
+                }).then(function() {
+                    showToast('Receipt sent via Email!');
+                    closeSendReceiptModal();
+                }, function() {
+                    var mailto = `mailto:${email}?subject=Maya Mini Payments Computation&body=Hi ${name},%0A%0AHere is your computation:%0A%0A${encodeURIComponent(text)}`;
+                    window.open(mailto);
+                    showToast('Email App Opened');
+                });
+            } else {
+                var mailto = `mailto:${email}?subject=Maya Mini Payments Computation&body=Hi ${name},%0A%0AHere is your computation:%0A%0A${encodeURIComponent(text)}`;
+                window.open(mailto);
+                showToast('Email App Opened');
+            }
         }
 
         function sendReceiptWhatsApp() {
-            var phone = document.getElementById('send-cust-phone').value;
+            var phone = document.getElementById('send-cust-phone').value.trim();
             if(!phone) { showToast('Please enter mobile number'); return; }
-            
             var text = buildTextReceipt();
             var url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
@@ -931,9 +916,7 @@
                 rows.push(cells);
             }
             var csv='';
-            rows.forEach(function(row){
-                csv+=row.join(',')+'\n';
-            });
+            rows.forEach(function(row){csv+=row.join(',')+'\n';});
             var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
             var link=document.createElement('a');
             link.href=URL.createObjectURL(blob);
@@ -951,38 +934,14 @@
             localStorage.setItem('maya_calc_history',JSON.stringify(hist));
             showToast('Saved to History');
         }
-        function saveMilesHistory(){
-            saveHistory('Miles', `Spend: ₱${document.getElementById('est-spend').textContent} | Miles: ${document.getElementById('miles-input').value}`, {
-                spend: document.getElementById('spend-input').value,
-                mult: document.getElementById('multiplier-select').value,
-                customMult: document.getElementById('custom-multiplier').value
-            });
-        }
-        function saveFinanceHistory(){
-            saveHistory('Finance', `Total Payable: ₱${document.getElementById('finance-charge-result').textContent}`, {
-                loan: document.getElementById('loan-credit').value,
-                pay: document.getElementById('partial-payment').value,
-                term: document.getElementById('loan-term').value,
-                held: document.getElementById('days-held').value
-            });
-        }
-        function saveEMIHistory(){
-            saveHistory('EMI', `Principal: ₱${document.getElementById('emi-principal').value} | EMI: ₱${document.getElementById('emi-fixed-amount').textContent}`, {
-                P: document.getElementById('emi-principal').value,
-                EIR: document.getElementById('emi-rate').value,
-                N: document.getElementById('emi-months').value,
-                D: document.getElementById('emi-days-year').value,
-                startDate: document.getElementById('emi-start-date').value
-            });
-        }
+        function saveMilesHistory(){ saveHistory('Miles', `Spend: ₱${document.getElementById('est-spend').textContent} | Miles: ${document.getElementById('miles-input').value}`, { spend: document.getElementById('spend-input').value, mult: document.getElementById('multiplier-select').value, customMult: document.getElementById('custom-multiplier').value }); }
+        function saveFinanceHistory(){ saveHistory('Finance', `Total Payable: ₱${document.getElementById('finance-charge-result').textContent}`, { loan: document.getElementById('loan-credit').value, pay: document.getElementById('partial-payment').value, term: document.getElementById('loan-term').value, held: document.getElementById('days-held').value }); }
+        function saveEMIHistory(){ saveHistory('EMI', `Principal: ₱${document.getElementById('emi-principal').value} | EMI: ₱${document.getElementById('emi-fixed-amount').textContent}`, { P: document.getElementById('emi-principal').value, EIR: document.getElementById('emi-rate').value, N: document.getElementById('emi-months').value, D: document.getElementById('emi-days-year').value, startDate: document.getElementById('emi-start-date').value }); }
+        
         function toggleHistory(){
             var modal=document.getElementById('historyModal');
-            if(modal.classList.contains('open')){
-                modal.classList.remove('open');
-            } else {
-                renderHistory();
-                modal.classList.add('open');
-            }
+            if(modal.classList.contains('open')){ modal.classList.remove('open'); } 
+            else { renderHistory(); modal.classList.add('open'); }
         }
         function renderHistory(){
             var hist=getHistory();
@@ -1001,18 +960,8 @@
             }
             list.innerHTML=h;
         }
-        function deleteHistory(id){
-            var hist=getHistory().filter(function(item){return item.id!==id;});
-            localStorage.setItem('maya_calc_history',JSON.stringify(hist));
-            renderHistory();
-            showToast('History Deleted');
-        }
-        function clearAllHistory(){
-            if(!confirm('Clear all calculation history? This cannot be undone.'))return;
-            localStorage.removeItem('maya_calc_history');
-            renderHistory();
-            showToast('History Cleared');
-        }
+        function deleteHistory(id){ var hist=getHistory().filter(function(item){return item.id!==id;}); localStorage.setItem('maya_calc_history',JSON.stringify(hist)); renderHistory(); showToast('History Deleted'); }
+        function clearAllHistory(){ if(!confirm('Clear all calculation history? This cannot be undone.'))return; localStorage.removeItem('maya_calc_history'); renderHistory(); showToast('History Cleared'); }
         function loadHistory(id){
             var item=getHistory().find(function(i){return i.id===id;});
             if(!item)return;
