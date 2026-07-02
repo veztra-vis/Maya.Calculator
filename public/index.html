@@ -35,10 +35,6 @@
         .glass-panel { background: rgba(17, 17, 19, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(30, 30, 32, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
         .glass-panel:hover { border-color: rgba(0, 209, 122, 0.4); box-shadow: 0 0 30px rgba(0, 209, 122, 0.1); transform: translateY(-3px); }
         button:hover { transition: all 0.2s ease; }
-        .ai-quick-btn { transition: transform 0.2s ease, background 0.2s ease; }
-        .ai-quick-btn:hover { transform: scale(1.05); }
-        #ai-fab { animation: pulseGlow 2.5s infinite; }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(0, 209, 122, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 209, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 209, 122, 0); } }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #08090A; }
         ::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 4px; }
@@ -47,18 +43,9 @@
         .hidden-loader { opacity: 0; visibility: hidden; pointer-events: none; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .data-font { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
-        @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
-        .typing-dot { animation: typingBounce 1.4s infinite; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        #maya-chat::-webkit-scrollbar { width: 4px; }
-        #maya-chat::-webkit-scrollbar-track { background: transparent; }
-        #maya-chat::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
         .header-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; }
         .logo-fallback { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #00D17A; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
-        .ai-window-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes spinRing { to { transform: rotate(360deg); } }
         @keyframes arcDash { 0% { stroke-dasharray: 1 210; stroke-dashoffset: 0; } 50% { stroke-dasharray: 120 210; stroke-dashoffset: -40; } 100% { stroke-dasharray: 120 210; stroke-dashoffset: -130; } }
         .module-d-alert { padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; display: none; align-items: center; gap: 8px; line-height: 1.45; }
@@ -69,62 +56,19 @@
         .user-table-wrap::-webkit-scrollbar { width: 4px; }
         .user-table-wrap::-webkit-scrollbar-track { background: transparent; }
         .user-table-wrap::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .user-row { transition: background 0.15s; cursor: pointer; }
-        .user-row:hover { background: rgba(0, 209, 122, 0.08); }
-        .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-        .role-tag-admin { background: rgba(0, 209, 122, 0.15); color: #00D17A; border: 1px solid rgba(0, 209, 122, 0.3); }
-        .role-tag-client { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .role-tag-om { background: rgba(0, 153, 90, 0.15); color: #34d399; border: 1px solid rgba(0, 153, 90, 0.3); }
-        .role-tag-tl { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .role-tag-agent { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.3); }
-        .role-tag-training { background: rgba(236, 72, 153, 0.15); color: #f9a8d4; border: 1px solid rgba(236, 72, 153, 0.3); }
-        .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(0, 209, 122, 0.2); color: #00D17A; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-        .btn-action-user:hover { background: rgba(0, 209, 122, 0.1); border-color: rgba(0, 209, 122, 0.4); }
-        .btn-action-user:disabled { opacity: 0.3; cursor: not-allowed; }
-        .btn-delete-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-        .btn-delete-user:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
-        .btn-delete-user:disabled { opacity: 0.3; cursor: not-allowed; }
         .modal-backdrop-module-d { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-backdrop-module-d.open { display: flex; }
         .modal-card-module-d { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
         @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .modal-card-module-d::-webkit-scrollbar { width: 4px; }
-        .modal-card-module-d::-webkit-scrollbar-track { background: transparent; }
-        .modal-card-module-d::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .edit-field-input { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
-        .edit-field-input:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .edit-field-input:disabled { opacity: 0.5; cursor: not-allowed; }
-        .edit-field-input.mono { font-family: 'JetBrains Mono', monospace; }
-        .edit-field-select { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px; }
-        .edit-field-select:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .edit-field-select option { background: #08090A; color: #f4f4f5; }
-        .info-box { background: rgba(0, 209, 122, 0.06); border: 1px solid rgba(0, 209, 122, 0.15); border-radius: 10px; padding: 14px 16px; }
-        .info-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #00D17A; margin-bottom: 6px; font-weight: 600; }
-        .info-box-text { font-size: 14px; color: #f4f4f5; }
         .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .contact-textarea::placeholder { color: #3f3f46; }
-
-        /* --- NEW FEATURE STYLES --- */
-        /* 1. Validation */
         .input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; background: rgba(239, 68, 68, 0.05) !important; }
         .err-msg { color: #fca5a5; font-size: 10px; margin-top: 4px; display: none; font-family: 'Inter', sans-serif; }
-        
-        /* 2. Formula Breakdown */
         .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
         .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; outline: none; user-select: none; }
         .formula-card summary:hover { color: #00F590; }
         .formula-text { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a1a1aa; white-space: pre-wrap; line-height: 1.6; background: #08090A; padding: 12px; border-radius: 6px; border: 1px dashed #27272a; }
-        .formula-text span { color: #00D17A; font-weight: bold; }
-
-        /* 3. History */
-        .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
-        .hist-item:hover { background: #18181b; transform: translateX(4px); }
-        .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
-        .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
-        .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
-
-        /* 4. Receipt Styles */
         .receipt-container { width: 100%; max-width: 400px; margin: 0 auto; background: #fff; color: #000; font-family: 'Courier New', Courier, monospace; font-size: 12px; padding: 20px; line-height: 1.4; }
         .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 15px; margin-bottom: 15px; }
         .receipt-title { font-size: 24px; font-weight: bold; color: #00995A; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
@@ -133,22 +77,10 @@
         .receipt-label { font-weight: bold; color: #333; }
         .receipt-val { color: #000; }
         .receipt-divider { border-top: 1px dashed #000; margin: 15px 0; }
-        .receipt-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 10px; }
-        .receipt-table th, .receipt-table td { border-bottom: 1px solid #eee; padding: 6px 4px; text-align: left; }
-        .receipt-table th { border-bottom: 2px solid #000; font-weight: bold; background: #f5f5f5; }
         .receipt-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; background: #f0f0f0; padding: 12px; margin-top: 10px; border-radius: 6px; border: 2px solid #00995A; }
         .receipt-footer { text-align: center; font-size: 10px; margin-top: 20px; color: #666; }
         .receipt-status { display: inline-block; padding: 4px 12px; background: #00995A; color: white; font-size: 10px; font-weight: bold; border-radius: 3px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        /* 5. Print Styles */
-        @media print {
-            body * { visibility: hidden; }
-            #receipt-print-area, #receipt-print-area * { visibility: visible; }
-            #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; }
-            .no-print { display: none !important; }
-        }
-        
-        /* 6. Receipt Modal Styles */
+        @media print { body * { visibility: hidden; } #receipt-print-area, #receipt-print-area * { visibility: visible; } #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; } .no-print { display: none !important; } }
         .receipt-modal-backdrop { position: fixed; inset: 0; z-index: 300; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; padding: 20px; }
         .receipt-modal-backdrop.open { display: flex; }
         .receipt-modal-card { background: rgba(17, 17, 19, 0.99); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 24px; padding: 32px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8); animation: receiptModalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -255,30 +187,10 @@
             </div>
         </div>
 
-        <!-- ACCOUNT MANAGEMENT - Module D -->
-        <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
-            <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
-            <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
-                <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
-                    </div>
-                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
-                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
-                </div>
-            </div>
-            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
-        </div>
-
         <!-- MINI PAYMENTS CALCULATOR (EMI) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
             
-            <!-- Customer Information for Receipt -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 no-print">
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Name <span class="text-red-400">*</span></label><input type="text" id="receipt-customer-name" placeholder="Juan Dela Cruz" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"><div class="err-msg" id="receipt-customer-name-err">Customer name is required</div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Email <span class="text-red-400">*</span></label><input type="email" id="receipt-customer-email" placeholder="customer@email.com" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"><div class="err-msg" id="receipt-customer-email-err">Valid email is required</div></div>
@@ -292,7 +204,6 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" value="2026-01-02" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
             </div>
             
-            <!-- Export Toolkit -->
             <div class="flex flex-wrap gap-2 mb-4 no-print">
                 <button onclick="generateAndSendReceipt()" id="generate-receipt-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
@@ -302,11 +213,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History
                 </button>
                 <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export Data (CSV)
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export CSV
                 </button>
             </div>
 
-            <!-- Formula Breakdown -->
             <details class="formula-card mb-4 no-print">
                 <summary>Show Calculation Breakdown</summary>
                 <div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div>
@@ -362,23 +272,12 @@
                 <h3 style="font-size: 18px; font-weight: bold; color: white;">Official Receipt</h3>
                 <button onclick="closeReceiptModal()" style="background: none; border: none; color: #71717a; cursor: pointer; font-size: 24px; padding: 4px 8px; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.color='#f4f4f5';this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#71717a';this.style.background='none'">&times;</button>
             </div>
-            
             <div id="receipt-status-area"></div>
-            
-            <div id="receipt-print-area" style="background: white; border-radius: 12px; padding: 10px; margin-bottom: 20px; max-height: 500px; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                <!-- Receipt content will be injected here -->
-            </div>
-            
+            <div id="receipt-print-area" style="background: white; border-radius: 12px; padding: 10px; margin-bottom: 20px; max-height: 500px; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);"></div>
             <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
-                <button onclick="printReceipt()" style="padding: 10px 16px; background: rgba(113, 113, 122, 0.2); border: 1px solid rgba(113, 113, 122, 0.3); color: #a1a1aa; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(113, 113, 122, 0.3)';this.style.color='#f4f4f5'" onmouseout="this.style.background='rgba(113, 113, 122, 0.2)';this.style.color='#a1a1aa'">
-                    🖨️ Print
-                </button>
-                <button onclick="downloadReceiptPDF()" style="padding: 10px 16px; background: rgba(0, 209, 122, 0.15); border: 1px solid rgba(0, 209, 122, 0.3); color: #00D17A; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(0, 209, 122, 0.25)'" onmouseout="this.style.background='rgba(0, 209, 122, 0.15)'">
-                    📄 Download PDF
-                </button>
-                <button onclick="closeReceiptModal()" style="padding: 10px 16px; background: transparent; border: 1px solid #27272a; color: #71717a; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#f4f4f5'" onmouseout="this.style.background='transparent';this.style.color='#71717a'">
-                    Close
-                </button>
+                <button onclick="printReceipt()" style="padding: 10px 16px; background: rgba(113, 113, 122, 0.2); border: 1px solid rgba(113, 113, 122, 0.3); color: #a1a1aa; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;">Print</button>
+                <button onclick="downloadReceiptPDF()" style="padding: 10px 16px; background: rgba(0, 209, 122, 0.15); border: 1px solid rgba(0, 209, 122, 0.3); color: #00D17A; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;">Download PDF</button>
+                <button onclick="closeReceiptModal()" style="padding: 10px 16px; background: transparent; border: 1px solid #27272a; color: #71717a; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;">Close</button>
             </div>
         </div>
     </div>
@@ -386,104 +285,108 @@
     <!-- Hidden Print Area -->
     <div id="hidden-print-area" style="position: fixed; left: -9999px; top: -9999px;"></div>
 
-<script>
-// =====================================================
-// EMAILJS CONFIGURATION
-// =====================================================
-// Replace these with your actual EmailJS credentials
-const EMAILJS_PUBLIC_KEY = 'EqpvSEszjMBtqUSBd';
-const EMAILJS_SERVICE_ID = 'service_1zm2s7c';
-const EMAILJS_RECEIPT_TEMPLATE_ID = 'template_4dibrxf';
-const EMAILJS_CONTACT_TEMPLATE_ID = 'template_h7keskr'; // <-- Added for Contact Admin
+    <script>
+    // =====================================================
+    // EMAILJS CONFIGURATION
+    // =====================================================
+    const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY_HERE';
+    const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID_HERE';
+    const EMAILJS_RECEIPT_TEMPLATE_ID = 'YOUR_RECEIPT_TEMPLATE_ID_HERE';
+    const EMAILJS_CONTACT_TEMPLATE_ID = 'YOUR_CONTACT_TEMPLATE_ID_HERE';
 
-// Initialize EmailJS
-(function() {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-})();
-
-// =====================================================
-// RECEIPT GENERATION & EMAIL SENDING
-// =====================================================
-
-async function generateAndSendReceipt() {
-    const customerName = document.getElementById('receipt-customer-name').value.trim();
-    const customerEmail = document.getElementById('receipt-customer-email').value.trim();
-    
-    clearError('receipt-customer-name');
-    clearError('receipt-customer-email');
-    
-    let hasError = false;
-    
-    if (!customerName) {
-        showError('receipt-customer-name', 'Customer name is required');
-        hasError = true;
-    }
-    
-    if (!customerEmail || !isValidEmail(customerEmail)) {
-        showError('receipt-customer-email', 'Valid email address is required');
-        hasError = true;
-    }
-    
-    if (hasError) return;
-    
-    const principal = parseFloat(document.getElementById('emi-principal').value.replace(/,/g, '')) || 0;
-    const rate = parseFloat(document.getElementById('emi-rate').value) || 0;
-    const months = parseInt(document.getElementById('emi-months').value) || 0;
-    const startDate = document.getElementById('emi-start-date').value;
-    const emiAmount = parseFloat(document.getElementById('emi-fixed-amount').textContent.replace(/,/g, '')) || 0;
-    const totalInterest = parseFloat(document.getElementById('emi-total-interest').textContent.replace(/,/g, '')) || 0;
-    const totalAmount = principal + totalInterest;
-    
-    if (principal === 0 || months === 0 || emiAmount === 0) {
-        showContactAlert('Please calculate the EMI first before generating a receipt.', 'error');
-        return;
-    }
-    
-    const receiptData = {
-        customerName, customerEmail, principal, rate, months, startDate,
-        emiAmount, totalInterest, totalAmount,
-        receiptNumber: 'MAYA-' + Date.now().toString().slice(-8),
-        date: new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-        processedBy: document.getElementById('user-name').textContent || 'System'
-    };
-    
-    const receiptHTML = generateReceiptHTML(receiptData);
-    showReceiptModal(receiptHTML, 'loading');
-    
+    let isEmailJsReady = false;
     try {
-        const templateParams = {
-            to_email: customerEmail,
-            to_name: customerName,
-            receipt_number: receiptData.receiptNumber,
-            principal_amount: principal.toFixed(2),
-            monthly_emi: emiAmount.toFixed(2),
-            total_interest: totalInterest.toFixed(2),
-            total_amount: totalAmount.toFixed(2),
-            tenure: months,
-            start_date: startDate,
-            processed_by: receiptData.processedBy
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+            isEmailJsReady = true;
+        }
+    } catch (e) { console.error('EmailJS Init Error:', e); }
+
+    // =====================================================
+    // CORE APP FUNCTIONS (Logout, History, etc.)
+    // =====================================================
+    function handleLogout() {
+        if(confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('maya_user');
+            window.location.href = 'index.html'; // Adjust if your login page is different
+        }
+    }
+
+    function toggleHistory() { alert("History panel toggled."); /* Link to your history logic */ }
+    function saveMilesHistory() { alert("Miles saved to history."); /* Link to your miles logic */ }
+    function saveFinanceHistory() { alert("Finance saved to history."); /* Link to your finance logic */ }
+    function saveEMIHistory() { alert("EMI saved to history."); /* Link to your EMI logic */ }
+    function exportEMICSV() { alert("CSV Export triggered."); /* Link to your CSV logic */ }
+    
+    function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            const text = element.value || element.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalColor = element.style.color;
+                element.style.color = '#00D17A';
+                setTimeout(() => { element.style.color = originalColor; }, 300);
+            }).catch(err => console.error('Copy failed:', err));
+        }
+    }
+
+    // =====================================================
+    // RECEIPT GENERATION & EMAIL SENDING
+    // =====================================================
+    async function generateAndSendReceipt() {
+        const customerName = document.getElementById('receipt-customer-name').value.trim();
+        const customerEmail = document.getElementById('receipt-customer-email').value.trim();
+        clearError('receipt-customer-name'); clearError('receipt-customer-email');
+        
+        let hasError = false;
+        if (!customerName) { showError('receipt-customer-name', 'Customer name is required'); hasError = true; }
+        if (!customerEmail || !isValidEmail(customerEmail)) { showError('receipt-customer-email', 'Valid email is required'); hasError = true; }
+        if (hasError) return;
+        
+        const principal = parseFloat(document.getElementById('emi-principal').value.replace(/,/g, '')) || 0;
+        const rate = parseFloat(document.getElementById('emi-rate').value) || 0;
+        const months = parseInt(document.getElementById('emi-months').value) || 0;
+        const startDate = document.getElementById('emi-start-date').value;
+        const emiAmount = parseFloat(document.getElementById('emi-fixed-amount').textContent.replace(/,/g, '')) || 0;
+        const totalInterest = parseFloat(document.getElementById('emi-total-interest').textContent.replace(/,/g, '')) || 0;
+        const totalAmount = principal + totalInterest;
+        
+        if (principal === 0 || months === 0 || emiAmount === 0) {
+            showContactAlert('Please calculate the EMI first before generating a receipt.', 'error'); return;
+        }
+        
+        const userNameEl = document.getElementById('user-name');
+        const receiptData = {
+            customerName, customerEmail, principal, rate, months, startDate, emiAmount, totalInterest, totalAmount,
+            receiptNumber: 'MAYA-' + Date.now().toString().slice(-8),
+            date: new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            processedBy: userNameEl ? userNameEl.textContent.trim() : 'System'
         };
         
-        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_TEMPLATE_ID, templateParams);
-        console.log('Receipt sent successfully:', response.status, response.text);
-        showReceiptModal(receiptHTML, 'success', customerEmail);
-    } catch (error) {
-        console.error('Failed to send receipt:', error);
-        showReceiptModal(receiptHTML, 'error', error.text || 'Unknown error occurred');
+        const receiptHTML = generateReceiptHTML(receiptData);
+        showReceiptModal(receiptHTML, 'loading');
+        
+        if (!isEmailJsReady) { showReceiptModal(receiptHTML, 'error', 'EmailJS is not configured.'); return; }
+        
+        try {
+            const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_TEMPLATE_ID, {
+                to_email: customerEmail, to_name: customerName, receipt_number: receiptData.receiptNumber,
+                principal_amount: principal.toFixed(2), monthly_emi: emiAmount.toFixed(2),
+                total_interest: totalInterest.toFixed(2), total_amount: totalAmount.toFixed(2),
+                tenure: months, start_date: startDate, processed_by: receiptData.processedBy
+            });
+            showReceiptModal(receiptHTML, 'success', customerEmail);
+        } catch (error) {
+            showReceiptModal(receiptHTML, 'error', error.text || 'Unknown error');
+        }
     }
-}
 
-function generateReceiptHTML(data) {
-    return `
-        <div class="receipt-container">
-            <div class="receipt-header">
-                <div class="receipt-title">MAYA</div>
-                <div class="receipt-sub">Utility Terminal</div>
-                <div style="margin-top: 10px;"><span class="receipt-status">OFFICIAL RECEIPT</span></div>
-            </div>
+    function generateReceiptHTML(data) {
+        return `<div class="receipt-container">
+            <div class="receipt-header"><div class="receipt-title">MAYA</div><div class="receipt-sub">Utility Terminal</div><div style="margin-top: 10px;"><span class="receipt-status">OFFICIAL RECEIPT</span></div></div>
             <div style="margin-bottom: 15px;">
                 <div class="receipt-row"><span class="receipt-label">Receipt No:</span><span class="receipt-val">${data.receiptNumber}</span></div>
-                <div class="receipt-row"><span class="receipt-label">Date & Time:</span><span class="receipt-val">${data.date}</span></div>
+                <div class="receipt-row"><span class="receipt-label">Date:</span><span class="receipt-val">${data.date}</span></div>
                 <div class="receipt-row"><span class="receipt-label">Customer:</span><span class="receipt-val">${data.customerName}</span></div>
                 <div class="receipt-row"><span class="receipt-label">Email:</span><span class="receipt-val">${data.customerEmail}</span></div>
                 <div class="receipt-row"><span class="receipt-label">Processed By:</span><span class="receipt-val">${data.processedBy}</span></div>
@@ -491,7 +394,7 @@ function generateReceiptHTML(data) {
             <div class="receipt-divider"></div>
             <div style="margin-bottom: 15px;">
                 <div style="font-weight: bold; margin-bottom: 10px; text-transform: uppercase; font-size: 11px; color: #00995A;">Loan Details</div>
-                <div class="receipt-row"><span>Principal Amount:</span><span>₱${data.principal.toFixed(2)}</span></div>
+                <div class="receipt-row"><span>Principal:</span><span>₱${data.principal.toFixed(2)}</span></div>
                 <div class="receipt-row"><span>Monthly EIR:</span><span>${data.rate}%</span></div>
                 <div class="receipt-row"><span>Tenure:</span><span>${data.months} months</span></div>
                 <div class="receipt-row"><span>Start Date:</span><span>${data.startDate}</span></div>
@@ -502,221 +405,125 @@ function generateReceiptHTML(data) {
                 <div class="receipt-row"><span>Total Interest:</span><span>₱${data.totalInterest.toFixed(2)}</span></div>
                 <div class="receipt-total" style="margin-top: 10px;"><span>TOTAL PAYABLE:</span><span>₱${data.totalAmount.toFixed(2)}</span></div>
             </div>
-            <div class="receipt-footer">
-                <p style="margin: 0 0 5px;">This is a computer-generated receipt.</p>
-                <p style="margin: 0 0 5px;">No signature required.</p>
-                <p style="margin: 10px 0 0; font-weight: bold; color: #00995A;">Thank you for choosing Maya!</p>
-            </div>
+            <div class="receipt-footer"><p style="margin: 0 0 5px;">Computer-generated receipt.</p><p style="margin: 10px 0 0; font-weight: bold; color: #00995A;">Thank you for choosing Maya!</p></div>
         </div>`;
-}
-
-function showReceiptModal(receiptHTML, status, extraInfo) {
-    const modal = document.getElementById('receiptModal');
-    const printArea = document.getElementById('receipt-print-area');
-    const statusArea = document.getElementById('receipt-status-area');
-    
-    printArea.innerHTML = receiptHTML;
-    
-    switch(status) {
-        case 'loading':
-            statusArea.innerHTML = `<div class="receipt-loading"><div class="receipt-spinner"></div><span style="font-size: 12px; color: #a1a1aa;">Sending receipt to customer...</span></div>`;
-            break;
-        case 'success':
-            statusArea.innerHTML = `<div class="receipt-success"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span style="font-size: 12px;">Receipt sent successfully to ${extraInfo}</span></div>`;
-            break;
-        case 'error':
-            statusArea.innerHTML = `<div class="receipt-error"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg><span style="font-size: 12px;">Failed to send email: ${extraInfo}. Receipt available for download.</span></div>`;
-            break;
-    }
-    
-    modal.classList.add('open');
-    modal.style.display = 'flex';
-}
-
-function closeReceiptModal() {
-    const modal = document.getElementById('receiptModal');
-    modal.classList.remove('open');
-    modal.style.display = 'none';
-}
-
-function printReceipt() {
-    const receiptContent = document.getElementById('receipt-print-area').innerHTML;
-    const hiddenArea = document.getElementById('hidden-print-area');
-    hiddenArea.innerHTML = receiptContent;
-    hiddenArea.style.position = 'fixed';
-    hiddenArea.style.left = '0'; hiddenArea.style.top = '0';
-    hiddenArea.style.width = '100%'; hiddenArea.style.height = '100%';
-    hiddenArea.style.zIndex = '99999'; hiddenArea.style.background = 'white'; hiddenArea.style.padding = '20px';
-    window.print();
-    setTimeout(() => { hiddenArea.style.left = '-9999px'; hiddenArea.style.top = '-9999px'; }, 500);
-}
-
-async function downloadReceiptPDF() {
-    const receiptElement = document.querySelector('#receipt-print-area .receipt-container');
-    if (!receiptElement) return alert('No receipt to download');
-    try {
-        const canvas = await html2canvas(receiptElement, { scale: 2, backgroundColor: '#ffffff', logging: false, useCORS: true });
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 190; const pageHeight = 277;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight; let position = 10;
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= (pageHeight - 20);
-        while (heightLeft > 0) { position = heightLeft - imgHeight + 10; pdf.addPage(); pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight); heightLeft -= (pageHeight - 20); }
-        const receiptNumber = document.querySelector('.receipt-val')?.textContent || 'receipt';
-        pdf.save(`Maya_Receipt_${receiptNumber}.pdf`);
-    } catch (error) { console.error('PDF generation failed:', error); alert('Failed to generate PDF.'); }
-}
-
-
-// =====================================================
-// CONTACT ADMIN EMAIL SENDING
-// =====================================================
-
-async function sendContactMessage() {
-    const name = document.getElementById('contact-name').value.trim();
-    const eid = document.getElementById('contact-eid').value.trim();
-    const subject = document.getElementById('contact-subject').value;
-    const message = document.getElementById('contact-message').value.trim();
-    const btn = document.getElementById('contact-send-btn');
-
-    // Validation
-    if (!subject) {
-        showContactAlert('Please select a subject for your message.', 'error');
-        return;
-    }
-    if (!message) {
-        showContactAlert('Please enter a message before sending.', 'error');
-        return;
     }
 
-    // Set Loading State
-    btn.disabled = true;
-    btn.innerHTML = `<div class="receipt-spinner" style="border-top-color: white; width: 14px; height: 14px; border-width: 2px;"></div> Sending...`;
-    showContactAlert('Connecting to mail server...', 'error'); // Temporarily use error style for neutral gray loading look, will override
-
-    try {
-        const templateParams = {
-            from_name: name,
-            from_eid: eid,
-            subject: subject,
-            message: message
-        };
-
-        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONTACT_TEMPLATE_ID, templateParams);
+    function showReceiptModal(receiptHTML, status, extraInfo) {
+        const modal = document.getElementById('receiptModal');
+        const printArea = document.getElementById('receipt-print-area');
+        const statusArea = document.getElementById('receipt-status-area');
+        if (!modal || !printArea || !statusArea) return;
+        printArea.innerHTML = receiptHTML;
         
-        console.log('Contact message sent successfully:', response.status, response.text);
-        showContactAlert('Message sent successfully! The admin will respond to your concern shortly.', 'success');
+        if (status === 'loading') statusArea.innerHTML = `<div class="receipt-loading"><div class="receipt-spinner"></div><span style="font-size: 12px; color: #a1a1aa;">Sending receipt...</span></div>`;
+        else if (status === 'success') statusArea.innerHTML = `<div class="receipt-success"><span style="font-size: 12px;">Sent to ${extraInfo}</span></div>`;
+        else if (status === 'error') statusArea.innerHTML = `<div class="receipt-error"><span style="font-size: 12px;">Error: ${extraInfo}</span></div>`;
         
-        // Clear form
-        document.getElementById('contact-subject').value = '';
-        document.getElementById('contact-message').value = '';
-
-    } catch (error) {
-        console.error('Failed to send contact message:', error);
-        showContactAlert(`Failed to send message: ${error.text || 'Please check your connection or try again later.'}`, 'error');
-    } finally {
-        // Reset Button State
-        btn.disabled = false;
-        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message`;
+        modal.classList.add('open'); modal.style.display = 'flex';
     }
-}
 
-// Helper to handle Contact Alert UI states
-function showContactAlert(message, type) {
-    const alert = document.getElementById('contact-alert');
-    const alertText = document.getElementById('contact-alert-text');
-    
-    alert.className = `module-d-alert module-d-alert-${type} show`;
-    alertText.textContent = message;
-
-    // Auto-hide success messages after 6 seconds
-    if (type === 'success') {
-        setTimeout(() => {
-            alert.classList.remove('show');
-        }, 6000);
+    function closeReceiptModal() {
+        const modal = document.getElementById('receiptModal');
+        if (modal) { modal.classList.remove('open'); modal.style.display = 'none'; }
     }
-}
 
-
-// =====================================================
-// VALIDATION & UTILITY HELPERS
-// =====================================================
-
-function showError(inputId, message) {
-    const input = document.getElementById(inputId);
-    const errorDiv = document.getElementById(inputId + '-err');
-    if (input) input.classList.add('input-error');
-    if (errorDiv) { errorDiv.textContent = message; errorDiv.style.display = 'block'; }
-}
-
-function clearError(inputId) {
-    const input = document.getElementById(inputId);
-    const errorDiv = document.getElementById(inputId + '-err');
-    if (input) input.classList.remove('input-error');
-    if (errorDiv) errorDiv.style.display = 'none';
-}
-
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function copyToClipboard(elementId) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        const text = element.value || element.textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            const originalColor = element.style.color;
-            element.style.color = '#00D17A';
-            setTimeout(() => { element.style.color = originalColor; }, 300);
-        }).catch(err => console.error('Failed to copy:', err));
+    function printReceipt() {
+        const receiptContent = document.getElementById('receipt-print-area').innerHTML;
+        const hiddenArea = document.getElementById('hidden-print-area');
+        if(!hiddenArea) return;
+        hiddenArea.innerHTML = receiptContent;
+        hiddenArea.style.position = 'fixed'; hiddenArea.style.left = '0'; hiddenArea.style.top = '0';
+        hiddenArea.style.width = '100%'; hiddenArea.style.height = '100%';
+        hiddenArea.style.zIndex = '99999'; hiddenArea.style.background = 'white'; hiddenArea.style.padding = '20px';
+        window.print();
+        setTimeout(() => { hiddenArea.style.left = '-9999px'; hiddenArea.style.top = '-9999px'; }, 500);
     }
-}
 
-// Placeholder for your other existing functions
-function toggleHistory() { /* Your existing code */ }
-function handleLogout() { /* Your existing code */ }
-function saveMilesHistory() { /* Your existing code */ }
-function saveFinanceHistory() { /* Your existing code */ }
-function saveEMIHistory() { /* Your existing code */ }
-function exportEMICSV() { /* Your existing code */ }
-function toggleCreateForm() { /* Your existing code */ }
-function createAccount() { /* Your existing code */ }
+    async function downloadReceiptPDF() {
+        const receiptElement = document.querySelector('#receipt-print-area .receipt-container');
+        if (!receiptElement) return alert('No receipt to download');
+        if (typeof html2canvas === 'undefined') return alert('PDF library failed to load.');
+        try {
+            const canvas = await html2canvas(receiptElement, { scale: 2, backgroundColor: '#ffffff', logging: false, useCORS: true });
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgWidth = 190; const pageHeight = 277;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight; let position = 10;
+            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= (pageHeight - 20);
+            while (heightLeft > 0) { position = heightLeft - imgHeight + 10; pdf.addPage(); pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight); heightLeft -= (pageHeight - 20); }
+            pdf.save(`Maya_Receipt_${Date.now()}.pdf`);
+        } catch (error) { console.error(error); alert('Failed to generate PDF.'); }
+    }
 
-// =====================================================
-// EVENT LISTENERS & LOADER
-// =====================================================
+    // =====================================================
+    // CONTACT ADMIN EMAIL SENDING
+    // =====================================================
+    async function sendContactMessage() {
+        const name = document.getElementById('contact-name')?.value.trim() || 'Unknown';
+        const eid = document.getElementById('contact-eid')?.value.trim() || 'Unknown';
+        const subject = document.getElementById('contact-subject')?.value || '';
+        const message = document.getElementById('contact-message')?.value.trim() || '';
+        const btn = document.getElementById('contact-send-btn');
 
-// Close modal on backdrop click
-document.getElementById('receiptModal').addEventListener('click', function(e) {
-    if (e.target === this) closeReceiptModal();
-});
+        if (!subject) { showContactAlert('Please select a subject.', 'error'); return; }
+        if (!message) { showContactAlert('Please enter a message.', 'error'); return; }
+        if (!isEmailJsReady) { showContactAlert('Email system offline.', 'error'); return; }
 
-// Close modal on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeReceiptModal();
-});
+        if(btn) { btn.disabled = true; btn.innerHTML = `<div class="receipt-spinner" style="border-top-color: white; width: 14px; height: 14px; border-width: 2px;"></div> Sending...`; }
+        showContactAlert('Sending message...', 'loading');
 
-// Clear receipt validation on input
-document.getElementById('receipt-customer-name').addEventListener('input', function() { clearError('receipt-customer-name'); });
-document.getElementById('receipt-customer-email').addEventListener('input', function() { clearError('receipt-customer-email'); });
+        try {
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONTACT_TEMPLATE_ID, { from_name: name, from_eid: eid, subject: subject, message: message });
+            showContactAlert('Message sent successfully!', 'success');
+            document.getElementById('contact-subject').value = '';
+            document.getElementById('contact-message').value = '';
+        } catch (error) {
+            showContactAlert(`Failed: ${error.text || 'Check connection.'}`, 'error');
+        } finally {
+            if(btn) { btn.disabled = false; btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message`; }
+        }
+    }
 
-// Clear contact alert when user starts typing again
-document.getElementById('contact-message').addEventListener('input', function() {
-    document.getElementById('contact-alert').classList.remove('show');
-});
-document.getElementById('contact-subject').addEventListener('change', function() {
-    document.getElementById('contact-alert').classList.remove('show');
-});
+    function showContactAlert(message, type) {
+        const alert = document.getElementById('contact-alert');
+        const alertText = document.getElementById('contact-alert-text');
+        if (!alert || !alertText) return;
+        if (type === 'loading') {
+            alert.className = 'module-d-alert show'; alert.style.background = 'rgba(0, 209, 122, 0.05)'; alert.style.border = '1px solid rgba(0, 209, 122, 0.15)'; alert.style.color = '#a1a1aa';
+        } else {
+            alert.style.background = ''; alert.style.border = ''; alert.style.color = ''; alert.className = `module-d-alert module-d-alert-${type} show`;
+        }
+        alertText.textContent = message;
+        if (type === 'success') setTimeout(() => { alert.classList.remove('show'); }, 6000);
+    }
 
-// Loader removal
-window.addEventListener('load', function() {
-    setTimeout(function() {
-        const loader = document.getElementById('loader');
-        loader.classList.add('hidden-loader');
-        setTimeout(() => loader.remove(), 600);
-    }, 2000);
-});
-</script>
+    // =====================================================
+    // VALIDATIONS & EVENT LISTENERS
+    // =====================================================
+    function showError(inputId, message) { const input = document.getElementById(inputId); const err = document.getElementById(inputId + '-err'); if(input) input.classList.add('input-error'); if(err) { err.textContent = message; err.style.display = 'block'; } }
+    function clearError(inputId) { const input = document.getElementById(inputId); const err = document.getElementById(inputId + '-err'); if(input) input.classList.remove('input-error'); if(err) err.style.display = 'none'; }
+    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+
+    document.getElementById('receiptModal')?.addEventListener('click', function(e) { if (e.target === this) closeReceiptModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeReceiptModal(); });
+    document.getElementById('receipt-customer-name')?.addEventListener('input', function() { clearError('receipt-customer-name'); });
+    document.getElementById('receipt-customer-email')?.addEventListener('input', function() { clearError('receipt-customer-email'); });
+    document.getElementById('contact-message')?.addEventListener('input', function() { document.getElementById('contact-alert')?.classList.remove('show'); });
+    document.getElementById('contact-subject')?.addEventListener('change', function() { document.getElementById('contact-alert')?.classList.remove('show'); });
+
+    // =====================================================
+    // LOADER REMOVAL
+    // =====================================================
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            const loader = document.getElementById('loader');
+            if(loader) { loader.classList.add('hidden-loader'); setTimeout(() => loader.remove(), 600); }
+        }, 2000);
+    });
+    </script>
+</body>
+</html>
