@@ -85,6 +85,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .receipt-success { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: rgba(0, 209, 122, 0.15); border: 1px solid rgba(0, 209, 122, 0.3); border-radius: 10px; margin-bottom: 16px; color: #6ee7b7; }
         .receipt-error { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; margin-bottom: 16px; color: #fca5a5; }
+        .tier-breakdown { white-space: pre-line; }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
@@ -169,7 +170,7 @@
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="landers-spend-err"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="total-card-spend-err"></div></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label><select id="landers-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors"><option value="landers">Landers Superstore (Progressive)</option><option value="dining">Dining (2%)</option><option value="other">Other Retail (1%)</option><option value="excluded">Excluded Categories (0%)</option><option value="custom">Custom Percentage...</option></select><div id="landers-custom-group" class="hidden mt-3 animate-fade-in"><label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label><div class="relative"><input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all"><span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span></div></div></div>
-                <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em]">Waiting for input...</p></div>
+                <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em] tier-breakdown">Waiting for input...</p></div>
             </div>
             <div class="md:w-1/2 bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center border border-dashed border-zinc-800 relative">
                 <p class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Points Earned</p>
@@ -193,7 +194,7 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-rate-err"></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-months-err"></div></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" value="2026-01-02" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
             </div>
             
             <div class="flex flex-wrap gap-2 mb-4 no-print">
@@ -285,51 +286,116 @@
     const EMAILJS_CONTACT_TEMPLATE_ID = 'template_h7keskr';
     const isPlaceholder = str => !str || str.includes('YOUR_');
 
+    // Auth keys — must match the login page exactly
+    const AUTH_KEYS = ['maya_token', 'maya_user_id', 'maya_user_name', 'maya_user_role'];
+
     let isEmailJsReady = false;
-    try { if (typeof emailjs !== 'undefined') { emailjs.init(EMAILJS_PUBLIC_KEY); isEmailJsReady = true; } } catch (e) {}
+    try { if (typeof emailjs !== 'undefined') { emailjs.init(EMAILJS_PUBLIC_KEY); isEmailJsReady = true; } } catch (e) { console.warn('EmailJS init skipped:', e); }
+
+    // --- FIX: Read user data from the SAME keys the login page writes ---
+    // Login page stores: maya_token, maya_user_id, maya_user_name, maya_user_role
+    // in either localStorage or sessionStorage (depending on "Remember me")
+    function getAuthStorage() {
+        if (localStorage.getItem('maya_token')) return localStorage;
+        if (sessionStorage.getItem('maya_token')) return sessionStorage;
+        return null;
+    }
 
     function initApp() {
-        const userData = JSON.parse(localStorage.getItem('maya_user')) || { name: 'Agent Smith', eid: 'asmith', role: 'AGENT' };
+        const storage = getAuthStorage();
+
+        // --- FIX: Auth guard — redirect to login if not authenticated ---
+        if (!storage) {
+            window.location.replace('/');
+            return;
+        }
+
+        const userData = {
+            name: storage.getItem('maya_user_name') || 'Agent',
+            eid: storage.getItem('maya_user_id') || 'unknown',
+            role: storage.getItem('maya_user_role') || 'AGENT'
+        };
+
         document.getElementById('user-name').textContent = userData.name;
         document.getElementById('contact-name').value = userData.name;
         document.getElementById('contact-eid').value = userData.eid;
         document.getElementById('user-info').classList.remove('hidden');
         document.getElementById('logout-btn').classList.remove('hidden');
         const roleBadge = document.getElementById('role-badge');
-        roleBadge.textContent = userData.role; roleBadge.classList.remove('hidden');
-        updateClock(); setInterval(updateClock, 1000);
+        roleBadge.textContent = userData.role;
+        roleBadge.classList.remove('hidden');
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Set default EMI start date to today
+        const today = new Date().toISOString().split('T')[0];
+        const startDateInput = document.getElementById('emi-start-date');
+        if (startDateInput && !startDateInput.value) startDateInput.value = today;
+
+        // Run initial calculations so defaults are visible immediately
+        calculateMiles();
+        calculateFinance();
+        calculateLanders();
+        calculateEMI();
     }
 
     function updateClock() {
         const el = document.getElementById('live-date-time');
-        if(el) el.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (el) el.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
-    function handleLogout() { if(confirm('Logout?')) { localStorage.removeItem('maya_user'); window.location.reload(); } }
+    // --- FIX: Logout now clears the CORRECT keys and redirects to login ---
+    function handleLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            AUTH_KEYS.forEach(key => {
+                localStorage.removeItem(key);
+                sessionStorage.removeItem(key);
+            });
+            window.location.href = '/';
+        }
+    }
+
     function toggleHistory() { alert("History toggled."); }
     function saveMilesHistory() { alert("Saved to history."); }
     function saveFinanceHistory() { alert("Saved to history."); }
     function saveEMIHistory() { alert("Saved to history."); }
     function exportEMICSV() { alert("CSV Exported."); }
-    function copyToClipboard(id) { const el = document.getElementById(id); if(el) { navigator.clipboard.writeText(el.value || el.textContent); el.style.color='#00D17A'; setTimeout(()=>el.style.color='', 300); } }
+    function copyToClipboard(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            navigator.clipboard.writeText(el.value || el.textContent).catch(() => {});
+            el.style.color = '#00D17A';
+            setTimeout(() => el.style.color = '', 300);
+        }
+    }
 
     // =====================================================
     // 2. MAYA MILES CALCULATOR
     // =====================================================
     document.getElementById('spend-input')?.addEventListener('input', calculateMiles);
-    document.getElementById('multiplier-select')?.addEventListener('change', function() {
+    document.getElementById('multiplier-select')?.addEventListener('change', function () {
         document.getElementById('custom-multiplier').classList.toggle('hidden', this.value !== 'custom');
         calculateMiles();
     });
     document.getElementById('custom-multiplier')?.addEventListener('input', calculateMiles);
 
     function calculateMiles() {
-        const spend = parseFloat(document.getElementById('spend-input').value.replace(/,/g, '')) || 0;
-        let mult = document.getElementById('multiplier-select').value === 'custom' ? (parseFloat(document.getElementById('custom-multiplier').value) || 1) : parseFloat(document.getElementById('multiplier-select').value);
+        const spendEl = document.getElementById('spend-input');
+        const multSelect = document.getElementById('multiplier-select');
+        if (!spendEl || !multSelect) return;
+
+        const spend = parseFloat(spendEl.value.replace(/,/g, '')) || 0;
+        let mult;
+        if (multSelect.value === 'custom') {
+            mult = parseFloat(document.getElementById('custom-multiplier').value) || 1;
+        } else {
+            mult = parseFloat(multSelect.value) || 1;
+        }
         const miles = spend * mult;
-        document.getElementById('miles-input').value = miles.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('cash-value').textContent = (miles * 0.50).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('est-spend').textContent = spend.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+        document.getElementById('miles-input').value = miles.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('cash-value').textContent = (miles * 0.50).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('est-spend').textContent = spend.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // =====================================================
@@ -344,12 +410,14 @@
         const partial = parseFloat(document.getElementById('partial-payment').value.replace(/,/g, '')) || 0;
         const term = parseFloat(document.getElementById('loan-term').value) || 30;
         const daysHeld = parseFloat(document.getElementById('days-held').value) || 0;
+
         const remaining = Math.max(0, loan - partial);
         const interest = remaining * 0.03 * (daysHeld / term);
         const total = remaining + interest;
-        document.getElementById('fb-principal').textContent = '₱' + remaining.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('fb-interest').textContent = '₱' + interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('finance-charge-result').textContent = total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+        document.getElementById('fb-principal').textContent = '₱' + remaining.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('fb-interest').textContent = '₱' + interest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('finance-charge-result').textContent = total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // =====================================================
@@ -361,28 +429,63 @@
 
     function calculateLanders() {
         const txSpend = parseFloat(document.getElementById('landers-spend').value.replace(/,/g, '')) || 0;
+        // --- FIX: Actually READ the previous accumulated value (was ignored before) ---
+        const prevAccumulated = parseFloat(document.getElementById('total-card-spend').value.replace(/,/g, '')) || 0;
         const category = document.getElementById('landers-category').value;
         let points = 0, breakdown = "";
 
         if (category === 'custom') {
             document.getElementById('landers-custom-group').classList.remove('hidden');
             const rate = parseFloat(document.getElementById('landers-custom-rate').value) || 0;
-            points = txSpend * (rate / 100); breakdown = `Custom: ${rate}% of ₱${txSpend.toFixed(2)}`;
+            points = txSpend * (rate / 100);
+            breakdown = `Custom: ${rate}% of ₱${txSpend.toFixed(2)}`;
         } else {
             document.getElementById('landers-custom-group').classList.add('hidden');
+
             if (category === 'landers') {
-                let rem = txSpend, t1=0, t2=0, t3=0;
-                if(rem > 0) { t1 = Math.min(rem, 3000); points += t1 * 0.01; rem -= t1; }
-                if(rem > 0) { t2 = Math.min(rem, 3000); points += t2 * 0.02; rem -= t2; }
-                if(rem > 0) { t3 = rem; points += rem * 0.03; }
-                breakdown = `0-3k (1%): ₱${t1.toFixed(2)}\n3k-6k (2%): ₱${t2.toFixed(2)}\n6k+ (3%): ₱${t3.toFixed(2)}`;
-            } else if (category === 'dining') { points = txSpend * 0.02; breakdown = `Dining 2%`; }
-            else if (category === 'other') { points = txSpend * 0.01; breakdown = `Other 1%`; }
-            else { points = 0; breakdown = `Excluded 0%`; }
+                // --- FIX: Progressive tiers now account for previous accumulated spend ---
+                // Tier 1: ₱0 – ₱3,000  → 1%
+                // Tier 2: ₱3,000 – ₱6,000 → 2%
+                // Tier 3: ₱6,000+ → 3%
+                const totalAfter = prevAccumulated + txSpend;
+                let t1 = 0, t2 = 0, t3 = 0;
+
+                // Portion of current tx that falls in Tier 1 (0–3000)
+                if (prevAccumulated < 3000) {
+                    t1 = Math.max(0, Math.min(totalAfter, 3000) - prevAccumulated);
+                    points += t1 * 0.01;
+                }
+                // Portion in Tier 2 (3000–6000)
+                if (totalAfter > 3000 && prevAccumulated < 6000) {
+                    t2 = Math.max(0, Math.min(totalAfter, 6000) - Math.max(prevAccumulated, 3000));
+                    points += t2 * 0.02;
+                }
+                // Portion in Tier 3 (6000+)
+                if (totalAfter > 6000) {
+                    t3 = Math.max(0, totalAfter - Math.max(prevAccumulated, 6000));
+                    points += t3 * 0.03;
+                }
+
+                breakdown = `Tier 1 (1%): ₱${t1.toFixed(2)}\n`
+                          + `Tier 2 (2%): ₱${t2.toFixed(2)}\n`
+                          + `Tier 3 (3%): ₱${t3.toFixed(2)}\n`
+                          + `Prev: ₱${prevAccumulated.toFixed(2)} → ₱${totalAfter.toFixed(2)}`;
+            } else if (category === 'dining') {
+                points = txSpend * 0.02;
+                breakdown = `Dining 2% of ₱${txSpend.toFixed(2)}`;
+            } else if (category === 'other') {
+                points = txSpend * 0.01;
+                breakdown = `Other 1% of ₱${txSpend.toFixed(2)}`;
+            } else {
+                points = 0;
+                breakdown = `Excluded 0%`;
+            }
         }
-        document.getElementById('landers-result').textContent = points.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+        document.getElementById('landers-result').textContent = points.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('voucher-result').textContent = Math.floor(points / 500);
-        document.getElementById('tier-breakdown').textContent = breakdown;
+        // --- FIX: Use innerHTML with <br> so line breaks actually render ---
+        document.getElementById('tier-breakdown').innerHTML = breakdown.replace(/\n/g, '<br>');
     }
 
     // =====================================================
@@ -398,7 +501,7 @@
         const n = parseInt(document.getElementById('emi-months').value) || 0;
         const daysInYear = parseInt(document.getElementById('emi-days-year').value) || 365;
         const startDateStr = document.getElementById('emi-start-date').value;
-        
+
         const nominalAnnual = monthlyEIR * 12;
         const dailyRate = (monthlyEIR / 100) / daysInYear;
         document.getElementById('emi-nominal-rate').textContent = nominalAnnual.toFixed(2);
@@ -420,54 +523,108 @@
         for (let i = 1; i <= n; i++) {
             const curDate = new Date(startDate); curDate.setMonth(curDate.getMonth() + i);
             const prevDate = new Date(startDate); prevDate.setMonth(prevDate.getMonth() + i - 1);
-            const days = Math.round((curDate - prevDate) / (1000 * 60 * 60 * 24));
+            const days = Math.max(1, Math.round((curDate - prevDate) / (1000 * 60 * 60 * 24)));
             const interestAmt = balance * dailyRate * days;
             let principalPaid = emiFixed - interestAmt;
-            let startBalance = balance;
+            const startBalance = balance;
 
             if (i === n) principalPaid = balance; // Last month clears balance
             balance -= principalPaid;
             if (balance < 0) balance = 0;
             totalInterest += interestAmt;
 
-            const dateStr = curDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
-            tableHTML += `<tr class="border-b border-zinc-800/50 hover:bg-zinc-900/30"><td class="px-3 py-2.5 text-center text-zinc-500">${i}</td><td class="px-3 py-2.5">${dateStr}</td><td class="px-3 py-2.5 text-right">${days}</td><td class="px-3 py-2.5 text-right">₱${startBalance.toFixed(2)}</td><td class="px-3 py-2.5 text-right text-red-400">₱${interestAmt.toFixed(2)}</td><td class="px-3 py-2.5 text-right text-emerald-400">₱${principalPaid.toFixed(2)}</td><td class="px-3 py-2.5 text-right font-semibold text-white">₱${(i===n ? principalPaid+interestAmt : emiFixed).toFixed(2)}</td><td class="px-3 py-2.5 text-right">₱${balance.toFixed(2)}</td></tr>`;
+            const dateStr = curDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const installment = (i === n) ? (principalPaid + interestAmt) : emiFixed;
+            tableHTML += `<tr class="border-b border-zinc-800/50 hover:bg-zinc-900/30">`
+                + `<td class="px-3 py-2.5 text-center text-zinc-500">${i}</td>`
+                + `<td class="px-3 py-2.5">${dateStr}</td>`
+                + `<td class="px-3 py-2.5 text-right">${days}</td>`
+                + `<td class="px-3 py-2.5 text-right">₱${startBalance.toFixed(2)}</td>`
+                + `<td class="px-3 py-2.5 text-right text-red-400">₱${interestAmt.toFixed(2)}</td>`
+                + `<td class="px-3 py-2.5 text-right text-emerald-400">₱${principalPaid.toFixed(2)}</td>`
+                + `<td class="px-3 py-2.5 text-right font-semibold text-white">₱${installment.toFixed(2)}</td>`
+                + `<td class="px-3 py-2.5 text-right">₱${balance.toFixed(2)}</td>`
+                + `</tr>`;
         }
 
-        document.getElementById('emi-fixed-amount').textContent = emiFixed.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('emi-total-interest').textContent = totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('emi-fixed-amount').textContent = emiFixed.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('emi-total-interest').textContent = totalInterest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('emi-table-body').innerHTML = tableHTML;
-        document.getElementById('emi-breakdown').textContent = `EMI = P × r × (1+r)^n / ((1+r)^n - 1)\nP = ₱${P.toFixed(2)}\nr = ${monthlyEIR}% / 100\nn = ${n} months\n\nFixed EMI = ₱${emiFixed.toFixed(2)}\nDaily Rate = ${dailyRate.toFixed(6)}`;
+        document.getElementById('emi-breakdown').textContent =
+            `EMI = P × r × (1+r)^n / ((1+r)^n - 1)\n`
+            + `P = ₱${P.toFixed(2)}\n`
+            + `r = ${monthlyEIR}% / 100 = ${r}\n`
+            + `n = ${n} months\n\n`
+            + `Fixed EMI = ₱${emiFixed.toFixed(2)}\n`
+            + `Daily Rate = ${dailyRate.toFixed(6)}`;
     }
 
     // =====================================================
     // 6. RECEIPT & CONTACT SYSTEM
     // =====================================================
-    function showError(id, msg) { const el = document.getElementById(id); const err = document.getElementById(id+'-err'); if(el) el.classList.add('input-error'); if(err) { err.textContent=msg; err.style.display='block'; } }
-    function clearError(id) { const el = document.getElementById(id); const err = document.getElementById(id+'-err'); if(el) el.classList.remove('input-error'); if(err) err.style.display='none'; }
+    function showError(id, msg) {
+        const el = document.getElementById(id);
+        const err = document.getElementById(id + '-err');
+        if (el) el.classList.add('input-error');
+        if (err) { err.textContent = msg; err.style.display = 'block'; }
+    }
+    function clearError(id) {
+        const el = document.getElementById(id);
+        const err = document.getElementById(id + '-err');
+        if (el) el.classList.remove('input-error');
+        if (err) err.style.display = 'none';
+    }
     function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 
     async function generateAndSendReceipt() {
         const cName = document.getElementById('receipt-customer-name').value.trim();
         const cEmail = document.getElementById('receipt-customer-email').value.trim();
         clearError('receipt-customer-name'); clearError('receipt-customer-email');
-        if(!cName) { showError('receipt-customer-name', 'Required'); return; }
-        if(!cEmail || !isValidEmail(cEmail)) { showError('receipt-customer-email', 'Valid email required'); return; }
-        
+        if (!cName) { showError('receipt-customer-name', 'Required'); return; }
+        if (!cEmail || !isValidEmail(cEmail)) { showError('receipt-customer-email', 'Valid email required'); return; }
+
         const P = parseFloat(document.getElementById('emi-principal').value.replace(/,/g, '')) || 0;
         const emi = parseFloat(document.getElementById('emi-fixed-amount').textContent.replace(/,/g, '')) || 0;
-        const int = parseFloat(document.getElementById('emi-total-interest').textContent.replace(/,/g, '')) || 0;
-        if(P===0||emi===0) { showContactAlert('Calculate EMI first.', 'error'); return; }
+        const interest = parseFloat(document.getElementById('emi-total-interest').textContent.replace(/,/g, '')) || 0;
+        if (P === 0 || emi === 0) { showContactAlert('Calculate EMI first.', 'error'); return; }
 
-        const data = { cName, cEmail, P, int, total: P+int, emi, num: 'MAYA-'+Date.now().toString().slice(-8), date: new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}) };
-        const html = `<div class="receipt-container"><div class="receipt-header"><div class="receipt-title">MAYA</div><div class="receipt-sub">Utility Terminal</div><div style="margin-top:10px"><span class="receipt-status">OFFICIAL RECEIPT</span></div></div><div style="margin-bottom:15px"><div class="receipt-row"><span class="receipt-label">Receipt No:</span><span>${data.num}</span></div><div class="receipt-row"><span class="receipt-label">Date:</span><span>${data.date}</span></div><div class="receipt-row"><span class="receipt-label">Customer:</span><span>${data.cName}</span></div><div class="receipt-row"><span class="receipt-label">Email:</span><span>${data.cEmail}</span></div></div><div class="receipt-divider"></div><div style="margin-bottom:15px"><div class="receipt-row"><span>Principal:</span><span>₱${data.P.toFixed(2)}</span></div><div class="receipt-row"><span>Monthly EMI:</span><span>₱${data.emi.toFixed(2)}</span></div><div class="receipt-row"><span>Total Interest:</span><span>₱${data.int.toFixed(2)}</span></div></div><div class="receipt-total"><span>TOTAL:</span><span>₱${data.total.toFixed(2)}</span></div><div class="receipt-footer"><p style="margin:10px 0 0;font-weight:bold;color:#00995A;">Thank you!</p></div></div>`;
-        
+        const data = {
+            cName, cEmail, P, int: interest, total: P + interest, emi,
+            num: 'MAYA-' + Date.now().toString().slice(-8),
+            date: new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })
+        };
+
+        const html = `<div class="receipt-container">`
+            + `<div class="receipt-header"><div class="receipt-title">MAYA</div>`
+            + `<div class="receipt-sub">Utility Terminal</div>`
+            + `<div style="margin-top:10px"><span class="receipt-status">OFFICIAL RECEIPT</span></div></div>`
+            + `<div style="margin-bottom:15px">`
+            + `<div class="receipt-row"><span class="receipt-label">Receipt No:</span><span>${data.num}</span></div>`
+            + `<div class="receipt-row"><span class="receipt-label">Date:</span><span>${data.date}</span></div>`
+            + `<div class="receipt-row"><span class="receipt-label">Customer:</span><span>${data.cName}</span></div>`
+            + `<div class="receipt-row"><span class="receipt-label">Email:</span><span>${data.cEmail}</span></div></div>`
+            + `<div class="receipt-divider"></div>`
+            + `<div style="margin-bottom:15px">`
+            + `<div class="receipt-row"><span>Principal:</span><span>₱${data.P.toFixed(2)}</span></div>`
+            + `<div class="receipt-row"><span>Monthly EMI:</span><span>₱${data.emi.toFixed(2)}</span></div>`
+            + `<div class="receipt-row"><span>Total Interest:</span><span>₱${data.int.toFixed(2)}</span></div></div>`
+            + `<div class="receipt-total"><span>TOTAL:</span><span>₱${data.total.toFixed(2)}</span></div>`
+            + `<div class="receipt-footer"><p style="margin:10px 0 0;font-weight:bold;color:#00995A;">Thank you!</p></div></div>`;
+
         showReceiptModal(html, 'loading');
-        if (!isPlaceholder(EMAILJS_SERVICE_ID)) {
+
+        if (!isPlaceholder(EMAILJS_SERVICE_ID) && isEmailJsReady) {
             try {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_TEMPLATE_ID, { to_email: cEmail, to_name: cName, receipt_number: data.num, principal_amount: P.toFixed(2), monthly_emi: emi.toFixed(2), total_interest: int.toFixed(2), total_amount: data.total.toFixed(2), tenure: document.getElementById('emi-months').value });
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_TEMPLATE_ID, {
+                    to_email: cEmail, to_name: cName, receipt_number: data.num,
+                    principal_amount: P.toFixed(2), monthly_emi: emi.toFixed(2),
+                    total_interest: interest.toFixed(2), total_amount: data.total.toFixed(2),
+                    tenure: document.getElementById('emi-months').value
+                });
                 showReceiptModal(html, 'success', cEmail);
-            } catch (e) { showReceiptModal(html, 'error', e.text); }
+            } catch (e) {
+                showReceiptModal(html, 'error', (e && e.text) ? e.text : 'EmailJS error');
+            }
         } else {
             await new Promise(r => setTimeout(r, 1500));
             showReceiptModal(html, 'success', cEmail + ' (Demo Mode)');
@@ -475,60 +632,125 @@
     }
 
     function showReceiptModal(html, status, info) {
-        const m = document.getElementById('receiptModal'), p = document.getElementById('receipt-print-area'), s = document.getElementById('receipt-status-area');
+        const m = document.getElementById('receiptModal');
+        const p = document.getElementById('receipt-print-area');
+        const s = document.getElementById('receipt-status-area');
         p.innerHTML = html;
-        if(status==='loading') s.innerHTML = `<div class="receipt-loading"><div class="receipt-spinner"></div><span style="font-size:12px;color:#a1a1aa">Sending...</span></div>`;
-        else if(status==='success') s.innerHTML = `<div class="receipt-success"><span style="font-size:12px">Sent to ${info}</span></div>`;
-        else s.innerHTML = `<div class="receipt-error"><span style="font-size:12px">Error: ${info}</span></div>`;
-        m.classList.add('open'); m.style.display='flex';
+        if (status === 'loading')
+            s.innerHTML = `<div class="receipt-loading"><div class="receipt-spinner"></div><span style="font-size:12px;color:#a1a1aa">Sending...</span></div>`;
+        else if (status === 'success')
+            s.innerHTML = `<div class="receipt-success"><span style="font-size:12px">Sent to ${info}</span></div>`;
+        else
+            s.innerHTML = `<div class="receipt-error"><span style="font-size:12px">Error: ${info}</span></div>`;
+        m.classList.add('open');
+        m.style.display = 'flex';
     }
-    function closeReceiptModal() { const m=document.getElementById('receiptModal'); m.classList.remove('open'); m.style.display='none'; }
-    function printReceipt() { const h=document.getElementById('hidden-print-area'); h.innerHTML=document.getElementById('receipt-print-area').innerHTML; h.style.cssText='position:fixed;left:0;top:0;width:100%;z-index:99999;background:white;padding:20px'; window.print(); setTimeout(()=>h.style.left='-9999px',500); }
-    async function downloadReceiptPDF() { if(typeof html2canvas==='undefined') return alert('PDF library missing'); const c=await html2canvas(document.querySelector('#receipt-print-area .receipt-container'),{scale:2,backgroundColor:'#fff'}); const p=new window.jspdf.jsPDF(); p.addImage(c.toDataURL('image/png'),'PNG',10,10,190,c.height*190/c.width); p.save(`Maya_Receipt.pdf`); }
+
+    function closeReceiptModal() {
+        const m = document.getElementById('receiptModal');
+        m.classList.remove('open');
+        m.style.display = 'none';
+    }
+
+    function printReceipt() {
+        const h = document.getElementById('hidden-print-area');
+        h.innerHTML = document.getElementById('receipt-print-area').innerHTML;
+        h.style.cssText = 'position:fixed;left:0;top:0;width:100%;z-index:99999;background:white;padding:20px';
+        window.print();
+        setTimeout(() => h.style.left = '-9999px', 500);
+    }
+
+    async function downloadReceiptPDF() {
+        if (typeof html2canvas === 'undefined') { alert('PDF library still loading, try again.'); return; }
+        const canvas = await html2canvas(document.querySelector('#receipt-print-area .receipt-container'), { scale: 2, backgroundColor: '#fff' });
+        const pdf = new window.jspdf.jsPDF();
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, 190, canvas.height * 190 / canvas.width);
+        pdf.save('Maya_Receipt.pdf');
+    }
 
     async function sendContactMessage() {
-        const name = document.getElementById('contact-name').value, eid = document.getElementById('contact-eid').value, subj = document.getElementById('contact-subject').value, msg = document.getElementById('contact-message').value.trim(), btn = document.getElementById('contact-send-btn');
-        if(!subj) { showContactAlert('Select a subject.','error'); return; }
-        if(!msg) { showContactAlert('Enter a message.','error'); return; }
-        
-        btn.disabled = true; btn.innerHTML = `<div class="receipt-spinner" style="border-top-color:white;width:14px;height:14px;border-width:2px"></div> Sending...`;
+        const name = document.getElementById('contact-name').value;
+        const eid = document.getElementById('contact-eid').value;
+        const subj = document.getElementById('contact-subject').value;
+        const msg = document.getElementById('contact-message').value.trim();
+        const btn = document.getElementById('contact-send-btn');
+
+        if (!subj) { showContactAlert('Select a subject.', 'error'); return; }
+        if (!msg) { showContactAlert('Enter a message.', 'error'); return; }
+
+        btn.disabled = true;
+        btn.innerHTML = `<div class="receipt-spinner" style="border-top-color:white;width:14px;height:14px;border-width:2px"></div> Sending...`;
         showContactAlert('Connecting...', 'loading');
 
-        if (!isPlaceholder(EMAILJS_SERVICE_ID)) {
+        if (!isPlaceholder(EMAILJS_SERVICE_ID) && isEmailJsReady) {
             try {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONTACT_TEMPLATE_ID, { from_name: name, from_eid: eid, subject: subj, message: msg });
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONTACT_TEMPLATE_ID, {
+                    from_name: name, from_eid: eid, subject: subj, message: msg
+                });
                 showContactAlert('Message sent successfully!', 'success');
-                document.getElementById('contact-subject').value = ''; document.getElementById('contact-message').value = '';
-            } catch (e) { showContactAlert(`Failed: ${e.text}`, 'error'); }
+                document.getElementById('contact-subject').value = '';
+                document.getElementById('contact-message').value = '';
+            } catch (e) {
+                showContactAlert(`Failed: ${(e && e.text) ? e.text : 'Unknown error'}`, 'error');
+            }
         } else {
-            await new Promise(r => setTimeout(r, 1500)); // Simulate network
-            showContactAlert('Message sent successfully! (Demo Mode - Configure EmailJS for live emails)', 'success');
-            document.getElementById('contact-subject').value = ''; document.getElementById('contact-message').value = '';
+            await new Promise(r => setTimeout(r, 1500));
+            showContactAlert('Message sent successfully! (Demo Mode)', 'success');
+            document.getElementById('contact-subject').value = '';
+            document.getElementById('contact-message').value = '';
         }
-        btn.disabled = false; btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message`;
+
+        btn.disabled = false;
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg> Send Message`;
     }
 
     function showContactAlert(msg, type) {
-        const a = document.getElementById('contact-alert'), t = document.getElementById('contact-alert-text');
-        if(type==='loading') { a.className='module-d-alert show'; a.style.cssText='background:rgba(0,209,122,0.05);border:1px solid rgba(0,209,122,0.15);color:#a1a1aa'; }
-        else { a.style.cssText=''; a.className=`module-d-alert module-d-alert-${type} show`; }
-        t.textContent = msg; if(type==='success') setTimeout(()=>a.classList.remove('show'), 6000);
+        const a = document.getElementById('contact-alert');
+        const t = document.getElementById('contact-alert-text');
+        if (type === 'loading') {
+            a.className = 'module-d-alert show';
+            a.style.cssText = 'background:rgba(0,209,122,0.05);border:1px solid rgba(0,209,122,0.15);color:#a1a1aa';
+        } else {
+            a.style.cssText = '';
+            a.className = `module-d-alert module-d-alert-${type} show`;
+        }
+        t.textContent = msg;
+        if (type === 'success') setTimeout(() => a.classList.remove('show'), 6000);
     }
 
     // =====================================================
-    // 7. EVENTS & LOADER
+    // 7. EVENTS & LOADER  (FIXED)
     // =====================================================
-    document.getElementById('receiptModal')?.addEventListener('click', function(e) { if(e.target===this) closeReceiptModal(); });
-    document.addEventListener('keydown', e => { if(e.key==='Escape') closeReceiptModal(); });
+    document.getElementById('receiptModal')?.addEventListener('click', function (e) { if (e.target === this) closeReceiptModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeReceiptModal(); });
     document.getElementById('receipt-customer-name')?.addEventListener('input', () => clearError('receipt-customer-name'));
     document.getElementById('receipt-customer-email')?.addEventListener('input', () => clearError('receipt-customer-email'));
     document.getElementById('contact-message')?.addEventListener('input', () => document.getElementById('contact-alert')?.classList.remove('show'));
     document.getElementById('contact-subject')?.addEventListener('change', () => document.getElementById('contact-alert')?.classList.remove('show'));
 
-    window.addEventListener('load', () => {
+    // --- FIX: Initialize immediately (script is at end of <body>, DOM is ready) ---
+    // Previously this was inside window.addEventListener('load') which waits for ALL
+    // CDN scripts (jsPDF, html2canvas, EmailJS) to finish. If any CDN was slow or
+    // blocked, the loader stayed on screen forever — hiding everything including
+    // the calculators and the logout button.
+    try {
         initApp();
-        setTimeout(() => { const l = document.getElementById('loader'); l.classList.add('hidden-loader'); setTimeout(()=>l.remove(), 600); }, 2000);
-    });
+    } catch (e) {
+        console.error('Initialization error:', e);
+    }
+
+    // --- FIX: Dismiss loader on a fixed timer, NOT dependent on window 'load' ---
+    function dismissLoader() {
+        const l = document.getElementById('loader');
+        if (l) {
+            l.classList.add('hidden-loader');
+            setTimeout(() => { if (l && l.parentNode) l.remove(); }, 600);
+        }
+    }
+    setTimeout(dismissLoader, 1500);
+
+    // Backup: also dismiss on window load (in case the 1.5s fires before paint)
+    window.addEventListener('load', () => setTimeout(dismissLoader, 100));
     </script>
 </body>
 </html>
