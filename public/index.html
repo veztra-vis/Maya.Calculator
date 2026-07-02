@@ -47,6 +47,16 @@
         .module-d-alert.show { display: flex; }
         .module-d-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; }
         .module-d-alert-success { background: rgba(0, 209, 122, 0.1); border: 1px solid rgba(0, 209, 122, 0.2); color: #6ee7b7; }
+        .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #1f1f22; }
+        .user-row { transition: background 0.15s; cursor: pointer; }
+        .user-row:hover { background: rgba(0, 209, 122, 0.08); }
+        .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .role-tag-admin { background: rgba(0, 209, 122, 0.15); color: #00D17A; border: 1px solid rgba(0, 209, 122, 0.3); }
+        .role-tag-agent { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.3); }
+        .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(0, 209, 122, 0.2); color: #00D17A; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+        .btn-action-user:hover { background: rgba(0, 209, 122, 0.1); border-color: rgba(0, 209, 122, 0.4); }
+        .btn-delete-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+        .btn-delete-user:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
         .modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-backdrop.open { display: flex; }
         .modal-card { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
@@ -55,7 +65,7 @@
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
         .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; outline: none; user-select: none; }
-        .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; transition: all 0.2s; }
+        .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
         .hist-item:hover { background: #18181b; transform: translateX(4px); }
         .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
         .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
@@ -162,6 +172,26 @@
             </div>
         </div>
 
+        <!-- MODULE D: ACCOUNT MANAGEMENT -->
+        <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
+            <div id="module-d-alert" class="module-d-alert module-d-alert-error"><span id="module-d-alert-text"></span></div>
+            <div class="mb-6">
+                <button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
+                <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
+                    </div>
+                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
+                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 text-xs font-bold uppercase rounded-lg transition-colors">Cancel</button></div>
+                </div>
+            </div>
+            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5">Employee ID</th><th class="px-3 py-2.5">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
+        </div>
+
         <!-- MODULE E -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
@@ -202,9 +232,9 @@
             <p class="text-xs text-zinc-500 mb-5 leading-relaxed">Having issues with your account or the website? Send a message directly to the admin.</p>
             <div id="contact-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="contact-alert-text"></span></div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
             </div>
             <div class="mb-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Message</label><textarea id="contact-message" class="contact-textarea" placeholder="Describe your concern in detail..." rows="4"></textarea></div>
             <div class="flex items-center justify-between">
@@ -221,8 +251,8 @@
         <div class="modal-card" style="max-width: 700px;">
             <div class="flex items-center justify-between mb-5"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div><div><h3 class="text-white font-bold text-sm">Send Receipt via Email</h3><p class="text-zinc-500 text-[10px] mt-0.5">Review and send computation receipt to customer</p></div></div><button onclick="closeEmailReceiptModal()" class="text-zinc-500 hover:text-white transition-colors p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Name</label><input type="text" id="modal-email-name" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Customer name"></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Email</label><input type="email" id="modal-email-addr" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="customer@email.com"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Name</label><input type="text" id="modal-email-name" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-purple-500 transition-all" placeholder="Customer name"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Recipient Email</label><input type="email" id="modal-email-addr" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-purple-500 transition-all" placeholder="customer@email.com"></div>
             </div>
             <div class="mb-4 flex items-center gap-3"><span id="email-send-status" class="email-status-badge email-status-idle"><span class="w-1.5 h-1.5 rounded-full bg-current"></span> Ready</span><span id="email-send-time" class="text-[10px] text-zinc-600 font-mono"></span></div>
             <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium mb-2">Receipt Preview</p>
@@ -250,19 +280,50 @@ const fmt = (n, d=2) => parseFloat(n||0).toLocaleString('en-PH',{minimumFraction
 const fmtN = (n) => parseFloat(String(n||'0').replace(/,/g,'')) || 0;
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2,5);
 let currentUser = JSON.parse(localStorage.getItem('mayaCurrentUser') || 'null');
+const roleLevels = { 'ADMIN': 6, 'CLIENT': 5, 'OPERATIONS MANAGER': 4, 'TEAM LEADER': 3, 'AGENT': 2, 'TRAINING': 1 };
+function getRoleLevel(role) { return roleLevels[role] || 0; }
 
 window.addEventListener('load', () => { setTimeout(() => { document.getElementById('loader').classList.add('hidden-loader'); }, 1800); initApp(); });
-function initApp() { updateLiveTime(); setInterval(updateLiveTime, 1000); initEMI(); if (currentUser) onLogin(currentUser); }
+
+async function initApp() { 
+    updateLiveTime(); setInterval(updateLiveTime, 1000); initEMI(); 
+    const token = localStorage.getItem('mayaToken');
+    if (!token) return handleLogout();
+    if (!currentUser) {
+        try {
+            const res = await fetch('/api/auth/verify', { headers: { 'x-maya-token': token } });
+            if (res.ok) { const data = await res.json(); if (data.valid) onLogin(data.user); else handleLogout(); } 
+            else handleLogout();
+        } catch(e) { handleLogout(); }
+    } else { onLogin(currentUser); }
+}
+
 function updateLiveTime() { const el = document.getElementById('live-date-time'); if (el) el.textContent = new Date().toLocaleString('en-PH', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' }); }
 
-function onLogin(user) { currentUser = user; localStorage.setItem('mayaCurrentUser', JSON.stringify(user)); document.getElementById('user-info').classList.remove('hidden'); document.getElementById('logout-btn').classList.remove('hidden'); document.getElementById('user-name').textContent = user.fullName || user.employeeId; const badge = document.getElementById('role-badge'); badge.classList.remove('hidden'); badge.textContent = user.role; document.getElementById('contact-name').value = user.fullName || ''; document.getElementById('contact-eid').value = user.employeeId || ''; }
-function handleLogout() { currentUser = null; localStorage.removeItem('mayaCurrentUser'); localStorage.removeItem('mayaToken'); window.location.href = '/'; }
+function onLogin(user) { 
+    currentUser = user; localStorage.setItem('mayaCurrentUser', JSON.stringify(user)); 
+    document.getElementById('user-info').classList.remove('hidden'); document.getElementById('logout-btn').classList.remove('hidden'); 
+    document.getElementById('user-name').textContent = user.fullName || user.name || user.employeeId; 
+    const badge = document.getElementById('role-badge'); badge.classList.remove('hidden'); badge.textContent = user.role; 
+    document.getElementById('contact-name').value = user.fullName || user.name || ''; 
+    document.getElementById('contact-eid').value = user.employeeId || user.id || '';
+    if (getRoleLevel(user.role) >= 3) { document.getElementById('module-d').style.display = 'flex'; loadUsers(); } 
+    else { document.getElementById('module-d').style.display = 'none'; }
+}
 
+function handleLogout() { currentUser = null; localStorage.removeItem('mayaCurrentUser'); localStorage.removeItem('mayaToken'); window.location.href = '/'; }
 function copyToClipboard(elId) { const el = document.getElementById(elId); if (!el) return; navigator.clipboard.writeText(el.value || el.textContent).then(() => showToast('Copied to clipboard')); }
 function showToast(msg, type='success') { const toast = document.createElement('div'); toast.className = `fixed top-6 right-6 z-[500] px-5 py-3 rounded-xl text-sm font-semibold shadow-2xl animate-fade-in ${type==='success'?'bg-emerald-600 text-white':'bg-red-600 text-white'}`; toast.textContent = msg; document.body.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; setTimeout(() => toast.remove(), 400); }, 2500); }
 function show_alert(elId, textId, msg, type) { const alertEl = document.getElementById(elId); const textEl = document.getElementById(textId); textEl.textContent = msg; alertEl.className = 'module-d-alert module-d-alert-' + (type === 'success' ? 'success' : 'error') + ' show'; setTimeout(() => { alertEl.classList.remove('show'); }, 6000); }
 
-async function secureFetch(url, options = {}) { const token = localStorage.getItem('mayaToken'); if (!token) { showToast('Session expired. Please login again.', 'error'); setTimeout(() => handleLogout(), 1500); throw new Error('No token'); } options.headers = { ...options.headers, 'Content-Type': 'application/json', 'x-maya-token': token }; const response = await fetch(url, options); if (response.status === 401) { showToast('Session expired. Please login again.', 'error'); setTimeout(() => handleLogout(), 1500); throw new Error('Unauthorized'); } return response; }
+async function secureFetch(url, options = {}) { const token = localStorage.getItem('mayaToken'); if (!token) { showToast('Session expired.', 'error'); setTimeout(() => handleLogout(), 1500); throw new Error('No token'); } options.headers = { ...options.headers, 'Content-Type': 'application/json', 'x-maya-token': token }; const response = await fetch(url, options); if (response.status === 401) { showToast('Session expired.', 'error'); setTimeout(() => handleLogout(), 1500); throw new Error('Unauthorized'); } return response; }
+
+// MODULE D
+function toggleCreateForm() { document.getElementById('create-form').classList.toggle('hidden'); }
+async function loadUsers() { try { const res = await secureFetch('/api/auth/users'); const users = await res.json(); const tbody = document.getElementById('user-table-body'); document.getElementById('user-count').textContent = users.length + ' users'; tbody.innerHTML = users.map(u => `<tr class="user-row border-b border-zinc-800/50"><td class="px-3 py-2.5">${u.employeeId}</td><td class="px-3 py-2.5">${u.fullName}</td><td class="px-3 py-2.5 text-center"><span class="role-tag role-tag-${u.role.toLowerCase().replace(/ /g, '-')}">${u.role}</span></td><td class="px-3 py-2.5 text-right text-zinc-500">${new Date(u.createdAt).toLocaleDateString()}</td><td class="px-3 py-2.5 text-center"><div class="flex gap-2 justify-center"><button onclick="editUserPrompt('${u.employeeId}')" class="btn-action-user">Edit</button><button onclick="deleteUserPrompt('${u.employeeId}')" class="btn-delete-user">Del</button></div></td></tr>`).join(''); } catch(e) { console.error(e); } }
+async function createAccount() { const payload = { fullName: document.getElementById('new-fullname').value, employeeId: document.getElementById('new-employeeid').value, password: document.getElementById('new-password').value, role: document.getElementById('new-role').value, securityQuestion: document.getElementById('new-security-question').value, securityAnswer: document.getElementById('new-security-answer').value }; try { const res = await secureFetch('/api/auth/users', { method: 'POST', body: JSON.stringify(payload) }); const data = await res.json(); if (!res.ok) throw new Error(data.error); showToast(data.message); toggleCreateForm(); loadUsers(); } catch(e) { show_alert('module-d-alert', 'module-d-alert-text', e.message, 'error'); } }
+async function editUserPrompt(id) { const newPass = prompt(`Edit user ${id}\nLeave blank to keep unchanged.\nEnter new Password:`); if (newPass === null) return; const newRole = prompt(`Enter new Role for ${id} (AGENT, TRAINING, TEAM LEADER, OPERATIONS MANAGER, CLIENT):`); if (newRole === null) return; try { const payload = {}; if (newPass) payload.password = newPass; if (newRole) payload.role = newRole.toUpperCase(); const res = await secureFetch(`/api/auth/users/${id}`, { method: 'PUT', body: JSON.stringify(payload) }); const data = await res.json(); if (!res.ok) throw new Error(data.error); showToast(data.message); loadUsers(); } catch(e) { show_alert('module-d-alert', 'module-d-alert-text', e.message, 'error'); } }
+async function deleteUserPrompt(id) { if (!confirm(`Are you sure you want to delete ${id}?`)) return; try { const res = await secureFetch(`/api/auth/users/${id}`, { method: 'DELETE' }); const data = await res.json(); if (!res.ok) throw new Error(data.error); showToast(data.message); loadUsers(); } catch(e) { show_alert('module-d-alert', 'module-d-alert-text', e.message, 'error'); } }
 
 // MODULE A
 document.getElementById('spend-input')?.addEventListener('input', calcMiles);
@@ -308,7 +369,7 @@ async function sendEmailReceipt() {
     const n = parseInt(document.getElementById('emi-months').value) || 0;
     const emi = P * monthlyRate * Math.pow(1+monthlyRate, n) / (Math.pow(1+monthlyRate, n) - 1);
     const totalAmt = emi * n, totalInt = totalAmt - P;
-    const senderName = currentUser ? currentUser.fullName : 'Maya Agent';
+    const senderName = currentUser ? (currentUser.fullName || currentUser.name) : 'Maya Agent';
 
     const payload = {
         type: 'receipt',
@@ -325,7 +386,7 @@ async function sendEmailReceipt() {
     try {
         const response = await secureFetch('/api/email/send', { method: 'POST', body: JSON.stringify(payload) });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Failed to send email');
+        if (!response.ok) throw new Error(data.error || 'Failed to send email. Is /api/email/send added to server.js?');
         setEmailStatus('sent', 'Sent Successfully');
         document.getElementById('email-send-time').textContent = new Date().toLocaleTimeString('en-PH');
         showToast('Receipt sent to ' + email);
