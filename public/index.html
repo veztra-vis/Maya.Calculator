@@ -342,16 +342,59 @@
 
         <!-- FX TRANSACTION CALCULATOR (Module H) -->
         <div id="module-h" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-cyan-500 rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold rounded">Module H</span></div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Foreign Amount</label><input type="text" inputmode="decimal" id="fx-foreign-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-zinc-700"><div class="err-msg" id="fx-foreign-amt-err"></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Exchange Rate (to PHP)</label><input type="number" step="0.0001" id="fx-rate" placeholder="55.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">FX Fee (%)</label><input type="number" step="0.01" id="fx-fee" value="1.75" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Base PHP Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" id="fx-base-php" readonly class="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-zinc-400 font-mono focus:outline-none cursor-default" value="0.00"></div></div>
+            <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-cyan-500 rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold rounded">Module H</span></div>
+            
+            <div id="fx-live-alert" class="mb-4 p-3 bg-cyan-500/5 border border-cyan-500/10 rounded-lg text-cyan-400 text-[10px] flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <span id="fx-live-status">Fetching live global exchange rates...</span>
             </div>
-            <div class="pt-5 border-t border-zinc-800 mt-4 flex justify-between items-center">
-                <div><label class="block text-[10px] uppercase tracking-wider text-cyan-500/80 mb-1">Total Billed in PHP</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('fx-total')"><p class="text-3xl font-mono font-bold text-white group-hover:text-cyan-400 transition-colors data-font">₱<span id="fx-total">0.00</span></p></div></div>
-                <div class="grid grid-cols-2 gap-4 mt-4 w-1/2">
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Currency</label>
+                    <select id="fx-currency-select" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors">
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                        <option value="JPY">JPY - Japanese Yen</option>
+                        <option value="AUD">AUD - Australian Dollar</option>
+                        <option value="CAD">CAD - Canadian Dollar</option>
+                        <option value="SGD">SGD - Singapore Dollar</option>
+                        <option value="HKD">HKD - Hong Kong Dollar</option>
+                        <option value="AED">AED - UAE Dirham</option>
+                        <option value="SAR">SAR - Saudi Riyal</option>
+                        <option value="KRW">KRW - South Korean Won</option>
+                        <option value="CNY">CNY - Chinese Yuan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Foreign Amount</label>
+                    <input type="text" inputmode="decimal" id="fx-foreign-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-zinc-700">
+                    <div class="err-msg" id="fx-foreign-amt-err"></div>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Exchange Rate (to PHP)</label>
+                    <div class="relative">
+                        <input type="number" step="0.0001" id="fx-rate" placeholder="55.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all pr-12">
+                        <span class="absolute right-3 top-2.5 text-zinc-500 text-xs">PHP</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Base PHP Amount</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
+                        <input type="text" id="fx-base-php" readonly class="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-zinc-400 font-mono focus:outline-none cursor-default" value="0.00">
+                    </div>
+                </div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-cyan-500/80 mb-1">Total Billed in PHP</label>
+                    <div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('fx-total')">
+                        <p class="text-3xl font-mono font-bold text-white group-hover:text-cyan-400 transition-colors data-font">₱<span id="fx-total">0.00</span></p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-4 md:mt-0 w-full md:w-1/2">
                     <button onclick="saveFXHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
                     <button onclick="resetFX()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
                 </div>
@@ -537,6 +580,7 @@
         var editingUserId = null;
         var allUsersCache = [];
         var shiftStartTime = Date.now();
+        var liveFxRates = {};
 
         // =============================================
         // EMAILJS CONFIG - REPLACE THESE 3 VALUES
@@ -716,7 +760,7 @@
 
         // ===== LOADER =====
         function hideLoader(){var e=document.getElementById('loader');if(e)e.classList.add('hidden-loader');}
-        window.addEventListener('load',function(){setTimeout(hideLoader,1200);});setTimeout(hideLoader,5000);
+        window.addEventListener('load',function(){setTimeout(hideLoader,1200);fetchLiveFxRates();});setTimeout(hideLoader,5000);
         
         // ===== MILES CALCULATOR =====
         var spendInput=document.getElementById('spend-input'),multSelect=document.getElementById('multiplier-select'),customMult=document.getElementById('custom-multiplier'),milesInput=document.getElementById('miles-input');
@@ -836,6 +880,40 @@
 
         // ===== FX TRANSACTION CALCULATOR =====
         setupCurrencyInput('fx-foreign-amt');
+        function fetchLiveFxRates() {
+            var statusEl = document.getElementById('fx-live-status');
+            var alertEl = document.getElementById('fx-live-alert');
+            fetch('https://open.er-api.com/v6/latest/PHP')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data && data.rates) {
+                        liveFxRates = data.rates;
+                        var lastUpdate = new Date(data.time_last_update_unix * 1000).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                        statusEl.textContent = 'Live global rates loaded. Last updated: ' + lastUpdate;
+                        alertEl.classList.remove('text-red-400', 'bg-red-500/5', 'border-red-500/10');
+                        alertEl.classList.add('text-cyan-400', 'bg-cyan-500/5', 'border-cyan-500/10');
+                        updateFxRateFromDropdown(); // Auto-populate initial rate
+                    } else {
+                        statusEl.textContent = 'Failed to load live rates. Using manual input.';
+                        alertEl.classList.remove('text-cyan-400', 'bg-cyan-500/5', 'border-cyan-500/10');
+                        alertEl.classList.add('text-red-400', 'bg-red-500/5', 'border-red-500/10');
+                    }
+                })
+                .catch(function() {
+                    statusEl.textContent = 'Error fetching live rates. Check connection or input manually.';
+                    alertEl.classList.remove('text-cyan-400', 'bg-cyan-500/5', 'border-cyan-500/10');
+                    alertEl.classList.add('text-red-400', 'bg-red-500/5', 'border-red-500/10');
+                });
+        }
+        function updateFxRateFromDropdown() {
+            var selectedCurrency = document.getElementById('fx-currency-select').value;
+            if (liveFxRates[selectedCurrency]) {
+                // API gives 1 PHP = X Foreign Currency. We need 1 Foreign Currency = Y PHP.
+                var rateToPhp = 1 / liveFxRates[selectedCurrency];
+                document.getElementById('fx-rate').value = rateToPhp.toFixed(4);
+                calcFX();
+            }
+        }
         function calcFX() {
             if(!validateNum('fx-foreign-amt', 0.01, Infinity, false, 'Foreign amount must be greater than 0.')) return;
             if(!validateNum('fx-rate', 0.0001, Infinity, false, 'Exchange rate must be greater than 0.')) return;
@@ -848,8 +926,14 @@
             document.getElementById('fx-base-php').value = formatCurrency(basePhp);
             document.getElementById('fx-total').textContent = formatCurrency(total);
         }
-        function resetFX() { document.getElementById('fx-foreign-amt').value=''; document.getElementById('fx-rate').value=''; document.getElementById('fx-fee').value='1.75'; calcFX(); showToast('FX Fields Cleared'); }
-        ['fx-foreign-amt','fx-rate','fx-fee'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcFX);el.addEventListener('change',calcFX);});
+        function resetFX() { 
+            document.getElementById('fx-foreign-amt').value=''; 
+            updateFxRateFromDropdown(); 
+            calcFX(); 
+            showToast('FX Fields Cleared'); 
+        }
+        document.getElementById('fx-currency-select').addEventListener('change', updateFxRateFromDropdown);
+        ['fx-foreign-amt','fx-rate'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcFX);el.addEventListener('change',calcFX);});
 
         // ===== COPY AGENT SUMMARY =====
         function copyAgentSummary() {
@@ -876,7 +960,7 @@
                 summary += "[Due Date Estimator]\n  Payment Due: " + document.getElementById('due-result-date').textContent + " | Remaining: " + document.getElementById('due-remaining').textContent + " days\n\n";
             }
             if (document.getElementById('fx-total').textContent !== "0.00") {
-                summary += "[FX Transaction Module]\n  Foreign Amt: " + document.getElementById('fx-foreign-amt').value + " | Rate: " + document.getElementById('fx-rate').value + "\n  Total Billed: ₱" + document.getElementById('fx-total').textContent + "\n\n";
+                summary += "[FX Transaction Module]\n  Currency: " + document.getElementById('fx-currency-select').value + " | Amount: " + document.getElementById('fx-foreign-amt').value + "\n  Rate: " + document.getElementById('fx-rate').value + " | Total Billed: ₱" + document.getElementById('fx-total').textContent + "\n\n";
             }
             summary += "--------------------------------------";
             navigator.clipboard.writeText(summary).then(function() { showToast("Agent Summary Copied!"); });
@@ -959,7 +1043,7 @@
         function saveEMIHistory(){ saveHistory('EMI', `Principal: ₱${document.getElementById('emi-principal').value} | EMI: ₱${document.getElementById('emi-fixed-amount').textContent}`, { P: document.getElementById('emi-principal').value, EIR: document.getElementById('emi-rate').value, N: document.getElementById('emi-months').value, D: document.getElementById('emi-days-year').value, startDate: document.getElementById('emi-start-date').value }); }
         function saveBillingHistory(){ saveHistory('Billing', `Total Due: ₱${document.getElementById('bil-total-due').textContent}`, { bal: document.getElementById('bil-outstanding').value, pastDue: document.getElementById('bil-is-past-due').checked }); }
         function saveDueDateHistory(){ saveHistory('Due Date', `Due: ${document.getElementById('due-result-date').textContent}`, { stmtDate: document.getElementById('due-stmt-date').value, grace: document.getElementById('due-grace-days').value }); }
-        function saveFXHistory(){ saveHistory('FX', `Total Billed: ₱${document.getElementById('fx-total').textContent}`, { forAmt: document.getElementById('fx-foreign-amt').value, rate: document.getElementById('fx-rate').value, fee: document.getElementById('fx-fee').value }); }
+        function saveFXHistory(){ saveHistory('FX', `Total Billed: ₱${document.getElementById('fx-total').textContent}`, { curr: document.getElementById('fx-currency-select').value, forAmt: document.getElementById('fx-foreign-amt').value, rate: document.getElementById('fx-rate').value }); }
         
         function toggleHistory(){ var modal=document.getElementById('historyModal'); if(modal.classList.contains('open')){ modal.classList.remove('open'); } else { renderHistory(); modal.classList.add('open'); } }
         function renderHistory(){
@@ -980,7 +1064,7 @@
             else if(item.type==='EMI'){ document.getElementById('emi-principal').value=item.inputs.P||''; document.getElementById('emi-rate').value=item.inputs.EIR||'1.69'; document.getElementById('emi-months').value=item.inputs.N||'6'; document.getElementById('emi-days-year').value=item.inputs.D||'365'; document.getElementById('emi-start-date').value=item.inputs.startDate||new Date().toISOString().split('T')[0]; calcEMI(); }
             else if(item.type==='Billing'){ document.getElementById('bil-outstanding').value=item.inputs.bal||''; document.getElementById('bil-is-past-due').checked=item.inputs.pastDue||false; calcBilling(); }
             else if(item.type==='Due Date'){ document.getElementById('due-stmt-date').value=item.inputs.stmtDate||''; document.getElementById('due-grace-days').value=item.inputs.grace||'21'; calcDueDate(); }
-            else if(item.type==='FX'){ document.getElementById('fx-foreign-amt').value=item.inputs.forAmt||''; document.getElementById('fx-rate').value=item.inputs.rate||''; document.getElementById('fx-fee').value=item.inputs.fee||'1.75'; calcFX(); }
+            else if(item.type==='FX'){ document.getElementById('fx-currency-select').value=item.inputs.curr||'USD'; document.getElementById('fx-foreign-amt').value=item.inputs.forAmt||''; document.getElementById('fx-rate').value=item.inputs.rate||''; calcFX(); }
             toggleHistory(); showToast('Inputs Loaded'); window.scrollTo({top:0,behavior:'smooth'});
         }
 
