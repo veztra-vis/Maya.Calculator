@@ -562,12 +562,11 @@
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events:none z-50 no-print"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
 
     <script>
-        // =============================================
-        // RENDER ENVIRONMENT VARIABLES
-        // If you are injecting from a Node.js server (EJS/Express), replace the string below with your Render env variable:
-        // e.g. var FX_API_URL = "<%= process.env.FX_API_URL %>";
-        // =============================================
-        var FX_API_URL = "https://open.er-api.com/v6/latest/PHP";
+// =============================================
+// RENDER ENVIRONMENT VARIABLES
+// Now fetching securely from our backend proxy!
+// =============================================
+var FX_API_URL = "/api/fx-rates";
 
         var editingUserId = null;
         var allUsersCache = [];
