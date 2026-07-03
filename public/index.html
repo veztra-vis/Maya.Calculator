@@ -91,6 +91,7 @@
         .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
         .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
         .contact-textarea::placeholder { color: #3f3f46; }
+        .contact-textarea:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* --- FEATURE STYLES --- */
         .input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; background: rgba(239, 68, 68, 0.05) !important; }
@@ -154,7 +155,7 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.4.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.5.0</p>
                     <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
@@ -434,6 +435,11 @@
                     <span id="ticket-status-badge" class="hidden px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] uppercase font-bold rounded">Open</span>
                 </div>
                 
+                <div id="ticket-view-only-msg" class="hidden mb-4 text-[10px] text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 p-2 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    Read Only: You can view but not edit this ticket.
+                </div>
+
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Ticket No.</label>
@@ -887,6 +893,7 @@
             document.getElementById('ticket-subject').value = '';
             document.getElementById('ticket-details').value = '';
             document.getElementById('ticket-status-badge').classList.add('hidden');
+            document.getElementById('ticket-view-only-msg').classList.add('hidden');
             
             document.getElementById('ticket-subject').disabled = false;
             document.getElementById('ticket-details').disabled = false;
@@ -902,7 +909,7 @@
             if (!ticket) return;
             currentTicketId = id;
             
-            document.getElementById('ticket-form-header').querySelector('h3').textContent = 'Edit Ticket';
+            document.getElementById('ticket-form-header').querySelector('h3').textContent = 'View Ticket';
             document.getElementById('ticket-id').value = ticket.id;
             document.getElementById('ticket-creator').value = ticket.userName;
             document.getElementById('ticket-subject').value = ticket.subject;
@@ -917,17 +924,23 @@
                 statusBadge.className = 'px-2 py-1 bg-zinc-500/10 border border-zinc-500/20 text-zinc-400 text-[9px] uppercase font-bold rounded';
             }
             
-            const isTL = getRoleLevel(sessionStorage.getItem('maya_user_role')) >= 3;
-            const isClosed = ticket.status === 'Closed';
-            const canEdit = !isClosed || isTL;
+            const currentUserId = sessionStorage.getItem('maya_user_id');
+            const isCreator = ticket.userId === currentUserId;
+            const isTLPlus = getRoleLevel(sessionStorage.getItem('maya_user_role')) >= 3;
+            
+            // RULE: Can edit if TL+ (regardless of open/closed) OR if creator and ticket is Open
+            const canEdit = isTLPlus || (isCreator && ticket.status === 'Open');
             
             document.getElementById('ticket-subject').disabled = !canEdit;
             document.getElementById('ticket-details').disabled = !canEdit;
             
+            // Show read-only message if they cannot edit
+            document.getElementById('ticket-view-only-msg').classList.toggle('hidden', canEdit);
+            
             document.getElementById('ticket-save-btn').classList.toggle('hidden', !canEdit);
-            document.getElementById('ticket-close-btn').classList.toggle('hidden', !canEdit);
-            document.getElementById('ticket-close-btn').textContent = isClosed ? 'Reopen Ticket' : 'Close Ticket';
-            document.getElementById('ticket-delete-btn').classList.toggle('hidden', !isTL);
+            document.getElementById('ticket-close-btn').classList.toggle('hidden', !isTLPlus);
+            document.getElementById('ticket-close-btn').textContent = ticket.status === 'Closed' ? 'Reopen Ticket' : 'Close Ticket';
+            document.getElementById('ticket-delete-btn').classList.toggle('hidden', !isTLPlus);
             
             renderTicketList(allTickets);
         }
