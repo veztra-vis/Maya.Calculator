@@ -19,7 +19,7 @@ let mongoClient = null;
 // ========================================
 // IP WHITELISTING MIDDLEWARE (TOGGLEABLE)
 // ========================================
-const IP_WHITELIST_ENABLED = process.env.IP_WHITELIST_ENABLED === 'true';
+const IP_WHITELIST_ENABLED = process.env.IP_WHITELIST_ENABLED === 'false';
 const allowedIpsEnv = process.env.ALLOWED_IPS || '';
 const allowedIps = allowedIpsEnv.split(',').map(ip => ip.trim()).filter(Boolean);
 
