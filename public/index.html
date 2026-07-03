@@ -178,7 +178,6 @@
         </div>
     </header>
 
-    <!-- Sticky Quick Nav -->
     <div class="sticky top-0 z-30 bg-zinc-950/80 backdrop-blur-md border-y border-zinc-800 mb-6 -mx-4 md:-mx-8 px-4 md:px-8 py-3 no-print">
         <div class="max-w-6xl mx-auto flex gap-2 overflow-x-auto">
             <a href="#module-d" id="nav-module-d" class="quick-nav-btn hidden">Admin Mgmt</a>
@@ -194,7 +193,6 @@
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
         
-        <!-- ACCOUNT MANAGEMENT - Module D -->
         <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
             <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
@@ -213,7 +211,6 @@
             <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
         </div>
 
-        <!-- MILES CALCULATOR -->
         <div id="module-a" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
             <div class="space-y-5 flex-grow">
@@ -228,7 +225,6 @@
             </div>
         </div>
 
-        <!-- FINANCE CHARGE CALCULATOR -->
         <div id="module-b" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-red-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span></div>
             <div class="space-y-5 flex-grow">
@@ -249,7 +245,6 @@
             </div>
         </div>
 
-        <!-- LANDERS REWARDS CALCULATOR -->
         <div id="module-c" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
@@ -269,7 +264,6 @@
             </div>
         </div>
 
-        <!-- MINI PAYMENTS CALCULATOR (EMI) -->
         <div id="module-e" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
@@ -298,7 +292,6 @@
             <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
         </div>
 
-        <!-- BILLING & LATE FEES CALCULATOR (Module F) -->
         <div id="module-f" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-purple-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Billing & Late Fees</h2></div><span class="px-2 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] uppercase font-bold rounded">Module F</span></div>
             <div class="space-y-5 flex-grow">
@@ -322,7 +315,6 @@
             </div>
         </div>
 
-        <!-- PAYMENT DUE DATE ESTIMATOR (Module G) -->
         <div id="module-g" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-pink-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Due Date Estimator</h2></div><span class="px-2 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] uppercase font-bold rounded">Module G</span></div>
             <div class="space-y-5 flex-grow">
@@ -340,7 +332,6 @@
             </div>
         </div>
 
-        <!-- FX TRANSACTION CALCULATOR (Module H) -->
         <div id="module-h" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-cyan-500 rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold rounded">Module H</span></div>
             
@@ -403,7 +394,6 @@
 
     </main>
 
-    <!-- AGENT RESOURCES SECTION -->
     <section class="max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in no-print">
         <a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
             <div class="p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-emerald-400">
@@ -434,7 +424,6 @@
         </a>
     </section>
 
-    <!-- CONTACT ADMIN SECTION -->
     <section class="max-w-6xl mx-auto mt-8 opacity-0 animate-fade-in no-print" style="animation-delay: 0.35s;">
         <div class="glass-panel rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between mb-5">
@@ -467,7 +456,6 @@
         <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p></div>
     </footer>
 
-    <!-- Receipt Modal -->
     <div id="receiptModal" class="modal-backdrop-module-d">
         <div class="modal-card-module-d" style="max-width: 360px; padding: 0; background: #fff; overflow: hidden;">
             <div class="bg-zinc-900 p-3 flex justify-between items-center no-print">
@@ -506,7 +494,6 @@
         </div>
     </div>
 
-    <!-- Send to Customer Modal -->
     <div id="sendReceiptModal" class="modal-backdrop-module-d">
         <div class="modal-card-module-d" style="max-width: 420px;">
             <div class="flex items-center justify-between mb-6">
@@ -525,7 +512,6 @@
         </div>
     </div>
 
-    <!-- History Modal -->
     <div id="historyModal" class="modal-backdrop-module-d">
         <div class="modal-card-module-d" style="max-width: 600px;">
             <div class="flex items-center justify-between mb-6">
@@ -539,7 +525,6 @@
         </div>
     </div>
 
-    <!-- Edit User Modal -->
     <div id="editModal" class="modal-backdrop-module-d">
         <div class="modal-card-module-d">
             <div class="flex items-center justify-between mb-6">
@@ -577,6 +562,13 @@
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events:none z-50 no-print"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
 
     <script>
+        // =============================================
+        // RENDER ENVIRONMENT VARIABLES
+        // If you are injecting from a Node.js server (EJS/Express), replace the string below with your Render env variable:
+        // e.g. var FX_API_URL = "<%= process.env.FX_API_URL %>";
+        // =============================================
+        var FX_API_URL = "https://open.er-api.com/v6/latest/PHP";
+
         var editingUserId = null;
         var allUsersCache = [];
         var shiftStartTime = Date.now();
@@ -883,7 +875,7 @@
         function fetchLiveFxRates() {
             var statusEl = document.getElementById('fx-live-status');
             var alertEl = document.getElementById('fx-live-alert');
-            fetch('https://open.er-api.com/v6/latest/PHP')
+            fetch(FX_API_URL)
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
                     if (data && data.rates) {
