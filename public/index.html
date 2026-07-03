@@ -24,6 +24,7 @@
         }
     </script>
     <style>
+        html { scroll-behavior: smooth; }
         body { background: radial-gradient(circle at 50% 50%, #111113 0%, #08090A 100%); background-attachment: fixed; }
         .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 80% 20%, rgba(0, 209, 122, 0.03) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(0, 209, 122, 0.03) 0%, transparent 40%); z-index: -1; pointer-events: none; }
         @keyframes floatOrb { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(20px, -30px) scale(1.1); } }
@@ -31,7 +32,7 @@
         .orb-1 { width: 300px; height: 300px; background: rgba(0, 209, 122, 0.2); top: -50px; left: -50px; }
         .orb-2 { width: 400px; height: 400px; background: rgba(0, 153, 90, 0.15); bottom: -100px; right: -100px; animation-delay: 2s; }
         .orb-3 { width: 250px; height: 250px; background: rgba(0, 245, 144, 0.15); top: 40%; right: 20%; animation-delay: 4s; }
-        .glass-panel { background: rgba(17, 17, 19, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(30, 30, 32, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .glass-panel { background: rgba(17, 17, 19, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(30, 30, 32, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; scroll-margin-top: 100px; }
         .glass-panel:hover { border-color: rgba(0, 209, 122, 0.4); box-shadow: 0 0 30px rgba(0, 209, 122, 0.1); transform: translateY(-3px); }
         button:hover { transition: all 0.2s ease; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -123,6 +124,8 @@
             #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; }
             .no-print { display: none !important; }
         }
+        .quick-nav-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #a1a1aa; background: rgba(39, 39, 42, 0.5); border: 1px solid rgba(39, 39, 42, 0.8); transition: all 0.2s; white-space: nowrap; }
+        .quick-nav-btn:hover { color: #00D17A; border-color: rgba(0, 209, 122, 0.4); background: rgba(0, 209, 122, 0.05); }
     </style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
@@ -151,12 +154,16 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.2.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.3.0</p>
                     <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
         </div>
         <div class="flex items-center gap-3 flex-wrap justify-center">
+            <div id="user-info" class="hidden text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800 flex flex-col">
+                <span class="text-xs font-medium text-zinc-300"><span id="user-name"></span> <span class="text-zinc-600 mx-1">•</span> <span id="shift-timer" class="font-mono text-emerald-400 text-[10px]">Shift: 00:00:00</span></span>
+                <span id="live-date-time" class="text-[10px] font-mono text-zinc-500 mt-0.5">Syncing...</span>
+            </div>
             <button onclick="copyAgentSummary()" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                 Copy Summary
@@ -165,24 +172,29 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 History
             </button>
-            <div id="user-info" class="hidden text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
-                <span id="user-name" class="text-xs font-medium text-zinc-300"></span><span class="text-zinc-600 mx-2">•</span><span id="live-date-time" class="text-xs font-mono text-zinc-400">Syncing...</span>
-            </div>
             <button onclick="handleLogout()" id="logout-btn" class="hidden px-3 py-2 bg-zinc-900/50 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-500 hover:text-red-400 text-[10px] uppercase font-bold rounded-full transition-all" title="Logout">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
             </button>
         </div>
     </header>
 
-    <!-- Policy Reminder Banner -->
-    <div class="max-w-6xl mx-auto mb-6 p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg flex items-center gap-3 animate-fade-in no-print">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-        <p class="text-[11px] text-blue-300/80 leading-relaxed">Ensure all calculations are verified against the latest Maya Credit Card policies. Strictly maintain customer data privacy in compliance with the Data Privacy Act (DPA) of 2012.</p>
+    <!-- Sticky Quick Nav -->
+    <div class="sticky top-0 z-30 bg-zinc-950/80 backdrop-blur-md border-y border-zinc-800 mb-6 -mx-4 md:-mx-8 px-4 md:px-8 py-3 no-print">
+        <div class="max-w-6xl mx-auto flex gap-2 overflow-x-auto">
+            <a href="#module-d" id="nav-module-d" class="quick-nav-btn hidden">Admin Mgmt</a>
+            <a href="#module-a" class="quick-nav-btn">Miles</a>
+            <a href="#module-b" class="quick-nav-btn">Finance</a>
+            <a href="#module-c" class="quick-nav-btn">Landers</a>
+            <a href="#module-e" class="quick-nav-btn">EMI</a>
+            <a href="#module-f" class="quick-nav-btn">Billing</a>
+            <a href="#module-g" class="quick-nav-btn">Due Date</a>
+            <a href="#module-h" class="quick-nav-btn">FX Trans</a>
+        </div>
     </div>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
         
-        <!-- ACCOUNT MANAGEMENT - Module D (MOVED TO TOP FOR ADMINS) -->
+        <!-- ACCOUNT MANAGEMENT - Module D -->
         <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
             <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
@@ -202,7 +214,7 @@
         </div>
 
         <!-- MILES CALCULATOR -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+        <div id="module-a" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
             <div class="space-y-5 flex-grow">
                 <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Customer Spend (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="spend-input-err"></div></div>
@@ -217,7 +229,7 @@
         </div>
 
         <!-- FINANCE CHARGE CALCULATOR -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+        <div id="module-b" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-red-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span></div>
             <div class="space-y-5 flex-grow">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -238,7 +250,7 @@
         </div>
 
         <!-- LANDERS REWARDS CALCULATOR -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
+        <div id="module-c" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="landers-spend-err"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="total-card-spend-err"></div></div></div>
@@ -258,7 +270,7 @@
         </div>
 
         <!-- MINI PAYMENTS CALCULATOR (EMI) -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
+        <div id="module-e" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
                 <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="emi-principal-err"></div></div>
@@ -287,7 +299,7 @@
         </div>
 
         <!-- BILLING & LATE FEES CALCULATOR (Module F) -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+        <div id="module-f" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-purple-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Billing & Late Fees</h2></div><span class="px-2 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] uppercase font-bold rounded">Module F</span></div>
             <div class="space-y-5 flex-grow">
                 <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Outstanding Balance (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="bil-outstanding" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="bil-outstanding-err"></div></div>
@@ -311,7 +323,7 @@
         </div>
 
         <!-- PAYMENT DUE DATE ESTIMATOR (Module G) -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+        <div id="module-g" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-pink-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Due Date Estimator</h2></div><span class="px-2 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] uppercase font-bold rounded">Module G</span></div>
             <div class="space-y-5 flex-grow">
                 <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Statement Cut-off Date</label><input type="date" id="due-stmt-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"></div>
@@ -329,44 +341,55 @@
         </div>
 
         <!-- FX TRANSACTION CALCULATOR (Module H) -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+        <div id="module-h" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-cyan-500 rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold rounded">Module H</span></div>
-            <div class="space-y-5 flex-grow">
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Foreign Amount</label><input type="text" inputmode="decimal" id="fx-foreign-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-zinc-700"><div class="err-msg" id="fx-foreign-amt-err"></div></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Exchange Rate (to PHP)</label><input type="number" step="0.0001" id="fx-rate" placeholder="55.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Foreign Amount</label><input type="text" inputmode="decimal" id="fx-foreign-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-zinc-700"><div class="err-msg" id="fx-foreign-amt-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Exchange Rate (to PHP)</label><input type="number" step="0.0001" id="fx-rate" placeholder="55.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">FX Fee (%)</label><input type="number" step="0.01" id="fx-fee" value="1.75" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Base PHP Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" id="fx-base-php" readonly class="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-zinc-400 font-mono focus:outline-none cursor-default" value="0.00"></div></div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4 flex justify-between items-center">
+                <div><label class="block text-[10px] uppercase tracking-wider text-cyan-500/80 mb-1">Total Billed in PHP</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('fx-total')"><p class="text-3xl font-mono font-bold text-white group-hover:text-cyan-400 transition-colors data-font">₱<span id="fx-total">0.00</span></p></div></div>
+                <div class="grid grid-cols-2 gap-4 mt-4 w-1/2">
+                    <button onclick="saveFXHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                    <button onclick="resetFX()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">FX Fee (%)</label><input type="number" step="0.01" id="fx-fee" value="1.75" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Base PHP Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" id="fx-base-php" readonly class="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-zinc-400 font-mono focus:outline-none cursor-default" value="0.00"></div></div>
-                </div>
-            </div>
-            <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-cyan-500/80 mb-1">Total Billed in PHP</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('fx-total')"><p class="text-3xl font-mono font-bold text-white group-hover:text-cyan-400 transition-colors data-font">₱<span id="fx-total">0.00</span></p></div></div>
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <button onclick="saveFXHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
-                <button onclick="resetFX()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
-            </div>
-        </div>
-
-        <!-- CASH ADVANCE CALCULATOR (Module I) -->
-        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-indigo-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Cash Advance</h2></div><span class="px-2 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] uppercase font-bold rounded">Module I</span></div>
-            <div class="space-y-5 flex-grow">
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Amount Requested (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="ca-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="ca-amt-err"></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cash Advance Fee (%)</label><input type="number" step="0.01" id="ca-fee" value="5.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"></div>
-            </div>
-            <div class="pt-5 border-t border-zinc-800 mt-4 space-y-2">
-                <div class="flex justify-between text-xs text-zinc-400"><span>Fee Deduction</span><span class="font-mono text-indigo-400 font-bold">₱<span id="ca-fee-amt">0.00</span></span></div>
-                <div class="flex justify-between items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('ca-disbursed')"><label class="block text-[10px] uppercase tracking-wider text-indigo-500/80">Cash Received</label><p class="text-3xl font-mono font-bold text-white group-hover:text-indigo-400 transition-colors data-font ml-auto">₱<span id="ca-disbursed">0.00</span></p></div>
-                <div class="flex justify-between text-xs text-zinc-400 mt-2"><span>Total Billed to Card Limit</span><span class="font-mono text-zinc-200">₱<span id="ca-limit-charge">0.00</span></span></div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <button onclick="saveCAHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
-                <button onclick="resetCA()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
             </div>
         </div>
 
     </main>
+
+    <!-- AGENT RESOURCES SECTION -->
+    <section class="max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in no-print">
+        <a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
+            <div class="p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-emerald-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-white">Agent Handbook</h3>
+                <p class="text-[10px] text-zinc-500">Latest CC Policies & Procedures</p>
+            </div>
+        </a>
+        <a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
+            <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/20 text-red-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-white">Fraud Guidelines</h3>
+                <p class="text-[10px] text-zinc-500">Escalation Matrix & Red Flags</p>
+            </div>
+        </a>
+        <a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
+            <div class="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-white">IT Support Hub</h3>
+                <p class="text-[10px] text-zinc-500">System Status & Helpdesk</p>
+            </div>
+        </a>
+    </section>
 
     <!-- CONTACT ADMIN SECTION -->
     <section class="max-w-6xl mx-auto mt-8 opacity-0 animate-fade-in no-print" style="animation-delay: 0.35s;">
@@ -513,6 +536,7 @@
     <script>
         var editingUserId = null;
         var allUsersCache = [];
+        var shiftStartTime = Date.now();
 
         // =============================================
         // EMAILJS CONFIG - REPLACE THESE 3 VALUES
@@ -541,7 +565,11 @@
                 document.getElementById('logout-btn').classList.remove('hidden');
                 var rb=document.getElementById('role-badge');rb.textContent=data.user.role;rb.classList.remove('hidden');
                 var ar=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'];
-                if(ar.indexOf(data.user.role)!==-1){document.getElementById('module-d').style.display='flex';renderUserTable();}
+                if(ar.indexOf(data.user.role)!==-1){
+                    document.getElementById('module-d').style.display='flex';
+                    document.getElementById('nav-module-d').classList.remove('hidden');
+                    renderUserTable();
+                }
             })
             .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');});
         })();
@@ -674,9 +702,17 @@
             return valid;
         }
 
-        // ===== CLOCK =====
+        // ===== CLOCK & SHIFT TIMER =====
+        function pad(n){return n<10?'0'+n:n;}
         function updateClock(){var n=new Date();document.getElementById('live-date-time').textContent=n.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
-        setInterval(updateClock,1000);updateClock();
+        function updateShiftTimer() {
+            var elapsed = Date.now() - shiftStartTime;
+            var seconds = Math.floor(elapsed / 1000) % 60;
+            var minutes = Math.floor(elapsed / (1000 * 60)) % 60;
+            var hours = Math.floor(elapsed / (1000 * 60 * 60));
+            document.getElementById('shift-timer').textContent = `Shift: ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+        setInterval(updateClock,1000); setInterval(updateShiftTimer, 1000); updateClock(); updateShiftTimer();
 
         // ===== LOADER =====
         function hideLoader(){var e=document.getElementById('loader');if(e)e.classList.add('hidden-loader');}
@@ -815,22 +851,6 @@
         function resetFX() { document.getElementById('fx-foreign-amt').value=''; document.getElementById('fx-rate').value=''; document.getElementById('fx-fee').value='1.75'; calcFX(); showToast('FX Fields Cleared'); }
         ['fx-foreign-amt','fx-rate','fx-fee'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcFX);el.addEventListener('change',calcFX);});
 
-        // ===== CASH ADVANCE CALCULATOR =====
-        setupCurrencyInput('ca-amt');
-        function calcCashAdvance() {
-            if(!validateNum('ca-amt', 0.01, Infinity, false, 'Amount must be greater than ₱0.')) return;
-            var amt = parseCurrency(document.getElementById('ca-amt').value);
-            var fee = parseFloat(document.getElementById('ca-fee').value) || 0;
-            var feeAmt = amt * (fee / 100);
-            var disbursed = amt;
-            var totalCharge = amt + feeAmt;
-            document.getElementById('ca-fee-amt').textContent = formatCurrency(feeAmt);
-            document.getElementById('ca-disbursed').textContent = formatCurrency(disbursed);
-            document.getElementById('ca-limit-charge').textContent = formatCurrency(totalCharge);
-        }
-        function resetCA() { document.getElementById('ca-amt').value=''; document.getElementById('ca-fee').value='5.00'; calcCashAdvance(); showToast('Cash Advance Fields Cleared'); }
-        ['ca-amt','ca-fee'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcCashAdvance);el.addEventListener('change',calcCashAdvance);});
-
         // ===== COPY AGENT SUMMARY =====
         function copyAgentSummary() {
             var summary = "--- MAYA AGENT COMPUTATION SUMMARY ---\n";
@@ -857,9 +877,6 @@
             }
             if (document.getElementById('fx-total').textContent !== "0.00") {
                 summary += "[FX Transaction Module]\n  Foreign Amt: " + document.getElementById('fx-foreign-amt').value + " | Rate: " + document.getElementById('fx-rate').value + "\n  Total Billed: ₱" + document.getElementById('fx-total').textContent + "\n\n";
-            }
-            if (document.getElementById('ca-limit-charge').textContent !== "0.00") {
-                summary += "[Cash Advance Module]\n  Cash Received: ₱" + document.getElementById('ca-disbursed').textContent + " | Fee: ₱" + document.getElementById('ca-fee-amt').textContent + "\n  Total Billed: ₱" + document.getElementById('ca-limit-charge').textContent + "\n\n";
             }
             summary += "--------------------------------------";
             navigator.clipboard.writeText(summary).then(function() { showToast("Agent Summary Copied!"); });
@@ -943,7 +960,6 @@
         function saveBillingHistory(){ saveHistory('Billing', `Total Due: ₱${document.getElementById('bil-total-due').textContent}`, { bal: document.getElementById('bil-outstanding').value, pastDue: document.getElementById('bil-is-past-due').checked }); }
         function saveDueDateHistory(){ saveHistory('Due Date', `Due: ${document.getElementById('due-result-date').textContent}`, { stmtDate: document.getElementById('due-stmt-date').value, grace: document.getElementById('due-grace-days').value }); }
         function saveFXHistory(){ saveHistory('FX', `Total Billed: ₱${document.getElementById('fx-total').textContent}`, { forAmt: document.getElementById('fx-foreign-amt').value, rate: document.getElementById('fx-rate').value, fee: document.getElementById('fx-fee').value }); }
-        function saveCAHistory(){ saveHistory('Cash Advance', `Total Charged: ₱${document.getElementById('ca-limit-charge').textContent}`, { amt: document.getElementById('ca-amt').value, fee: document.getElementById('ca-fee').value }); }
         
         function toggleHistory(){ var modal=document.getElementById('historyModal'); if(modal.classList.contains('open')){ modal.classList.remove('open'); } else { renderHistory(); modal.classList.add('open'); } }
         function renderHistory(){
@@ -965,7 +981,6 @@
             else if(item.type==='Billing'){ document.getElementById('bil-outstanding').value=item.inputs.bal||''; document.getElementById('bil-is-past-due').checked=item.inputs.pastDue||false; calcBilling(); }
             else if(item.type==='Due Date'){ document.getElementById('due-stmt-date').value=item.inputs.stmtDate||''; document.getElementById('due-grace-days').value=item.inputs.grace||'21'; calcDueDate(); }
             else if(item.type==='FX'){ document.getElementById('fx-foreign-amt').value=item.inputs.forAmt||''; document.getElementById('fx-rate').value=item.inputs.rate||''; document.getElementById('fx-fee').value=item.inputs.fee||'1.75'; calcFX(); }
-            else if(item.type==='Cash Advance'){ document.getElementById('ca-amt').value=item.inputs.amt||''; document.getElementById('ca-fee').value=item.inputs.fee||'5.00'; calcCashAdvance(); }
             toggleHistory(); showToast('Inputs Loaded'); window.scrollTo({top:0,behavior:'smooth'});
         }
 
