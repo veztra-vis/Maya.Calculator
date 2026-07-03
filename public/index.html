@@ -92,25 +92,18 @@
         .contact-textarea::placeholder { color: #3f3f46; }
 
         /* --- FEATURE STYLES --- */
-        /* 1. Validation */
         .input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; background: rgba(239, 68, 68, 0.05) !important; }
         .err-msg { color: #fca5a5; font-size: 10px; margin-top: 4px; display: none; font-family: 'Inter', sans-serif; }
-        
-        /* 2. Formula Breakdown */
         .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
         .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; outline: none; user-select: none; }
         .formula-card summary:hover { color: #00F590; }
         .formula-text { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a1a1aa; white-space: pre-wrap; line-height: 1.6; background: #08090A; padding: 12px; border-radius: 6px; border: 1px dashed #27272a; }
         .formula-text span { color: #00D17A; font-weight: bold; }
-
-        /* 3. History */
         .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
         .hist-item:hover { background: #18181b; transform: translateX(4px); }
         .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
         .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
-
-        /* 4. Receipt Styles */
         .receipt-container { width: 100%; max-width: 320px; margin: 0 auto; background: #fff; color: #000; font-family: 'Courier New', Courier, monospace; font-size: 12px; padding: 15px; line-height: 1.4; }
         .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
         .receipt-title { font-size: 18px; font-weight: bold; color: #00995A; text-transform: uppercase; letter-spacing: 1px; }
@@ -124,8 +117,6 @@
         .receipt-table th { border-bottom: 2px solid #000; font-weight: bold; }
         .receipt-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; background: #f0f0f0; padding: 8px; margin-top: 5px; border-radius: 4px; }
         .receipt-footer { text-align: center; font-size: 10px; margin-top: 15px; color: #555; }
-        
-        /* 5. Print Styles */
         @media print {
             body * { visibility: hidden; }
             #receipt-print-area, #receipt-print-area * { visibility: visible; }
@@ -160,12 +151,16 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.0.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.1.0</p>
                     <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 flex-wrap justify-center">
+            <button onclick="copyAgentSummary()" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                Copy Summary
+            </button>
             <button onclick="toggleHistory()" class="px-3 py-2 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 History
@@ -235,6 +230,10 @@
                 <div class="flex items-end justify-between mb-4"><p class="text-4xl md:text-5xl font-mono font-bold text-blue-400 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')"><span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span></p><button onclick="copyToClipboard('landers-result')" class="mb-2 p-2 hover:bg-blue-500/20 rounded-lg transition-colors text-blue-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div>
                 <div class="w-full h-px bg-zinc-800 my-4"></div>
                 <div class="flex justify-between items-center"><div><p class="text-[10px] uppercase text-zinc-500">Vouchers Earned</p><p class="text-[9px] text-zinc-600 mt-1">500 pts = 1 Voucher (₱500)</p></div><div class="text-right"><p class="text-2xl font-mono font-bold text-white" id="voucher-result">0</p><span class="text-[10px] text-zinc-500 uppercase">Vouchers</span></div></div>
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                    <button onclick="saveLandersHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save History</button>
+                    <button onclick="resetLanders()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                </div>
             </div>
         </div>
 
@@ -299,6 +298,48 @@
             </div>
             <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
         </div>
+
+        <!-- BILLING & LATE FEES CALCULATOR (Module F) -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-purple-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Billing & Late Fees</h2></div><span class="px-2 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] uppercase font-bold rounded">Module F</span></div>
+            <div class="space-y-5 flex-grow">
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Outstanding Balance (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="bil-outstanding" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="bil-outstanding-err"></div></div>
+                <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/50 space-y-3">
+                    <div class="flex justify-between text-sm"><span class="text-zinc-400">Minimum Amount Due (MAD)</span><span class="font-mono text-purple-400 font-bold">₱<span id="bil-mad">0.00</span></span></div>
+                    <div class="text-[9px] text-zinc-600">Rule: 5% of balance or ₱500, whichever is higher.</div>
+                </div>
+                <div class="flex items-center gap-3 bg-zinc-950/50 p-3 rounded-lg border border-zinc-800">
+                    <input type="checkbox" id="bil-is-past-due" class="w-4 h-4 accent-purple-500 cursor-pointer">
+                    <label for="bil-is-past-due" class="text-xs text-zinc-300 cursor-pointer">Previous MAD is Unpaid (Past Due)</label>
+                </div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4 space-y-2">
+                <div class="flex justify-between text-xs text-zinc-400"><span>Late Payment Fee (LPF)</span><span class="font-mono text-red-400 font-bold">₱<span id="bil-lpf">0.00</span></span></div>
+                <div class="flex justify-between items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('bil-total-due')"><label class="block text-[10px] uppercase tracking-wider text-purple-500/80">Total Amount Due</label><p class="text-2xl font-mono font-bold text-white group-hover:text-purple-400 transition-colors data-font ml-auto">₱<span id="bil-total-due">0.00</span></p></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <button onclick="saveBillingHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetBilling()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+            </div>
+        </div>
+
+        <!-- PAYMENT DUE DATE ESTIMATOR (Module G) -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-pink-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Due Date Estimator</h2></div><span class="px-2 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] uppercase font-bold rounded">Module G</span></div>
+            <div class="space-y-5 flex-grow">
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Statement Cut-off Date</label><input type="date" id="due-stmt-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Grace Period (Days)</label><input type="number" id="due-grace-days" value="21" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"></div>
+                    <div class="flex items-end"><div class="w-full p-2 bg-zinc-950/50 rounded-lg border border-zinc-800 text-center"><p class="text-[9px] uppercase text-zinc-500 mb-1">Days Remaining</p><p class="text-sm font-bold text-pink-400 data-font"><span id="due-remaining">0</span> days</p></div></div>
+                </div>
+                <div id="due-weekend-alert" class="hidden p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-400 text-[10px] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg> Falls on a weekend. Payment processing may be delayed to the next banking day.</div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-pink-500/80 mb-1">Estimated Payment Due Date</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('due-result-date')"><p class="text-3xl font-mono font-bold text-white group-hover:text-pink-400 transition-colors data-font" id="due-result-date">--</p></div></div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <button onclick="saveDueDateHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetDueDate()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+            </div>
+        </div>
     </main>
 
     <!-- CONTACT ADMIN SECTION -->
@@ -341,7 +382,6 @@
                 <h2 class="text-sm font-bold text-white px-2">Official Receipt</h2>
                 <button onclick="closeReceiptModal()" class="p-1.5 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
-            
             <div id="receipt-print-area" class="receipt-container">
                 <div class="receipt-header">
                     <div class="receipt-title">MAYA</div>
@@ -349,32 +389,23 @@
                     <div class="receipt-sub">Ref: <span id="rcpt-ref">MX-000000</span></div>
                     <div class="receipt-sub">Date: <span id="rcpt-date">Jan 01, 2026</span></div>
                 </div>
-                
                 <div class="receipt-row"><span class="receipt-label">Principal:</span><span class="receipt-val" id="rcpt-principal">₱0.00</span></div>
                 <div class="receipt-row"><span class="receipt-label">Monthly EIR:</span><span class="receipt-val" id="rcpt-rate">0.00%</span></div>
                 <div class="receipt-row"><span class="receipt-label">Term:</span><span class="receipt-val" id="rcpt-term">0 months</span></div>
-                
                 <div class="receipt-divider"></div>
-                
                 <table class="receipt-table">
-                    <thead>
-                        <tr><th>#</th><th>Due Date</th><th style="text-align:right;">Installment</th><th style="text-align:right;">Balance</th></tr>
-                    </thead>
+                    <thead><tr><th>#</th><th>Due Date</th><th style="text-align:right;">Installment</th><th style="text-align:right;">Balance</th></tr></thead>
                     <tbody id="rcpt-table-body"></tbody>
                 </table>
-                
                 <div class="receipt-divider"></div>
-                
                 <div class="receipt-row"><span class="receipt-label">Monthly EMI:</span><span class="receipt-val" id="rcpt-emi">₱0.00</span></div>
                 <div class="receipt-row"><span class="receipt-label">Total Interest:</span><span class="receipt-val" id="rcpt-interest">₱0.00</span></div>
                 <div class="receipt-total"><span>TOTAL PAYABLE:</span><span id="rcpt-total">₱0.00</span></div>
-                
                 <div class="receipt-footer">
                     This is a system-generated computation.<br>Not an official billing statement.<br><br>
                     <strong>Maya Philippines</strong><br>Internal Agent Terminal
                 </div>
             </div>
-
             <div class="bg-zinc-100 p-3 flex flex-col gap-2 no-print border-t border-zinc-300">
                 <button onclick="window.print()" class="w-full px-4 py-2 bg-zinc-800 hover:bg-zinc-900 text-white text-xs font-bold uppercase rounded-md transition-colors">Print Receipt</button>
                 <button onclick="downloadReceiptPDF()" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase rounded-md transition-colors">Download PDF</button>
@@ -391,28 +422,13 @@
                 <button onclick="closeSendReceiptModal()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="space-y-4">
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Name</label>
-                    <input type="text" id="send-cust-name" class="edit-field-input" placeholder="Juan Dela Cruz">
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Email</label>
-                    <input type="email" id="send-cust-email" class="edit-field-input" placeholder="juan@example.com">
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Mobile (WhatsApp/SMS)</label>
-                    <input type="text" id="send-cust-phone" class="edit-field-input mono" placeholder="639171234567">
-                </div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Name</label><input type="text" id="send-cust-name" class="edit-field-input" placeholder="Juan Dela Cruz"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Email</label><input type="email" id="send-cust-email" class="edit-field-input" placeholder="juan@example.com"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Mobile (WhatsApp/SMS)</label><input type="text" id="send-cust-phone" class="edit-field-input mono" placeholder="639171234567"></div>
             </div>
             <div class="flex flex-col gap-3 mt-6">
-                <button onclick="sendReceiptEmail()" class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    Send via Email
-                </button>
-                <button onclick="sendReceiptWhatsApp()" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C5.589 2 2 5.589 2 10c0 1.463.416 2.835 1.131 4.043L2 18l3.957-1.131A7.974 7.974 0 0010 18c4.411 0 8-3.589 8-8s-3.589-8-8-8zm0 14c-1.292 0-2.52-.355-3.586-1.01l-.233-.14-2.346.671.671-2.346-.14-.233A6.964 6.964 0 013 10c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"/></svg>
-                    Send via WhatsApp/SMS
-                </button>
+                <button onclick="sendReceiptEmail()" class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>Send via Email</button>
+                <button onclick="sendReceiptWhatsApp()" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C5.589 2 2 5.589 2 10c0 1.463.416 2.835 1.131 4.043L2 18l3.957-1.131A7.974 7.974 0 0010 18c4.411 0 8-3.589 8-8s-3.589-8-8-8zm0 14c-1.292 0-2.52-.355-3.586-1.01l-.233-.14-2.346.671.671-2.346-.14-.233A6.964 6.964 0 013 10c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"/></svg>Send via WhatsApp/SMS</button>
             </div>
         </div>
     </div>
@@ -427,9 +443,7 @@
                     <button onclick="toggleHistory()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
             </div>
-            <div id="history-list" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
-                <div class="text-center text-zinc-500 py-8 text-sm">No history saved yet.</div>
-            </div>
+            <div id="history-list" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2"><div class="text-center text-zinc-500 py-8 text-sm">No history saved yet.</div></div>
         </div>
     </div>
 
@@ -625,14 +639,10 @@
             let val = parseCurrency(raw);
             const errEl = document.getElementById(id+'-err');
             let valid = true; let msg = '';
-            
-            // If empty, treat value as 0 for validation purposes
             if(raw === '') val = 0;
-            
             if(val < min) { valid = false; msg = errMsg || `Value must be at least ${min}.`; }
             else if(val > max) { valid = false; msg = errMsg || `Value cannot exceed ${max}.`; }
             else if(integer && !Number.isInteger(val)) { valid = false; msg = 'Value must be a whole number.'; }
-            
             if(errEl) { errEl.style.display = valid ? 'none' : 'block'; errEl.textContent = msg; }
             el.classList.toggle('input-error', !valid);
             return valid;
@@ -711,28 +721,21 @@
 
         // ===== EMI CALCULATOR =====
         setupCurrencyInput('emi-principal');
-        
-        // Set EMI default start date to today
         document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0];
-        
         function calcEMI(){
             if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
             if(!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')) return;
             if(!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')) return;
-            
             var P=parseCurrency(document.getElementById('emi-principal').value),EIR=parseFloat(document.getElementById('emi-rate').value)||0,N=parseInt(document.getElementById('emi-months').value)||0,D=parseInt(document.getElementById('emi-days-year').value)||365,startDate=document.getElementById('emi-start-date').value;
-            
             var r=Math.pow(1+EIR/100,1/12)-1;
             var nominal=(Math.pow(1+EIR/100,12)-1)*100;
             var daily=r*12/D;
             document.getElementById('emi-nominal-rate').textContent=nominal.toFixed(2);
             document.getElementById('emi-daily-rate').textContent=daily.toFixed(6);
-            
             var emi=P*r*Math.pow(1+r,N)/(Math.pow(1+r,N)-1);
             var totalInt=emi*N-P;
             document.getElementById('emi-fixed-amount').textContent=formatCurrency(emi);
             document.getElementById('emi-total-interest').textContent=formatCurrency(totalInt);
-            
             var bal=P,html='',curDate=new Date(startDate);
             for(var i=1;i<=N;i++){
                 var daysInMonth=new Date(curDate.getFullYear(),curDate.getMonth()+1,0).getDate();
@@ -745,25 +748,8 @@
                 curDate.setMonth(curDate.getMonth()+1);
             }
             document.getElementById('emi-table-body').innerHTML=html;
-
-            // Update Formula Breakdown
             document.getElementById('emi-breakdown').innerHTML = 
-            `Assumptions:\n`+
-            `  - 1 Month = ${D}/12 days = ${(D/12).toFixed(2)} days\n`+
-            `  - Interest compounds monthly based on EIR.\n\n`+
-            `Formulas:\n`+
-            `  1. Monthly Rate (r) = (1 + EIR)^(1/12) - 1\n`+
-            `     => (1 + ${EIR}%)^(1/12) - 1 = <span>${(r*100).toFixed(6)}%</span>\n\n`+
-            `  2. Nominal Annual Rate = (1 + r)^12 - 1\n`+
-            `     => (1 + ${(r*100).toFixed(6)}%)^12 - 1 = <span>${nominal.toFixed(4)}%</span>\n\n`+
-            `  3. Daily Rate = r * 12 / Days in Year\n`+
-            `     => ${(r*100).toFixed(6)}% * 12 / ${D} = <span>${(daily*100).toFixed(8)}%</span>\n\n`+
-            `  4. Fixed Monthly EMI = P * r * (1+r)^N / ((1+r)^N - 1)\n`+
-            `     => ₱${formatCurrency(P)} * ${(r*100).toFixed(6)}% * (1+${(r*100).toFixed(6)}%)^${N} / ((1+${(r*100).toFixed(6)}%)^${N} - 1)\n`+
-            `     => EMI = <span>₱${formatCurrency(emi)}</span>\n\n`+
-            `  5. Total Interest = (EMI * N) - P\n`+
-            `     => (₱${formatCurrency(emi)} * ${N}) - ₱${formatCurrency(P)} = <span>₱${formatCurrency(totalInt)}</span>\n\n`+
-            `  6. Per Month Interest = Remaining Principal * Daily Rate * Days in Month`;
+            `Assumptions:\n  - 1 Month = ${D}/12 days = ${(D/12).toFixed(2)} days\n  - Interest compounds monthly based on EIR.\n\nFormulas:\n  1. Monthly Rate (r) = (1 + EIR)^(1/12) - 1\n     => (1 + ${EIR}%)^(1/12) - 1 = <span>${(r*100).toFixed(6)}%</span>\n\n  2. Nominal Annual Rate = (1 + r)^12 - 1\n     => (1 + ${(r*100).toFixed(6)}%)^12 - 1 = <span>${nominal.toFixed(4)}%</span>\n\n  3. Daily Rate = r * 12 / Days in Year\n     => ${(r*100).toFixed(6)}% * 12 / ${D} = <span>${(daily*100).toFixed(8)}%</span>\n\n  4. Fixed Monthly EMI = P * r * (1+r)^N / ((1+r)^N - 1)\n     => ₱${formatCurrency(P)} * ${(r*100).toFixed(6)}% * (1+${(r*100).toFixed(6)}%)^${N} / ((1+${(r*100).toFixed(6)}%)^${N} - 1)\n     => EMI = <span>₱${formatCurrency(emi)}</span>\n\n  5. Total Interest = (EMI * N) - P\n     => (₱${formatCurrency(emi)} * ${N}) - ₱${formatCurrency(P)} = <span>₱${formatCurrency(totalInt)}</span>\n\n  6. Per Month Interest = Remaining Principal * Daily Rate * Days in Month`;
         }
         function resetEMI() {
             document.getElementById('emi-principal').value = '';
@@ -775,6 +761,131 @@
             showToast('EMI Fields Cleared');
         }
         ['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcEMI);el.addEventListener('change',calcEMI);});
+
+        // ===== BILLING & LATE FEES CALCULATOR =====
+        setupCurrencyInput('bil-outstanding');
+        function calcBilling() {
+            if(!validateNum('bil-outstanding', 0.01, Infinity, false, 'Outstanding balance must be greater than ₱0.')) return;
+            var bal = parseCurrency(document.getElementById('bil-outstanding').value);
+            var isPastDue = document.getElementById('bil-is-past-due').checked;
+            
+            var mad = Math.max(bal * 0.05, 500);
+            if (mad > bal) mad = bal; // MAD cannot exceed total balance
+            
+            var lpf = 0;
+            if (isPastDue) {
+                lpf = Math.min(Math.max(500, mad * 0.01), 1000);
+            }
+            
+            var totalDue = mad + lpf;
+            document.getElementById('bil-mad').textContent = formatCurrency(mad);
+            document.getElementById('bil-lpf').textContent = formatCurrency(lpf);
+            document.getElementById('bil-total-due').textContent = formatCurrency(totalDue);
+        }
+        function resetBilling() {
+            document.getElementById('bil-outstanding').value = '';
+            document.getElementById('bil-is-past-due').checked = false;
+            calcBilling();
+            showToast('Billing Fields Cleared');
+        }
+        document.getElementById('bil-outstanding').addEventListener('input', calcBilling);
+        document.getElementById('bil-is-past-due').addEventListener('change', calcBilling);
+
+        // ===== DUE DATE ESTIMATOR =====
+        function calcDueDate() {
+            var stmtDateStr = document.getElementById('due-stmt-date').value;
+            var graceDays = parseInt(document.getElementById('due-grace-days').value) || 21;
+            
+            if (!stmtDateStr) {
+                document.getElementById('due-result-date').textContent = '--';
+                document.getElementById('due-remaining').textContent = '0';
+                document.getElementById('due-weekend-alert').classList.add('hidden');
+                return;
+            }
+            
+            var stmtDate = new Date(stmtDateStr);
+            var dueDate = new Date(stmtDate);
+            dueDate.setDate(dueDate.getDate() + graceDays);
+            
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            var diffTime = dueDate - today;
+            var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            var dayOfWeek = dueDate.getDay(); // 0 = Sunday, 6 = Saturday
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                document.getElementById('due-weekend-alert').classList.remove('hidden');
+            } else {
+                document.getElementById('due-weekend-alert').classList.add('hidden');
+            }
+            
+            document.getElementById('due-result-date').textContent = dueDate.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+            document.getElementById('due-remaining').textContent = diffDays > 0 ? diffDays : 0;
+        }
+        function resetDueDate() {
+            document.getElementById('due-stmt-date').value = '';
+            document.getElementById('due-grace-days').value = '21';
+            calcDueDate();
+            showToast('Due Date Fields Cleared');
+        }
+        document.getElementById('due-stmt-date').addEventListener('change', calcDueDate);
+        document.getElementById('due-grace-days').addEventListener('input', calcDueDate);
+
+        // ===== COPY AGENT SUMMARY =====
+        function copyAgentSummary() {
+            var summary = "--- MAYA AGENT COMPUTATION SUMMARY ---\n";
+            summary += "Date: " + new Date().toLocaleString('en-US') + "\n";
+            summary += "Agent: " + (document.getElementById('user-name').textContent || 'Unknown') + "\n\n";
+            
+            // Miles
+            var spend = document.getElementById('est-spend').textContent;
+            if (spend !== "0.00") {
+                summary += "[Miles Module]\n";
+                summary += "  Spend: ₱" + spend + " | Miles: " + document.getElementById('miles-input').value + "\n\n";
+            }
+            
+            // Finance
+            var finTot = document.getElementById('finance-charge-result').textContent;
+            if (finTot !== "0.00") {
+                summary += "[Finance Charge Module]\n";
+                summary += "  Total Payable: ₱" + finTot + "\n";
+                summary += "  Principal: ₱" + document.getElementById('fb-principal').textContent.replace('₱','') + " | Interest: ₱" + document.getElementById('fb-interest').textContent.replace('₱','') + "\n\n";
+            }
+            
+            // Landers
+            var pts = document.getElementById('landers-result').textContent;
+            if (pts !== "0.00") {
+                summary += "[Landers Rewards Module]\n";
+                summary += "  Points Earned: " + pts + " pts | Vouchers: " + document.getElementById('voucher-result').textContent + "\n\n";
+            }
+            
+            // EMI
+            var emi = document.getElementById('emi-fixed-amount').textContent;
+            if (emi !== "0.00") {
+                summary += "[Mini Payments (EMI) Module]\n";
+                summary += "  Principal: ₱" + document.getElementById('emi-principal').value + " | Term: " + document.getElementById('emi-months').value + " mos\n";
+                summary += "  Monthly EMI: ₱" + emi + " | Total Interest: ₱" + document.getElementById('emi-total-interest').textContent + "\n\n";
+            }
+            
+            // Billing
+            var mad = document.getElementById('bil-mad').textContent;
+            if (mad !== "0.00") {
+                summary += "[Billing & Late Fees Module]\n";
+                summary += "  MAD: ₱" + mad + " | LPF: ₱" + document.getElementById('bil-lpf').textContent + " | Total Due: ₱" + document.getElementById('bil-total-due').textContent + "\n\n";
+            }
+            
+            // Due Date
+            var dueDt = document.getElementById('due-result-date').textContent;
+            if (dueDt !== "--") {
+                summary += "[Due Date Estimator]\n";
+                summary += "  Payment Due: " + dueDt + " | Remaining: " + document.getElementById('due-remaining').textContent + " days\n\n";
+            }
+            
+            summary += "--------------------------------------";
+            navigator.clipboard.writeText(summary).then(function() {
+                showToast("Agent Summary Copied!");
+            });
+        }
 
         // ===== RECEIPT & EXPORT FUNCTIONS =====
         function generateReceipt() {
@@ -807,21 +918,12 @@
                 tr.innerHTML = `<td>${row.cells[0].innerText}</td><td>${row.cells[1].innerText}</td><td style="text-align:right;">${row.cells[6].innerText}</td><td style="text-align:right;">${row.cells[7].innerText}</td>`;
                 tableBody.appendChild(tr);
             }
-
             document.getElementById('receiptModal').classList.add('open');
         }
 
-        function closeReceiptModal() {
-            document.getElementById('receiptModal').classList.remove('open');
-        }
-
-        function openSendReceiptModal() {
-            document.getElementById('sendReceiptModal').classList.add('open');
-        }
-
-        function closeSendReceiptModal() {
-            document.getElementById('sendReceiptModal').classList.remove('open');
-        }
+        function closeReceiptModal() { document.getElementById('receiptModal').classList.remove('open'); }
+        function openSendReceiptModal() { document.getElementById('sendReceiptModal').classList.add('open'); }
+        function closeSendReceiptModal() { document.getElementById('sendReceiptModal').classList.remove('open'); }
 
         function buildTextReceipt() {
             var P = document.getElementById('emi-principal').value;
@@ -833,56 +935,30 @@
             var ref = document.getElementById('rcpt-ref').textContent;
             var date = document.getElementById('rcpt-date').textContent;
 
-            var text = `MAYA - Mini Payments Computation\n`;
-            text += `Ref: ${ref}\nDate: ${date}\n`;
-            text += `-----------------------------------\n`;
-            text += `Principal: ₱${P}\n`;
-            text += `Monthly EIR: ${EIR}%\n`;
-            text += `Term: ${N} months\n`;
-            text += `-----------------------------------\n`;
-            text += `Monthly EMI: ₱${emi}\n`;
-            text += `Total Interest: ₱${totInt}\n`;
-            text += `TOTAL PAYABLE: ₱${totalPay}\n`;
-            text += `-----------------------------------\n`;
-            text += `This is a system-generated computation.\nNot an official billing statement.`;
+            var text = `MAYA - Mini Payments Computation\nRef: ${ref}\nDate: ${date}\n-----------------------------------\nPrincipal: ₱${P}\nMonthly EIR: ${EIR}%\nTerm: ${N} months\n-----------------------------------\nMonthly EMI: ₱${emi}\nTotal Interest: ₱${totInt}\nTOTAL PAYABLE: ₱${totalPay}\n-----------------------------------\nThis is a system-generated computation.\nNot an official billing statement.`;
             return text;
         }
 
         function downloadReceiptPDF() {
             const { jsPDF } = window.jspdf;
-            var doc = new jsPDF({unit: 'pt', format: [320, 600]}); // Receipt size
-            
-            doc.setFontSize(18);
-            doc.setTextColor(0, 153, 90);
-            doc.text('MAYA', 120, 40);
-            doc.setFontSize(10);
-            doc.setTextColor(100);
+            var doc = new jsPDF({unit: 'pt', format: [320, 600]});
+            doc.setFontSize(18); doc.setTextColor(0, 153, 90); doc.text('MAYA', 120, 40);
+            doc.setFontSize(10); doc.setTextColor(100);
             doc.text('Mini Payments Computation', 95, 55);
             doc.text('Ref: ' + document.getElementById('rcpt-ref').textContent, 110, 67);
             doc.text('Date: ' + document.getElementById('rcpt-date').textContent, 105, 79);
-            
-            doc.setDrawColor(0);
-            doc.line(20, 90, 300, 90);
-            
-            doc.setFontSize(12);
-            doc.setTextColor(0);
-            doc.text('Principal:', 20, 110);
-            doc.text('₱' + document.getElementById('emi-principal').value, 200, 110, {align: 'right'});
-            doc.text('Monthly EIR:', 20, 125);
-            doc.text(document.getElementById('emi-rate').value + '%', 200, 125, {align: 'right'});
-            doc.text('Term:', 20, 140);
-            doc.text(document.getElementById('emi-months').value + ' months', 200, 140, {align: 'right'});
-            
+            doc.setDrawColor(0); doc.line(20, 90, 300, 90);
+            doc.setFontSize(12); doc.setTextColor(0);
+            doc.text('Principal:', 20, 110); doc.text('₱' + document.getElementById('emi-principal').value, 200, 110, {align: 'right'});
+            doc.text('Monthly EIR:', 20, 125); doc.text(document.getElementById('emi-rate').value + '%', 200, 125, {align: 'right'});
+            doc.text('Term:', 20, 140); doc.text(document.getElementById('emi-months').value + ' months', 200, 140, {align: 'right'});
             doc.line(20, 155, 300, 155);
-            
-            // Table
             var rows = [];
             var mainTable = document.getElementById('emi-table-body');
             for(var i=0; i<mainTable.rows.length; i++) {
                 var row = mainTable.rows[i];
                 rows.push([row.cells[0].innerText, row.cells[1].innerText, row.cells[6].innerText, row.cells[7].innerText]);
             }
-            
             doc.autoTable({
                 head: [['#', 'Due Date', 'Installment', 'Balance']],
                 body: rows,
@@ -892,30 +968,19 @@
                 headStyles: { fillColor: [255, 255, 255], textColor: 0, lineWidth: 0.1, lineColor: [0,0,0] },
                 columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } }
             });
-            
             var finalY = doc.lastAutoTable.finalY + 10;
             doc.line(20, finalY, 300, finalY);
             finalY += 20;
-            
-            doc.text('Monthly EMI:', 20, finalY);
-            doc.text('₱' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'});
+            doc.text('Monthly EMI:', 20, finalY); doc.text('₱' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'});
             finalY += 15;
-            doc.text('Total Interest:', 20, finalY);
-            doc.text('₱' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'});
+            doc.text('Total Interest:', 20, finalY); doc.text('₱' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'});
             finalY += 15;
             doc.setFontSize(14);
-            doc.text('TOTAL PAYABLE:', 20, finalY);
-            doc.text('₱' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
-            
-            finalY += 20;
-            doc.line(20, finalY, 300, finalY);
-            finalY += 20;
-            doc.setFontSize(9);
-            doc.setTextColor(100);
+            doc.text('TOTAL PAYABLE:', 20, finalY); doc.text('₱' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
+            finalY += 20; doc.line(20, finalY, 300, finalY); finalY += 20;
+            doc.setFontSize(9); doc.setTextColor(100);
             doc.text('This is a system-generated computation.', 60, finalY);
-            finalY += 12;
-            doc.text('Not an official billing statement.', 75, finalY);
-            
+            finalY += 12; doc.text('Not an official billing statement.', 75, finalY);
             doc.save('Maya_Receipt.pdf');
             showToast('PDF Downloaded');
         }
@@ -924,7 +989,6 @@
             var name = document.getElementById('send-cust-name').value;
             var email = document.getElementById('send-cust-email').value;
             if(!name || !email) { showToast('Please enter name and email'); return; }
-            
             var text = buildTextReceipt();
             var mailto = `mailto:${email}?subject=Maya Mini Payments Computation&body=Hi ${name},%0A%0AHere is your computation:%0A%0A${encodeURIComponent(text)}`;
             window.open(mailto);
@@ -934,7 +998,6 @@
         function sendReceiptWhatsApp() {
             var phone = document.getElementById('send-cust-phone').value;
             if(!phone) { showToast('Please enter mobile number'); return; }
-            
             var text = buildTextReceipt();
             var url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
@@ -951,9 +1014,7 @@
                 rows.push(cells);
             }
             var csv='';
-            rows.forEach(function(row){
-                csv+=row.join(',')+'\n';
-            });
+            rows.forEach(function(row){ csv+=row.join(',')+'\n'; });
             var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
             var link=document.createElement('a');
             link.href=URL.createObjectURL(blob);
@@ -971,38 +1032,16 @@
             localStorage.setItem('maya_calc_history',JSON.stringify(hist));
             showToast('Saved to History');
         }
-        function saveMilesHistory(){
-            saveHistory('Miles', `Spend: ₱${document.getElementById('est-spend').textContent} | Miles: ${document.getElementById('miles-input').value}`, {
-                spend: document.getElementById('spend-input').value,
-                mult: document.getElementById('multiplier-select').value,
-                customMult: document.getElementById('custom-multiplier').value
-            });
-        }
-        function saveFinanceHistory(){
-            saveHistory('Finance', `Total Payable: ₱${document.getElementById('finance-charge-result').textContent}`, {
-                loan: document.getElementById('loan-credit').value,
-                pay: document.getElementById('partial-payment').value,
-                term: document.getElementById('loan-term').value,
-                held: document.getElementById('days-held').value
-            });
-        }
-        function saveEMIHistory(){
-            saveHistory('EMI', `Principal: ₱${document.getElementById('emi-principal').value} | EMI: ₱${document.getElementById('emi-fixed-amount').textContent}`, {
-                P: document.getElementById('emi-principal').value,
-                EIR: document.getElementById('emi-rate').value,
-                N: document.getElementById('emi-months').value,
-                D: document.getElementById('emi-days-year').value,
-                startDate: document.getElementById('emi-start-date').value
-            });
-        }
+        function saveMilesHistory(){ saveHistory('Miles', `Spend: ₱${document.getElementById('est-spend').textContent} | Miles: ${document.getElementById('miles-input').value}`, { spend: document.getElementById('spend-input').value, mult: document.getElementById('multiplier-select').value, customMult: document.getElementById('custom-multiplier').value }); }
+        function saveFinanceHistory(){ saveHistory('Finance', `Total Payable: ₱${document.getElementById('finance-charge-result').textContent}`, { loan: document.getElementById('loan-credit').value, pay: document.getElementById('partial-payment').value, term: document.getElementById('loan-term').value, held: document.getElementById('days-held').value }); }
+        function saveLandersHistory(){ saveHistory('Landers', `Spend: ₱${document.getElementById('landers-spend').value} | Points: ${document.getElementById('landers-result').textContent}`, { spend: document.getElementById('landers-spend').value, acc: document.getElementById('total-card-spend').value, cat: document.getElementById('landers-category').value }); }
+        function saveEMIHistory(){ saveHistory('EMI', `Principal: ₱${document.getElementById('emi-principal').value} | EMI: ₱${document.getElementById('emi-fixed-amount').textContent}`, { P: document.getElementById('emi-principal').value, EIR: document.getElementById('emi-rate').value, N: document.getElementById('emi-months').value, D: document.getElementById('emi-days-year').value, startDate: document.getElementById('emi-start-date').value }); }
+        function saveBillingHistory(){ saveHistory('Billing', `Total Due: ₱${document.getElementById('bil-total-due').textContent}`, { bal: document.getElementById('bil-outstanding').value, pastDue: document.getElementById('bil-is-past-due').checked }); }
+        function saveDueDateHistory(){ saveHistory('Due Date', `Due: ${document.getElementById('due-result-date').textContent}`, { stmtDate: document.getElementById('due-stmt-date').value, grace: document.getElementById('due-grace-days').value }); }
+        
         function toggleHistory(){
             var modal=document.getElementById('historyModal');
-            if(modal.classList.contains('open')){
-                modal.classList.remove('open');
-            } else {
-                renderHistory();
-                modal.classList.add('open');
-            }
+            if(modal.classList.contains('open')){ modal.classList.remove('open'); } else { renderHistory(); modal.classList.add('open'); }
         }
         function renderHistory(){
             var hist=getHistory();
@@ -1015,9 +1054,7 @@
                 h+=`<div class="flex justify-between items-start">`;
                 h+=`<div><span class="hist-type">${item.type}</span><p class="hist-date">${item.date}</p></div>`;
                 h+=`<button onclick='event.stopPropagation();deleteHistory(${item.id})' class="text-zinc-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-                h+=`</div>`;
-                h+=`<p class="hist-summary">${item.summary}</p>`;
-                h+=`</div>`;
+                h+=`</div><p class="hist-summary">${item.summary}</p></div>`;
             }
             list.innerHTML=h;
         }
@@ -1047,6 +1084,11 @@
                 document.getElementById('loan-term').value=item.inputs.term||'30';
                 document.getElementById('days-held').value=item.inputs.held||'20';
                 calcFinance();
+            } else if(item.type==='Landers'){
+                document.getElementById('landers-spend').value=item.inputs.spend||'';
+                document.getElementById('total-card-spend').value=item.inputs.acc||'';
+                document.getElementById('landers-category').value=item.inputs.cat||'landers';
+                calcLanders();
             } else if(item.type==='EMI'){
                 document.getElementById('emi-principal').value=item.inputs.P||'';
                 document.getElementById('emi-rate').value=item.inputs.EIR||'1.69';
@@ -1054,6 +1096,14 @@
                 document.getElementById('emi-days-year').value=item.inputs.D||'365';
                 document.getElementById('emi-start-date').value=item.inputs.startDate||new Date().toISOString().split('T')[0];
                 calcEMI();
+            } else if(item.type==='Billing'){
+                document.getElementById('bil-outstanding').value=item.inputs.bal||'';
+                document.getElementById('bil-is-past-due').checked=item.inputs.pastDue||false;
+                calcBilling();
+            } else if(item.type==='Due Date'){
+                document.getElementById('due-stmt-date').value=item.inputs.stmtDate||'';
+                document.getElementById('due-grace-days').value=item.inputs.grace||'21';
+                calcDueDate();
             }
             toggleHistory();
             showToast('Inputs Loaded');
