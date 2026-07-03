@@ -151,7 +151,7 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.1.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.2.0</p>
                     <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
@@ -181,6 +181,26 @@
     </div>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
+        
+        <!-- ACCOUNT MANAGEMENT - Module D (MOVED TO TOP FOR ADMINS) -->
+        <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
+            <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
+            <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
+                <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
+                    </div>
+                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
+                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
+                </div>
+            </div>
+            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
+        </div>
+
         <!-- MILES CALCULATOR -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
@@ -237,25 +257,6 @@
             </div>
         </div>
 
-        <!-- ACCOUNT MANAGEMENT - Module D -->
-        <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
-            <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
-            <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
-                <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
-                    </div>
-                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
-                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
-                </div>
-            </div>
-            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
-        </div>
-
         <!-- MINI PAYMENTS CALCULATOR (EMI) -->
         <div class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
@@ -267,28 +268,14 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
             </div>
             
-            <!-- Export Toolkit -->
             <div class="flex flex-wrap gap-2 mb-4 no-print">
-                <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    Generate Official Receipt
-                </button>
-                <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History
-                </button>
-                <button onclick="resetEMI()" class="px-3 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-300 hover:text-red-400 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>Clear Fields
-                </button>
-                <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export Data (CSV)
-                </button>
+                <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Generate Official Receipt</button>
+                <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History</button>
+                <button onclick="resetEMI()" class="px-3 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-300 hover:text-red-400 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>Clear Fields</button>
+                <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export Data (CSV)</button>
             </div>
 
-            <!-- Formula Breakdown -->
-            <details class="formula-card mb-4 no-print">
-                <summary>Show Calculation Breakdown</summary>
-                <div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div>
-            </details>
+            <details class="formula-card mb-4 no-print"><summary>Show Calculation Breakdown</summary><div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div></details>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div>
@@ -340,6 +327,45 @@
                 <button onclick="resetDueDate()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
             </div>
         </div>
+
+        <!-- FX TRANSACTION CALCULATOR (Module H) -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-cyan-500 rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold rounded">Module H</span></div>
+            <div class="space-y-5 flex-grow">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Foreign Amount</label><input type="text" inputmode="decimal" id="fx-foreign-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-zinc-700"><div class="err-msg" id="fx-foreign-amt-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Exchange Rate (to PHP)</label><input type="number" step="0.0001" id="fx-rate" placeholder="55.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">FX Fee (%)</label><input type="number" step="0.01" id="fx-fee" value="1.75" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Base PHP Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" id="fx-base-php" readonly class="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-zinc-400 font-mono focus:outline-none cursor-default" value="0.00"></div></div>
+                </div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-cyan-500/80 mb-1">Total Billed in PHP</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('fx-total')"><p class="text-3xl font-mono font-bold text-white group-hover:text-cyan-400 transition-colors data-font">₱<span id="fx-total">0.00</span></p></div></div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <button onclick="saveFXHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetFX()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+            </div>
+        </div>
+
+        <!-- CASH ADVANCE CALCULATOR (Module I) -->
+        <div class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-indigo-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Cash Advance</h2></div><span class="px-2 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] uppercase font-bold rounded">Module I</span></div>
+            <div class="space-y-5 flex-grow">
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Amount Requested (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="ca-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="ca-amt-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Cash Advance Fee (%)</label><input type="number" step="0.01" id="ca-fee" value="5.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"></div>
+            </div>
+            <div class="pt-5 border-t border-zinc-800 mt-4 space-y-2">
+                <div class="flex justify-between text-xs text-zinc-400"><span>Fee Deduction</span><span class="font-mono text-indigo-400 font-bold">₱<span id="ca-fee-amt">0.00</span></span></div>
+                <div class="flex justify-between items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('ca-disbursed')"><label class="block text-[10px] uppercase tracking-wider text-indigo-500/80">Cash Received</label><p class="text-3xl font-mono font-bold text-white group-hover:text-indigo-400 transition-colors data-font ml-auto">₱<span id="ca-disbursed">0.00</span></p></div>
+                <div class="flex justify-between text-xs text-zinc-400 mt-2"><span>Total Billed to Card Limit</span><span class="font-mono text-zinc-200">₱<span id="ca-limit-charge">0.00</span></span></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <button onclick="saveCAHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetCA()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+            </div>
+        </div>
+
     </main>
 
     <!-- CONTACT ADMIN SECTION -->
@@ -664,13 +690,7 @@
             var v=parseCurrency(spendInput.value),ic=multSelect.value==='custom',m=ic?(parseFloat(customMult.value)||0):parseFloat(multSelect.value),mi=(v/40)*m;
             milesInput.value=formatCurrency(mi);document.getElementById('cash-value').textContent=formatCurrency(mi*0.16);document.getElementById('est-spend').textContent=formatCurrency(v);
         }
-        function resetMiles() {
-            document.getElementById('spend-input').value = '';
-            document.getElementById('multiplier-select').value = '1';
-            document.getElementById('custom-multiplier').classList.add('hidden');
-            calculateMiles();
-            showToast('Miles Fields Cleared');
-        }
+        function resetMiles() { document.getElementById('spend-input').value=''; document.getElementById('multiplier-select').value='1'; document.getElementById('custom-multiplier').classList.add('hidden'); calculateMiles(); showToast('Miles Fields Cleared'); }
         spendInput.addEventListener('calculate',calculateMiles);spendInput.addEventListener('input',calculateMiles);customMult.addEventListener('input',calculateMiles);
         multSelect.addEventListener('change',function(){if(multSelect.value==='custom'){customMult.classList.remove('hidden');customMult.focus();}else{customMult.classList.add('hidden');}calculateMiles();});
 
@@ -684,14 +704,7 @@
             var l=parseCurrency(document.getElementById('loan-credit').value),p=parseCurrency(document.getElementById('partial-payment').value),t=parseFloat(document.getElementById('loan-term').value)||0,d=parseFloat(document.getElementById('days-held').value)||0,rem=Math.max(0,l-p),int=rem*0.03*(d/t),tot=rem+int;
             document.getElementById('fb-principal').textContent='₱'+formatCurrency(rem);document.getElementById('fb-interest').textContent='₱'+formatCurrency(int);document.getElementById('finance-charge-result').textContent=formatCurrency(tot);
         }
-        function resetFinance() {
-            document.getElementById('loan-credit').value = '';
-            document.getElementById('partial-payment').value = '';
-            document.getElementById('loan-term').value = '30';
-            document.getElementById('days-held').value = '20';
-            calcFinance();
-            showToast('Finance Fields Cleared');
-        }
+        function resetFinance() { document.getElementById('loan-credit').value=''; document.getElementById('partial-payment').value=''; document.getElementById('loan-term').value='30'; document.getElementById('days-held').value='20'; calcFinance(); showToast('Finance Fields Cleared'); }
         ['loan-credit','partial-payment','loan-term','days-held'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcFinance);el.addEventListener('change',calcFinance);});
 
         // ===== LANDERS CALCULATOR =====
@@ -708,14 +721,7 @@
             else if(cat==='custom'){rate=parseFloat(landersCustomRate.value)||0;pts=a*(rate/100);breakdown='Custom rate: '+rate+'%';}
             document.getElementById('landers-result').textContent=formatCurrency(pts);document.getElementById('voucher-result').textContent=Math.floor(pts/500);document.getElementById('tier-breakdown').textContent=breakdown||'Select category';
         }
-        function resetLanders() {
-            document.getElementById('landers-spend').value = '';
-            document.getElementById('total-card-spend').value = '';
-            document.getElementById('landers-category').value = 'landers';
-            document.getElementById('landers-custom-group').classList.add('hidden');
-            calcLanders();
-            showToast('Landers Fields Cleared');
-        }
+        function resetLanders() { document.getElementById('landers-spend').value=''; document.getElementById('total-card-spend').value=''; document.getElementById('landers-category').value='landers'; document.getElementById('landers-custom-group').classList.add('hidden'); calcLanders(); showToast('Landers Fields Cleared'); }
         landersCat.addEventListener('change',function(){if(landersCat.value==='custom'){landersCustom.classList.remove('hidden');landersCustomRate.focus();}else{landersCustom.classList.add('hidden');}calcLanders();});landersCustomRate.addEventListener('input',calcLanders);
         ['landers-spend','total-card-spend'].forEach(function(id){document.getElementById(id).addEventListener('calculate',calcLanders);document.getElementById(id).addEventListener('input',calcLanders);});
 
@@ -748,18 +754,9 @@
                 curDate.setMonth(curDate.getMonth()+1);
             }
             document.getElementById('emi-table-body').innerHTML=html;
-            document.getElementById('emi-breakdown').innerHTML = 
-            `Assumptions:\n  - 1 Month = ${D}/12 days = ${(D/12).toFixed(2)} days\n  - Interest compounds monthly based on EIR.\n\nFormulas:\n  1. Monthly Rate (r) = (1 + EIR)^(1/12) - 1\n     => (1 + ${EIR}%)^(1/12) - 1 = <span>${(r*100).toFixed(6)}%</span>\n\n  2. Nominal Annual Rate = (1 + r)^12 - 1\n     => (1 + ${(r*100).toFixed(6)}%)^12 - 1 = <span>${nominal.toFixed(4)}%</span>\n\n  3. Daily Rate = r * 12 / Days in Year\n     => ${(r*100).toFixed(6)}% * 12 / ${D} = <span>${(daily*100).toFixed(8)}%</span>\n\n  4. Fixed Monthly EMI = P * r * (1+r)^N / ((1+r)^N - 1)\n     => ₱${formatCurrency(P)} * ${(r*100).toFixed(6)}% * (1+${(r*100).toFixed(6)}%)^${N} / ((1+${(r*100).toFixed(6)}%)^${N} - 1)\n     => EMI = <span>₱${formatCurrency(emi)}</span>\n\n  5. Total Interest = (EMI * N) - P\n     => (₱${formatCurrency(emi)} * ${N}) - ₱${formatCurrency(P)} = <span>₱${formatCurrency(totalInt)}</span>\n\n  6. Per Month Interest = Remaining Principal * Daily Rate * Days in Month`;
+            document.getElementById('emi-breakdown').innerHTML = `Assumptions:\n  - 1 Month = ${D}/12 days = ${(D/12).toFixed(2)} days\n  - Interest compounds monthly based on EIR.\n\nFormulas:\n  1. Monthly Rate (r) = (1 + EIR)^(1/12) - 1\n     => (1 + ${EIR}%)^(1/12) - 1 = <span>${(r*100).toFixed(6)}%</span>\n\n  2. Nominal Annual Rate = (1 + r)^12 - 1\n     => (1 + ${(r*100).toFixed(6)}%)^12 - 1 = <span>${nominal.toFixed(4)}%</span>\n\n  3. Daily Rate = r * 12 / Days in Year\n     => ${(r*100).toFixed(6)}% * 12 / ${D} = <span>${(daily*100).toFixed(8)}%</span>\n\n  4. Fixed Monthly EMI = P * r * (1+r)^N / ((1+r)^N - 1)\n     => ₱${formatCurrency(P)} * ${(r*100).toFixed(6)}% * (1+${(r*100).toFixed(6)}%)^${N} / ((1+${(r*100).toFixed(6)}%)^${N} - 1)\n     => EMI = <span>₱${formatCurrency(emi)}</span>\n\n  5. Total Interest = (EMI * N) - P\n     => (₱${formatCurrency(emi)} * ${N}) - ₱${formatCurrency(P)} = <span>₱${formatCurrency(totalInt)}</span>\n\n  6. Per Month Interest = Remaining Principal * Daily Rate * Days in Month`;
         }
-        function resetEMI() {
-            document.getElementById('emi-principal').value = '';
-            document.getElementById('emi-rate').value = '1.69';
-            document.getElementById('emi-months').value = '6';
-            document.getElementById('emi-days-year').value = '365';
-            document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0];
-            calcEMI();
-            showToast('EMI Fields Cleared');
-        }
+        function resetEMI() { document.getElementById('emi-principal').value=''; document.getElementById('emi-rate').value='1.69'; document.getElementById('emi-months').value='6'; document.getElementById('emi-days-year').value='365'; document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0]; calcEMI(); showToast('EMI Fields Cleared'); }
         ['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcEMI);el.addEventListener('change',calcEMI);});
 
         // ===== BILLING & LATE FEES CALCULATOR =====
@@ -768,26 +765,16 @@
             if(!validateNum('bil-outstanding', 0.01, Infinity, false, 'Outstanding balance must be greater than ₱0.')) return;
             var bal = parseCurrency(document.getElementById('bil-outstanding').value);
             var isPastDue = document.getElementById('bil-is-past-due').checked;
-            
             var mad = Math.max(bal * 0.05, 500);
-            if (mad > bal) mad = bal; // MAD cannot exceed total balance
-            
+            if (mad > bal) mad = bal;
             var lpf = 0;
-            if (isPastDue) {
-                lpf = Math.min(Math.max(500, mad * 0.01), 1000);
-            }
-            
+            if (isPastDue) { lpf = Math.min(Math.max(500, mad * 0.01), 1000); }
             var totalDue = mad + lpf;
             document.getElementById('bil-mad').textContent = formatCurrency(mad);
             document.getElementById('bil-lpf').textContent = formatCurrency(lpf);
             document.getElementById('bil-total-due').textContent = formatCurrency(totalDue);
         }
-        function resetBilling() {
-            document.getElementById('bil-outstanding').value = '';
-            document.getElementById('bil-is-past-due').checked = false;
-            calcBilling();
-            showToast('Billing Fields Cleared');
-        }
+        function resetBilling() { document.getElementById('bil-outstanding').value=''; document.getElementById('bil-is-past-due').checked=false; calcBilling(); showToast('Billing Fields Cleared'); }
         document.getElementById('bil-outstanding').addEventListener('input', calcBilling);
         document.getElementById('bil-is-past-due').addEventListener('change', calcBilling);
 
@@ -795,41 +782,54 @@
         function calcDueDate() {
             var stmtDateStr = document.getElementById('due-stmt-date').value;
             var graceDays = parseInt(document.getElementById('due-grace-days').value) || 21;
-            
-            if (!stmtDateStr) {
-                document.getElementById('due-result-date').textContent = '--';
-                document.getElementById('due-remaining').textContent = '0';
-                document.getElementById('due-weekend-alert').classList.add('hidden');
-                return;
-            }
-            
+            if (!stmtDateStr) { document.getElementById('due-result-date').textContent='--'; document.getElementById('due-remaining').textContent='0'; document.getElementById('due-weekend-alert').classList.add('hidden'); return; }
             var stmtDate = new Date(stmtDateStr);
             var dueDate = new Date(stmtDate);
             dueDate.setDate(dueDate.getDate() + graceDays);
-            
-            var today = new Date();
-            today.setHours(0, 0, 0, 0);
+            var today = new Date(); today.setHours(0, 0, 0, 0);
             var diffTime = dueDate - today;
             var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            var dayOfWeek = dueDate.getDay(); // 0 = Sunday, 6 = Saturday
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
-                document.getElementById('due-weekend-alert').classList.remove('hidden');
-            } else {
-                document.getElementById('due-weekend-alert').classList.add('hidden');
-            }
-            
+            var dayOfWeek = dueDate.getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) { document.getElementById('due-weekend-alert').classList.remove('hidden'); } else { document.getElementById('due-weekend-alert').classList.add('hidden'); }
             document.getElementById('due-result-date').textContent = dueDate.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
             document.getElementById('due-remaining').textContent = diffDays > 0 ? diffDays : 0;
         }
-        function resetDueDate() {
-            document.getElementById('due-stmt-date').value = '';
-            document.getElementById('due-grace-days').value = '21';
-            calcDueDate();
-            showToast('Due Date Fields Cleared');
-        }
+        function resetDueDate() { document.getElementById('due-stmt-date').value=''; document.getElementById('due-grace-days').value='21'; calcDueDate(); showToast('Due Date Fields Cleared'); }
         document.getElementById('due-stmt-date').addEventListener('change', calcDueDate);
         document.getElementById('due-grace-days').addEventListener('input', calcDueDate);
+
+        // ===== FX TRANSACTION CALCULATOR =====
+        setupCurrencyInput('fx-foreign-amt');
+        function calcFX() {
+            if(!validateNum('fx-foreign-amt', 0.01, Infinity, false, 'Foreign amount must be greater than 0.')) return;
+            if(!validateNum('fx-rate', 0.0001, Infinity, false, 'Exchange rate must be greater than 0.')) return;
+            var forAmt = parseCurrency(document.getElementById('fx-foreign-amt').value);
+            var rate = parseFloat(document.getElementById('fx-rate').value) || 0;
+            var fee = parseFloat(document.getElementById('fx-fee').value) || 0;
+            var basePhp = forAmt * rate;
+            var feeAmt = basePhp * (fee / 100);
+            var total = basePhp + feeAmt;
+            document.getElementById('fx-base-php').value = formatCurrency(basePhp);
+            document.getElementById('fx-total').textContent = formatCurrency(total);
+        }
+        function resetFX() { document.getElementById('fx-foreign-amt').value=''; document.getElementById('fx-rate').value=''; document.getElementById('fx-fee').value='1.75'; calcFX(); showToast('FX Fields Cleared'); }
+        ['fx-foreign-amt','fx-rate','fx-fee'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcFX);el.addEventListener('change',calcFX);});
+
+        // ===== CASH ADVANCE CALCULATOR =====
+        setupCurrencyInput('ca-amt');
+        function calcCashAdvance() {
+            if(!validateNum('ca-amt', 0.01, Infinity, false, 'Amount must be greater than ₱0.')) return;
+            var amt = parseCurrency(document.getElementById('ca-amt').value);
+            var fee = parseFloat(document.getElementById('ca-fee').value) || 0;
+            var feeAmt = amt * (fee / 100);
+            var disbursed = amt;
+            var totalCharge = amt + feeAmt;
+            document.getElementById('ca-fee-amt').textContent = formatCurrency(feeAmt);
+            document.getElementById('ca-disbursed').textContent = formatCurrency(disbursed);
+            document.getElementById('ca-limit-charge').textContent = formatCurrency(totalCharge);
+        }
+        function resetCA() { document.getElementById('ca-amt').value=''; document.getElementById('ca-fee').value='5.00'; calcCashAdvance(); showToast('Cash Advance Fields Cleared'); }
+        ['ca-amt','ca-fee'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcCashAdvance);el.addEventListener('change',calcCashAdvance);});
 
         // ===== COPY AGENT SUMMARY =====
         function copyAgentSummary() {
@@ -837,54 +837,32 @@
             summary += "Date: " + new Date().toLocaleString('en-US') + "\n";
             summary += "Agent: " + (document.getElementById('user-name').textContent || 'Unknown') + "\n\n";
             
-            // Miles
-            var spend = document.getElementById('est-spend').textContent;
-            if (spend !== "0.00") {
-                summary += "[Miles Module]\n";
-                summary += "  Spend: ₱" + spend + " | Miles: " + document.getElementById('miles-input').value + "\n\n";
+            if (document.getElementById('est-spend').textContent !== "0.00") {
+                summary += "[Miles Module]\n  Spend: ₱" + document.getElementById('est-spend').textContent + " | Miles: " + document.getElementById('miles-input').value + "\n\n";
             }
-            
-            // Finance
-            var finTot = document.getElementById('finance-charge-result').textContent;
-            if (finTot !== "0.00") {
-                summary += "[Finance Charge Module]\n";
-                summary += "  Total Payable: ₱" + finTot + "\n";
-                summary += "  Principal: ₱" + document.getElementById('fb-principal').textContent.replace('₱','') + " | Interest: ₱" + document.getElementById('fb-interest').textContent.replace('₱','') + "\n\n";
+            if (document.getElementById('finance-charge-result').textContent !== "0.00") {
+                summary += "[Finance Charge Module]\n  Total Payable: ₱" + document.getElementById('finance-charge-result').textContent + "\n  Principal: ₱" + document.getElementById('fb-principal').textContent.replace('₱','') + " | Interest: ₱" + document.getElementById('fb-interest').textContent.replace('₱','') + "\n\n";
             }
-            
-            // Landers
-            var pts = document.getElementById('landers-result').textContent;
-            if (pts !== "0.00") {
-                summary += "[Landers Rewards Module]\n";
-                summary += "  Points Earned: " + pts + " pts | Vouchers: " + document.getElementById('voucher-result').textContent + "\n\n";
+            if (document.getElementById('landers-result').textContent !== "0.00") {
+                summary += "[Landers Rewards Module]\n  Points Earned: " + document.getElementById('landers-result').textContent + " pts | Vouchers: " + document.getElementById('voucher-result').textContent + "\n\n";
             }
-            
-            // EMI
-            var emi = document.getElementById('emi-fixed-amount').textContent;
-            if (emi !== "0.00") {
-                summary += "[Mini Payments (EMI) Module]\n";
-                summary += "  Principal: ₱" + document.getElementById('emi-principal').value + " | Term: " + document.getElementById('emi-months').value + " mos\n";
-                summary += "  Monthly EMI: ₱" + emi + " | Total Interest: ₱" + document.getElementById('emi-total-interest').textContent + "\n\n";
+            if (document.getElementById('emi-fixed-amount').textContent !== "0.00") {
+                summary += "[Mini Payments (EMI) Module]\n  Principal: ₱" + document.getElementById('emi-principal').value + " | Term: " + document.getElementById('emi-months').value + " mos\n  Monthly EMI: ₱" + document.getElementById('emi-fixed-amount').textContent + " | Total Interest: ₱" + document.getElementById('emi-total-interest').textContent + "\n\n";
             }
-            
-            // Billing
-            var mad = document.getElementById('bil-mad').textContent;
-            if (mad !== "0.00") {
-                summary += "[Billing & Late Fees Module]\n";
-                summary += "  MAD: ₱" + mad + " | LPF: ₱" + document.getElementById('bil-lpf').textContent + " | Total Due: ₱" + document.getElementById('bil-total-due').textContent + "\n\n";
+            if (document.getElementById('bil-mad').textContent !== "0.00") {
+                summary += "[Billing & Late Fees Module]\n  MAD: ₱" + document.getElementById('bil-mad').textContent + " | LPF: ₱" + document.getElementById('bil-lpf').textContent + " | Total Due: ₱" + document.getElementById('bil-total-due').textContent + "\n\n";
             }
-            
-            // Due Date
-            var dueDt = document.getElementById('due-result-date').textContent;
-            if (dueDt !== "--") {
-                summary += "[Due Date Estimator]\n";
-                summary += "  Payment Due: " + dueDt + " | Remaining: " + document.getElementById('due-remaining').textContent + " days\n\n";
+            if (document.getElementById('due-result-date').textContent !== "--") {
+                summary += "[Due Date Estimator]\n  Payment Due: " + document.getElementById('due-result-date').textContent + " | Remaining: " + document.getElementById('due-remaining').textContent + " days\n\n";
             }
-            
+            if (document.getElementById('fx-total').textContent !== "0.00") {
+                summary += "[FX Transaction Module]\n  Foreign Amt: " + document.getElementById('fx-foreign-amt').value + " | Rate: " + document.getElementById('fx-rate').value + "\n  Total Billed: ₱" + document.getElementById('fx-total').textContent + "\n\n";
+            }
+            if (document.getElementById('ca-limit-charge').textContent !== "0.00") {
+                summary += "[Cash Advance Module]\n  Cash Received: ₱" + document.getElementById('ca-disbursed').textContent + " | Fee: ₱" + document.getElementById('ca-fee-amt').textContent + "\n  Total Billed: ₱" + document.getElementById('ca-limit-charge').textContent + "\n\n";
+            }
             summary += "--------------------------------------";
-            navigator.clipboard.writeText(summary).then(function() {
-                showToast("Agent Summary Copied!");
-            });
+            navigator.clipboard.writeText(summary).then(function() { showToast("Agent Summary Copied!"); });
         }
 
         // ===== RECEIPT & EXPORT FUNCTIONS =====
@@ -892,145 +870,71 @@
             if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
             if(!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')) return;
             if(!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')) return;
-
-            var P = document.getElementById('emi-principal').value;
-            var EIR = document.getElementById('emi-rate').value;
-            var N = document.getElementById('emi-months').value;
-            var emi = document.getElementById('emi-fixed-amount').textContent;
-            var totInt = document.getElementById('emi-total-interest').textContent;
-            var totalPay = formatCurrency(parseCurrency(emi) * parseInt(N));
-
+            var P = document.getElementById('emi-principal').value, EIR = document.getElementById('emi-rate').value, N = document.getElementById('emi-months').value, emi = document.getElementById('emi-fixed-amount').textContent, totInt = document.getElementById('emi-total-interest').textContent, totalPay = formatCurrency(parseCurrency(emi) * parseInt(N));
             document.getElementById('rcpt-ref').textContent = 'MX-' + Math.floor(Math.random() * 900000 + 100000);
             document.getElementById('rcpt-date').textContent = new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
-            document.getElementById('rcpt-principal').textContent = '₱' + P;
-            document.getElementById('rcpt-rate').textContent = EIR + '%';
-            document.getElementById('rcpt-term').textContent = N + ' months';
-            document.getElementById('rcpt-emi').textContent = '₱' + emi;
-            document.getElementById('rcpt-interest').textContent = '₱' + totInt;
-            document.getElementById('rcpt-total').textContent = '₱' + totalPay;
-
-            var tableBody = document.getElementById('rcpt-table-body');
-            tableBody.innerHTML = '';
-            var mainTable = document.getElementById('emi-table-body');
-            for(var i=0; i<mainTable.rows.length; i++) {
-                var row = mainTable.rows[i];
-                var tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row.cells[0].innerText}</td><td>${row.cells[1].innerText}</td><td style="text-align:right;">${row.cells[6].innerText}</td><td style="text-align:right;">${row.cells[7].innerText}</td>`;
-                tableBody.appendChild(tr);
-            }
+            document.getElementById('rcpt-principal').textContent = '₱' + P; document.getElementById('rcpt-rate').textContent = EIR + '%'; document.getElementById('rcpt-term').textContent = N + ' months'; document.getElementById('rcpt-emi').textContent = '₱' + emi; document.getElementById('rcpt-interest').textContent = '₱' + totInt; document.getElementById('rcpt-total').textContent = '₱' + totalPay;
+            var tableBody = document.getElementById('rcpt-table-body'); tableBody.innerHTML = ''; var mainTable = document.getElementById('emi-table-body');
+            for(var i=0; i<mainTable.rows.length; i++) { var row = mainTable.rows[i]; var tr = document.createElement('tr'); tr.innerHTML = `<td>${row.cells[0].innerText}</td><td>${row.cells[1].innerText}</td><td style="text-align:right;">${row.cells[6].innerText}</td><td style="text-align:right;">${row.cells[7].innerText}</td>`; tableBody.appendChild(tr); }
             document.getElementById('receiptModal').classList.add('open');
         }
-
         function closeReceiptModal() { document.getElementById('receiptModal').classList.remove('open'); }
         function openSendReceiptModal() { document.getElementById('sendReceiptModal').classList.add('open'); }
         function closeSendReceiptModal() { document.getElementById('sendReceiptModal').classList.remove('open'); }
 
         function buildTextReceipt() {
-            var P = document.getElementById('emi-principal').value;
-            var EIR = document.getElementById('emi-rate').value;
-            var N = document.getElementById('emi-months').value;
-            var emi = document.getElementById('emi-fixed-amount').textContent;
-            var totInt = document.getElementById('emi-total-interest').textContent;
-            var totalPay = formatCurrency(parseCurrency(emi) * parseInt(N));
-            var ref = document.getElementById('rcpt-ref').textContent;
-            var date = document.getElementById('rcpt-date').textContent;
-
+            var P = document.getElementById('emi-principal').value, EIR = document.getElementById('emi-rate').value, N = document.getElementById('emi-months').value, emi = document.getElementById('emi-fixed-amount').textContent, totInt = document.getElementById('emi-total-interest').textContent, totalPay = formatCurrency(parseCurrency(emi) * parseInt(N)), ref = document.getElementById('rcpt-ref').textContent, date = document.getElementById('rcpt-date').textContent;
             var text = `MAYA - Mini Payments Computation\nRef: ${ref}\nDate: ${date}\n-----------------------------------\nPrincipal: ₱${P}\nMonthly EIR: ${EIR}%\nTerm: ${N} months\n-----------------------------------\nMonthly EMI: ₱${emi}\nTotal Interest: ₱${totInt}\nTOTAL PAYABLE: ₱${totalPay}\n-----------------------------------\nThis is a system-generated computation.\nNot an official billing statement.`;
             return text;
         }
 
         function downloadReceiptPDF() {
-            const { jsPDF } = window.jspdf;
-            var doc = new jsPDF({unit: 'pt', format: [320, 600]});
+            const { jsPDF } = window.jspdf; var doc = new jsPDF({unit: 'pt', format: [320, 600]});
             doc.setFontSize(18); doc.setTextColor(0, 153, 90); doc.text('MAYA', 120, 40);
-            doc.setFontSize(10); doc.setTextColor(100);
-            doc.text('Mini Payments Computation', 95, 55);
-            doc.text('Ref: ' + document.getElementById('rcpt-ref').textContent, 110, 67);
-            doc.text('Date: ' + document.getElementById('rcpt-date').textContent, 105, 79);
-            doc.setDrawColor(0); doc.line(20, 90, 300, 90);
-            doc.setFontSize(12); doc.setTextColor(0);
+            doc.setFontSize(10); doc.setTextColor(100); doc.text('Mini Payments Computation', 95, 55); doc.text('Ref: ' + document.getElementById('rcpt-ref').textContent, 110, 67); doc.text('Date: ' + document.getElementById('rcpt-date').textContent, 105, 79);
+            doc.setDrawColor(0); doc.line(20, 90, 300, 90); doc.setFontSize(12); doc.setTextColor(0);
             doc.text('Principal:', 20, 110); doc.text('₱' + document.getElementById('emi-principal').value, 200, 110, {align: 'right'});
             doc.text('Monthly EIR:', 20, 125); doc.text(document.getElementById('emi-rate').value + '%', 200, 125, {align: 'right'});
             doc.text('Term:', 20, 140); doc.text(document.getElementById('emi-months').value + ' months', 200, 140, {align: 'right'});
-            doc.line(20, 155, 300, 155);
-            var rows = [];
-            var mainTable = document.getElementById('emi-table-body');
-            for(var i=0; i<mainTable.rows.length; i++) {
-                var row = mainTable.rows[i];
-                rows.push([row.cells[0].innerText, row.cells[1].innerText, row.cells[6].innerText, row.cells[7].innerText]);
-            }
-            doc.autoTable({
-                head: [['#', 'Due Date', 'Installment', 'Balance']],
-                body: rows,
-                startY: 165,
-                theme: 'plain',
-                styles: { fontSize: 8, cellPadding: 3, textColor: 0 },
-                headStyles: { fillColor: [255, 255, 255], textColor: 0, lineWidth: 0.1, lineColor: [0,0,0] },
-                columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } }
-            });
-            var finalY = doc.lastAutoTable.finalY + 10;
-            doc.line(20, finalY, 300, finalY);
-            finalY += 20;
-            doc.text('Monthly EMI:', 20, finalY); doc.text('₱' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'});
-            finalY += 15;
-            doc.text('Total Interest:', 20, finalY); doc.text('₱' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'});
-            finalY += 15;
-            doc.setFontSize(14);
-            doc.text('TOTAL PAYABLE:', 20, finalY); doc.text('₱' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
-            finalY += 20; doc.line(20, finalY, 300, finalY); finalY += 20;
-            doc.setFontSize(9); doc.setTextColor(100);
-            doc.text('This is a system-generated computation.', 60, finalY);
-            finalY += 12; doc.text('Not an official billing statement.', 75, finalY);
-            doc.save('Maya_Receipt.pdf');
-            showToast('PDF Downloaded');
+            doc.line(20, 155, 300, 155); var rows = []; var mainTable = document.getElementById('emi-table-body');
+            for(var i=0; i<mainTable.rows.length; i++) { var row = mainTable.rows[i]; rows.push([row.cells[0].innerText, row.cells[1].innerText, row.cells[6].innerText, row.cells[7].innerText]); }
+            doc.autoTable({ head: [['#', 'Due Date', 'Installment', 'Balance']], body: rows, startY: 165, theme: 'plain', styles: { fontSize: 8, cellPadding: 3, textColor: 0 }, headStyles: { fillColor: [255, 255, 255], textColor: 0, lineWidth: 0.1, lineColor: [0,0,0] }, columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } } });
+            var finalY = doc.lastAutoTable.finalY + 10; doc.line(20, finalY, 300, finalY); finalY += 20;
+            doc.text('Monthly EMI:', 20, finalY); doc.text('₱' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'}); finalY += 15;
+            doc.text('Total Interest:', 20, finalY); doc.text('₱' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'}); finalY += 15;
+            doc.setFontSize(14); doc.text('TOTAL PAYABLE:', 20, finalY); doc.text('₱' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
+            finalY += 20; doc.line(20, finalY, 300, finalY); finalY += 20; doc.setFontSize(9); doc.setTextColor(100);
+            doc.text('This is a system-generated computation.', 60, finalY); finalY += 12; doc.text('Not an official billing statement.', 75, finalY);
+            doc.save('Maya_Receipt.pdf'); showToast('PDF Downloaded');
         }
 
         function sendReceiptEmail() {
-            var name = document.getElementById('send-cust-name').value;
-            var email = document.getElementById('send-cust-email').value;
+            var name = document.getElementById('send-cust-name').value, email = document.getElementById('send-cust-email').value;
             if(!name || !email) { showToast('Please enter name and email'); return; }
-            var text = buildTextReceipt();
-            var mailto = `mailto:${email}?subject=Maya Mini Payments Computation&body=Hi ${name},%0A%0AHere is your computation:%0A%0A${encodeURIComponent(text)}`;
-            window.open(mailto);
-            showToast('Email App Opened');
+            var text = buildTextReceipt(); var mailto = `mailto:${email}?subject=Maya Mini Payments Computation&body=Hi ${name},%0A%0AHere is your computation:%0A%0A${encodeURIComponent(text)}`;
+            window.open(mailto); showToast('Email App Opened');
         }
 
         function sendReceiptWhatsApp() {
             var phone = document.getElementById('send-cust-phone').value;
             if(!phone) { showToast('Please enter mobile number'); return; }
-            var text = buildTextReceipt();
-            var url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-            showToast('WhatsApp Opened');
+            var text = buildTextReceipt(); var url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank'); showToast('WhatsApp Opened');
         }
 
         function exportEMICSV(){
-            var rows=[["No","Due Date","Days","Principal Amt","Interest Amt","Principal Paid","Installment Amt","Remaining Prin"]];
-            var table=document.getElementById('emi-table-body');
+            var rows=[["No","Due Date","Days","Principal Amt","Interest Amt","Principal Paid","Installment Amt","Remaining Prin"]]; var table=document.getElementById('emi-table-body');
             if(!table.rows.length){showToast('No data to export');return;}
-            for(var i=0;i<table.rows.length;i++){
-                var cells=[];
-                for(var j=0;j<table.rows[i].cells.length;j++){cells.push(table.rows[i].cells[j].innerText);}
-                rows.push(cells);
-            }
-            var csv='';
-            rows.forEach(function(row){ csv+=row.join(',')+'\n'; });
-            var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-            var link=document.createElement('a');
-            link.href=URL.createObjectURL(blob);
-            link.download='Maya_EMI_Schedule.csv';
-            link.click();
-            showToast('CSV Exported');
+            for(var i=0;i<table.rows.length;i++){ var cells=[]; for(var j=0;j<table.rows[i].cells.length;j++){cells.push(table.rows[i].cells[j].innerText);} rows.push(cells); }
+            var csv=''; rows.forEach(function(row){ csv+=row.join(',')+'\n'; });
+            var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); var link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download='Maya_EMI_Schedule.csv'; link.click(); showToast('CSV Exported');
         }
 
         // ===== HISTORY FUNCTIONS =====
         function getHistory(){return JSON.parse(localStorage.getItem('maya_calc_history')||'[]');}
         function saveHistory(type, summary, inputs){
-            var hist=getHistory();
-            hist.unshift({id:Date.now(),type:type,summary:summary,inputs:inputs,date:new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})});
-            if(hist.length>20)hist=hist.slice(0,20);
-            localStorage.setItem('maya_calc_history',JSON.stringify(hist));
-            showToast('Saved to History');
+            var hist=getHistory(); hist.unshift({id:Date.now(),type:type,summary:summary,inputs:inputs,date:new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})});
+            if(hist.length>20)hist=hist.slice(0,20); localStorage.setItem('maya_calc_history',JSON.stringify(hist)); showToast('Saved to History');
         }
         function saveMilesHistory(){ saveHistory('Miles', `Spend: ₱${document.getElementById('est-spend').textContent} | Miles: ${document.getElementById('miles-input').value}`, { spend: document.getElementById('spend-input').value, mult: document.getElementById('multiplier-select').value, customMult: document.getElementById('custom-multiplier').value }); }
         function saveFinanceHistory(){ saveHistory('Finance', `Total Payable: ₱${document.getElementById('finance-charge-result').textContent}`, { loan: document.getElementById('loan-credit').value, pay: document.getElementById('partial-payment').value, term: document.getElementById('loan-term').value, held: document.getElementById('days-held').value }); }
@@ -1038,76 +942,31 @@
         function saveEMIHistory(){ saveHistory('EMI', `Principal: ₱${document.getElementById('emi-principal').value} | EMI: ₱${document.getElementById('emi-fixed-amount').textContent}`, { P: document.getElementById('emi-principal').value, EIR: document.getElementById('emi-rate').value, N: document.getElementById('emi-months').value, D: document.getElementById('emi-days-year').value, startDate: document.getElementById('emi-start-date').value }); }
         function saveBillingHistory(){ saveHistory('Billing', `Total Due: ₱${document.getElementById('bil-total-due').textContent}`, { bal: document.getElementById('bil-outstanding').value, pastDue: document.getElementById('bil-is-past-due').checked }); }
         function saveDueDateHistory(){ saveHistory('Due Date', `Due: ${document.getElementById('due-result-date').textContent}`, { stmtDate: document.getElementById('due-stmt-date').value, grace: document.getElementById('due-grace-days').value }); }
+        function saveFXHistory(){ saveHistory('FX', `Total Billed: ₱${document.getElementById('fx-total').textContent}`, { forAmt: document.getElementById('fx-foreign-amt').value, rate: document.getElementById('fx-rate').value, fee: document.getElementById('fx-fee').value }); }
+        function saveCAHistory(){ saveHistory('Cash Advance', `Total Charged: ₱${document.getElementById('ca-limit-charge').textContent}`, { amt: document.getElementById('ca-amt').value, fee: document.getElementById('ca-fee').value }); }
         
-        function toggleHistory(){
-            var modal=document.getElementById('historyModal');
-            if(modal.classList.contains('open')){ modal.classList.remove('open'); } else { renderHistory(); modal.classList.add('open'); }
-        }
+        function toggleHistory(){ var modal=document.getElementById('historyModal'); if(modal.classList.contains('open')){ modal.classList.remove('open'); } else { renderHistory(); modal.classList.add('open'); } }
         function renderHistory(){
-            var hist=getHistory();
-            var list=document.getElementById('history-list');
+            var hist=getHistory(); var list=document.getElementById('history-list');
             if(!hist.length){list.innerHTML='<div class="text-center text-zinc-500 py-8 text-sm">No history saved yet.</div>';return;}
             var h='';
-            for(var i=0;i<hist.length;i++){
-                var item=hist[i];
-                h+=`<div class="hist-item" onclick='loadHistory(${item.id})'>`;
-                h+=`<div class="flex justify-between items-start">`;
-                h+=`<div><span class="hist-type">${item.type}</span><p class="hist-date">${item.date}</p></div>`;
-                h+=`<button onclick='event.stopPropagation();deleteHistory(${item.id})' class="text-zinc-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-                h+=`</div><p class="hist-summary">${item.summary}</p></div>`;
-            }
-            list.innerHTML=h;
+            for(var i=0;i<hist.length;i++){ var item=hist[i];
+                h+=`<div class="hist-item" onclick='loadHistory(${item.id})'><div class="flex justify-between items-start"><div><span class="hist-type">${item.type}</span><p class="hist-date">${item.date}</p></div><button onclick='event.stopPropagation();deleteHistory(${item.id})' class="text-zinc-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></div><p class="hist-summary">${item.summary}</p></div>`;
+            } list.innerHTML=h;
         }
-        function deleteHistory(id){
-            var hist=getHistory().filter(function(item){return item.id!==id;});
-            localStorage.setItem('maya_calc_history',JSON.stringify(hist));
-            renderHistory();
-            showToast('History Deleted');
-        }
-        function clearAllHistory(){
-            if(!confirm('Clear all calculation history? This cannot be undone.'))return;
-            localStorage.removeItem('maya_calc_history');
-            renderHistory();
-            showToast('History Cleared');
-        }
+        function deleteHistory(id){ var hist=getHistory().filter(function(item){return item.id!==id;}); localStorage.setItem('maya_calc_history',JSON.stringify(hist)); renderHistory(); showToast('History Deleted'); }
+        function clearAllHistory(){ if(!confirm('Clear all calculation history? This cannot be undone.'))return; localStorage.removeItem('maya_calc_history'); renderHistory(); showToast('History Cleared'); }
         function loadHistory(id){
-            var item=getHistory().find(function(i){return i.id===id;});
-            if(!item)return;
-            if(item.type==='Miles'){
-                document.getElementById('spend-input').value=item.inputs.spend||'';
-                document.getElementById('multiplier-select').value=item.inputs.mult||'1';
-                if(item.inputs.mult==='custom'){document.getElementById('custom-multiplier').value=item.inputs.customMult||'';document.getElementById('custom-multiplier').classList.remove('hidden');}
-                calculateMiles();
-            } else if(item.type==='Finance'){
-                document.getElementById('loan-credit').value=item.inputs.loan||'';
-                document.getElementById('partial-payment').value=item.inputs.pay||'';
-                document.getElementById('loan-term').value=item.inputs.term||'30';
-                document.getElementById('days-held').value=item.inputs.held||'20';
-                calcFinance();
-            } else if(item.type==='Landers'){
-                document.getElementById('landers-spend').value=item.inputs.spend||'';
-                document.getElementById('total-card-spend').value=item.inputs.acc||'';
-                document.getElementById('landers-category').value=item.inputs.cat||'landers';
-                calcLanders();
-            } else if(item.type==='EMI'){
-                document.getElementById('emi-principal').value=item.inputs.P||'';
-                document.getElementById('emi-rate').value=item.inputs.EIR||'1.69';
-                document.getElementById('emi-months').value=item.inputs.N||'6';
-                document.getElementById('emi-days-year').value=item.inputs.D||'365';
-                document.getElementById('emi-start-date').value=item.inputs.startDate||new Date().toISOString().split('T')[0];
-                calcEMI();
-            } else if(item.type==='Billing'){
-                document.getElementById('bil-outstanding').value=item.inputs.bal||'';
-                document.getElementById('bil-is-past-due').checked=item.inputs.pastDue||false;
-                calcBilling();
-            } else if(item.type==='Due Date'){
-                document.getElementById('due-stmt-date').value=item.inputs.stmtDate||'';
-                document.getElementById('due-grace-days').value=item.inputs.grace||'21';
-                calcDueDate();
-            }
-            toggleHistory();
-            showToast('Inputs Loaded');
-            window.scrollTo({top:0,behavior:'smooth'});
+            var item=getHistory().find(function(i){return i.id===id;}); if(!item)return;
+            if(item.type==='Miles'){ document.getElementById('spend-input').value=item.inputs.spend||''; document.getElementById('multiplier-select').value=item.inputs.mult||'1'; if(item.inputs.mult==='custom'){document.getElementById('custom-multiplier').value=item.inputs.customMult||'';document.getElementById('custom-multiplier').classList.remove('hidden');} calculateMiles(); }
+            else if(item.type==='Finance'){ document.getElementById('loan-credit').value=item.inputs.loan||''; document.getElementById('partial-payment').value=item.inputs.pay||''; document.getElementById('loan-term').value=item.inputs.term||'30'; document.getElementById('days-held').value=item.inputs.held||'20'; calcFinance(); }
+            else if(item.type==='Landers'){ document.getElementById('landers-spend').value=item.inputs.spend||''; document.getElementById('total-card-spend').value=item.inputs.acc||''; document.getElementById('landers-category').value=item.inputs.cat||'landers'; calcLanders(); }
+            else if(item.type==='EMI'){ document.getElementById('emi-principal').value=item.inputs.P||''; document.getElementById('emi-rate').value=item.inputs.EIR||'1.69'; document.getElementById('emi-months').value=item.inputs.N||'6'; document.getElementById('emi-days-year').value=item.inputs.D||'365'; document.getElementById('emi-start-date').value=item.inputs.startDate||new Date().toISOString().split('T')[0]; calcEMI(); }
+            else if(item.type==='Billing'){ document.getElementById('bil-outstanding').value=item.inputs.bal||''; document.getElementById('bil-is-past-due').checked=item.inputs.pastDue||false; calcBilling(); }
+            else if(item.type==='Due Date'){ document.getElementById('due-stmt-date').value=item.inputs.stmtDate||''; document.getElementById('due-grace-days').value=item.inputs.grace||'21'; calcDueDate(); }
+            else if(item.type==='FX'){ document.getElementById('fx-foreign-amt').value=item.inputs.forAmt||''; document.getElementById('fx-rate').value=item.inputs.rate||''; document.getElementById('fx-fee').value=item.inputs.fee||'1.75'; calcFX(); }
+            else if(item.type==='Cash Advance'){ document.getElementById('ca-amt').value=item.inputs.amt||''; document.getElementById('ca-fee').value=item.inputs.fee||'5.00'; calcCashAdvance(); }
+            toggleHistory(); showToast('Inputs Loaded'); window.scrollTo({top:0,behavior:'smooth'});
         }
 
         document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
