@@ -9,9 +9,79 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Required for Render to get the real user IP instead of the proxy IP
+app.set('trust proxy', true);
+
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const DB_NAME = 'maya-app';
 let mongoClient = null;
+
+// ========================================
+// IP WHITELISTING MIDDLEWARE (STRICT)
+// ========================================
+const allowedIpsEnv = process.env.ALLOWED_IPS || '';
+const allowedIps = allowedIpsEnv.split(',').map(ip => ip.trim()).filter(Boolean);
+
+console.log('=== IP WHITELIST STATUS ===');
+console.log('ALLOWED_IPS env set:', allowedIpsEnv.length > 0 ? 'YES' : 'NO - ALL ACCESS WILL BE BLOCKED');
+if (allowedIps.length > 0) {
+    console.log('Whitelisted IPs:', allowedIps);
+}
+console.log('==========================');
+
+app.use((req, res, next) => {
+    // STRICT: Block everything if no whitelist is configured
+    if (allowedIps.length === 0) {
+        console.log('BLOCKED - No IP whitelist configured');
+        return res.status(403).send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head><meta charset="UTF-8"><title>Access Denied</title></head>
+            <body style="font-family: 'Inter', sans-serif; background-color: #08090A; color: #fca5a5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center;">
+                <div>
+                    <h1 style="font-size: 24px; margin-bottom: 10px;">403 - Access Denied</h1>
+                    <p>IP whitelist is not configured on this server.</p>
+                    <p style="color: #71717a; font-size: 14px; margin-top: 20px;">Set the ALLOWED_IPS environment variable</p>
+                </div>
+            </body>
+            </html>
+        `);
+    }
+
+    // Get real IP (handle multiple proxy headers)
+    let clientIp = req.headers['x-forwarded-for'] || 
+                   req.headers['x-real-ip'] || 
+                   req.socket.remoteAddress || 
+                   '';
+    
+    // x-forwarded-for can contain multiple IPs: client, proxy1, proxy2
+    // The FIRST one is the real client IP
+    clientIp = clientIp.split(',')[0].trim();
+    
+    // Clean IPv6-mapped IPv4 (e.g., ::ffff:192.168.1.1 -> 192.168.1.1)
+    const cleanIp = clientIp.replace(/^::ffff:/, '');
+
+    console.log(`[IP] ${cleanIp} -> ${req.path}`);
+
+    if (allowedIps.includes(cleanIp)) {
+        next();
+    } else {
+        console.log(`DENIED - ${cleanIp} not in [${allowedIps.join(', ')}]`);
+        res.status(403).send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head><meta charset="UTF-8"><title>Access Denied</title></head>
+            <body style="font-family: 'Inter', sans-serif; background-color: #08090A; color: #fca5a5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center;">
+                <div>
+                    <h1 style="font-size: 24px; margin-bottom: 10px;">403 - Access Denied</h1>
+                    <p>Your IP address (${cleanIp}) is not authorized to access this terminal.</p>
+                    <p style="color: #71717a; font-size: 14px; margin-top: 20px;">Maya Internal Infrastructure</p>
+                </div>
+            </body>
+            </html>
+        `);
+    }
+});
 
 async function getDb() {
     if (!mongoClient) {
@@ -306,12 +376,10 @@ app.put('/api/notes/:id', authMiddleware, async function(req, res) {
         const isCreator = note.userId === req.user.id;
         const isTLPlus = getRoleLevel(req.user.role) >= 3;
 
-        // RULE 1: If note is closed, ONLY TL+ can edit
         if (note.status === 'Closed' && !isTLPlus) {
             return res.status(403).json({ error: 'Ticket is closed. Only TLs and above can edit.' });
         }
 
-        // RULE 2: If user is NOT the creator AND NOT a TL+, they cannot edit
         if (!isCreator && !isTLPlus) {
             return res.status(403).json({ error: 'You can only view this ticket. Only the creator or TLs+ can edit.' });
         }
