@@ -249,8 +249,10 @@ app.get('/api/health', async function(req, res) {
 // SECURE FX RATES API PROXY
 // ========================================
 app.get('/api/fx-rates', async function(req, res) {
-    // Uses your Render Environment Variable securely.
-    const fxApiUrl = process.env.FX_API_URL || 'https://open.er-api.com/v6/latest/PHP';
+    let fxApiUrl = process.env.FX_API_URL || 'https://open.er-api.com/v6/latest/PHP';
+    if (!fxApiUrl.startsWith('http://') && !fxApiUrl.startsWith('https://')) {
+        fxApiUrl = 'https://' + fxApiUrl;
+    }
     try {
         const response = await fetch(fxApiUrl);
         if (!response.ok) throw new Error('Network response was not ok');
@@ -260,6 +262,70 @@ app.get('/api/fx-rates', async function(req, res) {
         console.error('FX API Error:', err);
         res.status(500).json({ error: 'Failed to fetch live exchange rates' });
     }
+});
+
+// ========================================
+// TICKETING & NOTES API
+// ========================================
+app.get('/api/notes', authMiddleware, async function(req, res) {
+    try {
+        const db = await getDb();
+        const notes = await db.collection('notes').find({}).sort({ createdAt: -1 }).toArray();
+        res.json(notes);
+    } catch (e) { res.status(500).json({ error: 'Database error' }); }
+});
+
+app.post('/api/notes', authMiddleware, async function(req, res) {
+    const { subject, details } = req.body;
+    if (!subject) return res.status(400).json({ error: 'Subject is required' });
+    try {
+        const db = await getDb();
+        const newNote = {
+            id: 'TKT-' + Math.floor(Math.random() * 900000 + 100000),
+            userId: req.user.id,
+            userName: req.user.name,
+            subject,
+            details: details || '',
+            status: 'Open',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        await db.collection('notes').insertOne(newNote);
+        res.status(201).json({ message: 'Ticket created', note: newNote });
+    } catch (e) { res.status(500).json({ error: 'Database error' }); }
+});
+
+app.put('/api/notes/:id', authMiddleware, async function(req, res) {
+    const noteId = req.params.id;
+    const { subject, details, status } = req.body;
+    try {
+        const db = await getDb();
+        const note = await db.collection('notes').findOne({ id: noteId });
+        if (!note) return res.status(404).json({ error: 'Ticket not found' });
+
+        // If note is closed, only TL+ (role >= 3) can edit
+        if (note.status === 'Closed' && getRoleLevel(req.user.role) < 3) {
+            return res.status(403).json({ error: 'Ticket is closed. Only TLs and above can edit.' });
+        }
+
+        const updateFields = { updatedAt: new Date().toISOString() };
+        if (subject) updateFields.subject = subject;
+        if (details !== undefined) updateFields.details = details;
+        if (status) updateFields.status = status;
+
+        await db.collection('notes').updateOne({ id: noteId }, { $set: updateFields });
+        res.json({ message: 'Ticket updated' });
+    } catch (e) { res.status(500).json({ error: 'Database error' }); }
+});
+
+app.delete('/api/notes/:id', authMiddleware, async function(req, res) {
+    const noteId = req.params.id;
+    if (getRoleLevel(req.user.role) < 3) return res.status(403).json({ error: 'Only TLs and above can delete tickets' });
+    try {
+        const db = await getDb();
+        await db.collection('notes').deleteOne({ id: noteId });
+        res.json({ message: 'Ticket deleted' });
+    } catch (e) { res.status(500).json({ error: 'Database error' }); }
 });
 
 // ========================================
