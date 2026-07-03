@@ -246,12 +246,28 @@ app.get('/api/health', async function(req, res) {
 });
 
 // ========================================
+// SECURE FX RATES API PROXY
+// ========================================
+app.get('/api/fx-rates', async function(req, res) {
+    // Uses your Render Environment Variable securely.
+    const fxApiUrl = process.env.FX_API_URL || 'https://open.er-api.com/v6/latest/PHP';
+    try {
+        const response = await fetch(fxApiUrl);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        res.json(data);
+    } catch (err) {
+        console.error('FX API Error:', err);
+        res.status(500).json({ error: 'Failed to fetch live exchange rates' });
+    }
+});
+
+// ========================================
 // SECURE EMAIL API PROXY
 // ========================================
 app.post('/api/email/send', authMiddleware, async function(req, res) {
     let { to_email, to_name, subject, receipt_html, receipt_summary, total_amount, principal, interest_total, installments, note, from_name, type } = req.body;
 
-    // If it's a contact form message, override the recipient to the Admin email
     if (type === 'contact') {
         to_email = process.env.ADMIN_EMAIL;
         to_name = 'Admin';
@@ -306,6 +322,7 @@ app.post('/api/email/send', authMiddleware, async function(req, res) {
         res.status(500).json({ error: 'Server error sending email' });
     }
 });
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 var PORT = process.env.PORT || 10000;
