@@ -154,7 +154,7 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.3.0</p>
+                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.4.0</p>
                     <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
                 </div>
             </div>
@@ -188,29 +188,34 @@
             <a href="#module-f" class="quick-nav-btn">Billing</a>
             <a href="#module-g" class="quick-nav-btn">Due Date</a>
             <a href="#module-h" class="quick-nav-btn">FX Trans</a>
+            <a href="#module-i" class="quick-nav-btn">Tickets</a>
         </div>
     </div>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
         
+        <!-- MODULE D: ACCOUNT MANAGEMENT -->
         <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
             <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
-            <div class="mb-6"><button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
-                <div id="create-form" class="hidden mt-4 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                        <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
-                    </div>
-                    <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
-                    <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
+            <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between">
+                <button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
+                <input type="text" id="user-search" placeholder="Search by ID or Name..." class="w-full md:w-1/3 bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div id="create-form" class="hidden mb-6 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
                 </div>
+                <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
+                <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
             </div>
             <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
         </div>
 
+        <!-- MODULE A: MILES CALCULATOR -->
         <div id="module-a" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
             <div class="space-y-5 flex-grow">
@@ -225,6 +230,7 @@
             </div>
         </div>
 
+        <!-- MODULE B: FINANCE CHARGE CALCULATOR -->
         <div id="module-b" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-red-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span></div>
             <div class="space-y-5 flex-grow">
@@ -245,6 +251,7 @@
             </div>
         </div>
 
+        <!-- MODULE C: LANDERS REWARDS CALCULATOR -->
         <div id="module-c" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
                 <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
@@ -264,6 +271,7 @@
             </div>
         </div>
 
+        <!-- MODULE E: MINI PAYMENTS CALCULATOR (EMI) -->
         <div id="module-e" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
@@ -273,16 +281,13 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
             </div>
-            
             <div class="flex flex-wrap gap-2 mb-4 no-print">
                 <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Generate Official Receipt</button>
                 <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History</button>
                 <button onclick="resetEMI()" class="px-3 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-300 hover:text-red-400 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>Clear Fields</button>
                 <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export Data (CSV)</button>
             </div>
-
             <details class="formula-card mb-4 no-print"><summary>Show Calculation Breakdown</summary><div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div></details>
-
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div>
                 <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p></div>
@@ -292,6 +297,7 @@
             <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
         </div>
 
+        <!-- MODULE F: BILLING & LATE FEES CALCULATOR -->
         <div id="module-f" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-purple-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Billing & Late Fees</h2></div><span class="px-2 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] uppercase font-bold rounded">Module F</span></div>
             <div class="space-y-5 flex-grow">
@@ -315,6 +321,7 @@
             </div>
         </div>
 
+        <!-- MODULE G: PAYMENT DUE DATE ESTIMATOR -->
         <div id="module-g" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-pink-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Due Date Estimator</h2></div><span class="px-2 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] uppercase font-bold rounded">Module G</span></div>
             <div class="space-y-5 flex-grow">
@@ -332,14 +339,13 @@
             </div>
         </div>
 
+        <!-- MODULE H: FX TRANSACTION CALCULATOR -->
         <div id="module-h" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
             <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-cyan-500 rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold rounded">Module H</span></div>
-            
             <div id="fx-live-alert" class="mb-4 p-3 bg-cyan-500/5 border border-cyan-500/10 rounded-lg text-cyan-400 text-[10px] flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 <span id="fx-live-status">Fetching live global exchange rates...</span>
             </div>
-
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                 <div class="col-span-2 md:col-span-1">
                     <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Currency</label>
@@ -402,6 +408,59 @@
                 <div class="grid grid-cols-2 gap-4 mt-4 md:mt-0 w-full md:w-1/2">
                     <button onclick="saveFXHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
                     <button onclick="resetFX()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE I: TICKETING & NOTES -->
+        <div id="module-i" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-6">
+            <div class="md:w-1/3 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-yellow-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Tickets & Notes</h2></div>
+                    <button onclick="openNewTicket()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-md transition-colors flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        New
+                    </button>
+                </div>
+                <input type="text" id="ticket-search" placeholder="Search tickets..." class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-3 text-sm text-white mb-4 focus:outline-none focus:border-emerald-500" oninput="searchTickets()">
+                <div id="ticket-list" class="flex-grow overflow-y-auto space-y-2 pr-2" style="max-height: 450px;">
+                    <div class="text-center text-zinc-500 py-8 text-sm">Loading tickets...</div>
+                </div>
+            </div>
+            
+            <div class="md:w-2/3 bg-zinc-900/30 rounded-xl p-6 border border-zinc-800 flex flex-col">
+                <div id="ticket-form-header" class="flex justify-between items-center mb-4">
+                    <h3 class="text-md font-bold text-white">New Ticket</h3>
+                    <span id="ticket-status-badge" class="hidden px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] uppercase font-bold rounded">Open</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Ticket No.</label>
+                        <input type="text" id="ticket-id" class="edit-field-input mono" disabled placeholder="Auto-generated">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Created By</label>
+                        <input type="text" id="ticket-creator" class="edit-field-input" disabled placeholder="Auto-filled">
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label>
+                    <input type="text" id="ticket-subject" class="edit-field-input" placeholder="Brief subject of the ticket">
+                </div>
+                
+                <div class="mb-4 flex-grow">
+                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Details</label>
+                    <textarea id="ticket-details" class="contact-textarea" rows="6" placeholder="Describe the issue or note..."></textarea>
+                </div>
+
+                <div id="ticket-alert" class="module-d-alert module-d-alert-error mb-4"><span id="ticket-alert-text"></span></div>
+                
+                <div class="flex justify-end gap-3 mt-auto">
+                    <button id="ticket-delete-btn" onclick="deleteTicket()" class="hidden px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold uppercase rounded-lg transition-colors">Delete</button>
+                    <button id="ticket-close-btn" onclick="toggleTicketStatus()" class="hidden px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white text-xs font-bold uppercase rounded-lg transition-colors">Close Ticket</button>
+                    <button id="ticket-save-btn" onclick="saveTicket()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-lg transition-colors">Save Ticket</button>
                 </div>
             </div>
         </div>
@@ -612,7 +671,6 @@
     <script>
         // =============================================
         // RENDER ENVIRONMENT VARIABLES
-        // Now fetching securely from our own backend proxy!
         // =============================================
         var FX_API_URL = "/api/fx-rates";
 
@@ -620,9 +678,11 @@
         var allUsersCache = [];
         var shiftStartTime = Date.now();
         var liveFxRates = {};
+        let currentTicketId = null;
+        let allTickets = [];
 
         // =============================================
-        // EMAILJS CONFIG - REPLACE THESE 3 VALUES
+        // EMAILJS CONFIG
         // =============================================
         var EMAILJS_SERVICE_ID = 'service_1zm2s7c';
         var EMAILJS_TEMPLATE_ID = 'template_h7keskr';
@@ -653,6 +713,7 @@
                     document.getElementById('nav-module-d').classList.remove('hidden');
                     renderUserTable();
                 }
+                fetchTickets(); // Fetch tickets on load
             })
             .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');});
         })();
@@ -736,6 +797,21 @@
             .catch(function(){tbody.innerHTML='<tr><td colspan="5" class="text-center text-red-400 py-8 text-sm font-sans normal-case">Failed to load users.</td></tr>';});
         }
 
+        // User Search Logic
+        document.getElementById('user-search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#user-table-body .user-row');
+            rows.forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                if (id.includes(searchTerm) || name.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
         function toggleCreateForm(){
             var f=document.getElementById('create-form'),b=document.getElementById('toggle-create-btn');
             if(f.classList.contains('hidden')){
@@ -763,6 +839,167 @@
             if(!fn){showEditAlert('Please enter a full name.','error');return;}if(sq&&!sa){showEditAlert('Please enter the security answer.','error');return;}if(np&&np.length<6){showEditAlert('Password must be at least 6 characters.','error');return;}
             var body={fullName:fn,role:ro};if(sq)body.securityQuestion=sq;if(sa)body.securityAnswer=sa;if(np)body.password=np;
             fetch('/api/auth/users/'+encodeURIComponent(editingUserId),{method:'PUT',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){showEditAlert(d.error,'error');return;}closeEditModal();renderUserTable();showModuleDAlert(d.message,'success');}).catch(function(){showEditAlert('Cannot connect to server.','error');});
+        }
+
+        // ===== TICKETING & NOTES LOGIC =====
+        function fetchTickets() {
+            fetch('/api/notes', { headers: { 'x-maya-token': getToken() } })
+            .then(r => r.json())
+            .then(tickets => {
+                allTickets = tickets;
+                renderTicketList(tickets);
+            });
+        }
+
+        function renderTicketList(tickets) {
+            const list = document.getElementById('ticket-list');
+            if (!tickets.length) {
+                list.innerHTML = '<div class="text-center text-zinc-500 py-8 text-sm">No tickets found.</div>';
+                return;
+            }
+            list.innerHTML = tickets.map(t => `
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 cursor-pointer hover:border-emerald-500/40 transition-colors ${t.id === currentTicketId ? 'border-emerald-500/40' : ''}" onclick="loadTicket('${t.id}')">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] font-mono text-emerald-400">${t.id}</span>
+                        <span class="text-[9px] uppercase font-bold ${t.status === 'Open' ? 'text-emerald-400' : 'text-zinc-500'}">${t.status}</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-white truncate">${escapeHtml(t.subject)}</h4>
+                    <p class="text-[10px] text-zinc-500 mt-1">By ${escapeHtml(t.userName)} on ${formatDate(t.createdAt)}</p>
+                </div>
+            `).join('');
+        }
+
+        function searchTickets() {
+            const searchTerm = document.getElementById('ticket-search').value.toLowerCase();
+            const filtered = allTickets.filter(t => 
+                t.subject.toLowerCase().includes(searchTerm) || 
+                t.id.toLowerCase().includes(searchTerm) || 
+                t.userName.toLowerCase().includes(searchTerm)
+            );
+            renderTicketList(filtered);
+        }
+
+        function openNewTicket() {
+            currentTicketId = null;
+            document.getElementById('ticket-form-header').querySelector('h3').textContent = 'New Ticket';
+            document.getElementById('ticket-id').value = '';
+            document.getElementById('ticket-creator').value = sessionStorage.getItem('maya_user_name') || '';
+            document.getElementById('ticket-subject').value = '';
+            document.getElementById('ticket-details').value = '';
+            document.getElementById('ticket-status-badge').classList.add('hidden');
+            
+            document.getElementById('ticket-subject').disabled = false;
+            document.getElementById('ticket-details').disabled = false;
+            document.getElementById('ticket-save-btn').classList.remove('hidden');
+            document.getElementById('ticket-close-btn').classList.add('hidden');
+            document.getElementById('ticket-delete-btn').classList.add('hidden');
+            
+            renderTicketList(allTickets);
+        }
+
+        function loadTicket(id) {
+            const ticket = allTickets.find(t => t.id === id);
+            if (!ticket) return;
+            currentTicketId = id;
+            
+            document.getElementById('ticket-form-header').querySelector('h3').textContent = 'Edit Ticket';
+            document.getElementById('ticket-id').value = ticket.id;
+            document.getElementById('ticket-creator').value = ticket.userName;
+            document.getElementById('ticket-subject').value = ticket.subject;
+            document.getElementById('ticket-details').value = ticket.details;
+            
+            const statusBadge = document.getElementById('ticket-status-badge');
+            statusBadge.classList.remove('hidden');
+            statusBadge.textContent = ticket.status;
+            if (ticket.status === 'Open') {
+                statusBadge.className = 'px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] uppercase font-bold rounded';
+            } else {
+                statusBadge.className = 'px-2 py-1 bg-zinc-500/10 border border-zinc-500/20 text-zinc-400 text-[9px] uppercase font-bold rounded';
+            }
+            
+            const isTL = getRoleLevel(sessionStorage.getItem('maya_user_role')) >= 3;
+            const isClosed = ticket.status === 'Closed';
+            const canEdit = !isClosed || isTL;
+            
+            document.getElementById('ticket-subject').disabled = !canEdit;
+            document.getElementById('ticket-details').disabled = !canEdit;
+            
+            document.getElementById('ticket-save-btn').classList.toggle('hidden', !canEdit);
+            document.getElementById('ticket-close-btn').classList.toggle('hidden', !canEdit);
+            document.getElementById('ticket-close-btn').textContent = isClosed ? 'Reopen Ticket' : 'Close Ticket';
+            document.getElementById('ticket-delete-btn').classList.toggle('hidden', !isTL);
+            
+            renderTicketList(allTickets);
+        }
+
+        function saveTicket() {
+            const subject = document.getElementById('ticket-subject').value.trim();
+            const details = document.getElementById('ticket-details').value.trim();
+            if (!subject) { showTicketAlert('Subject is required', 'error'); return; }
+            
+            const method = currentTicketId ? 'PUT' : 'POST';
+            const url = currentTicketId ? `/api/notes/${currentTicketId}` : '/api/notes';
+            
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json', 'x-maya-token': getToken() },
+                body: JSON.stringify({ subject, details })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showTicketAlert(data.error, 'error'); return; }
+                showToast(currentTicketId ? 'Ticket Updated' : 'Ticket Created');
+                fetchTickets();
+                if (!currentTicketId && data.note) {
+                    loadTicket(data.note.id);
+                }
+            })
+            .catch(() => showTicketAlert('Failed to save ticket', 'error'));
+        }
+
+        function toggleTicketStatus() {
+            if (!currentTicketId) return;
+            const ticket = allTickets.find(t => t.id === currentTicketId);
+            const newStatus = ticket.status === 'Open' ? 'Closed' : 'Open';
+            
+            fetch(`/api/notes/${currentTicketId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'x-maya-token': getToken() },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showTicketAlert(data.error, 'error'); return; }
+                showToast(`Ticket ${newStatus}`);
+                fetchTickets();
+                loadTicket(currentTicketId);
+            })
+            .catch(() => showTicketAlert('Failed to update status', 'error'));
+        }
+
+        function deleteTicket() {
+            if (!currentTicketId) return;
+            if (!confirm('Delete this ticket? This cannot be undone.')) return;
+            
+            fetch(`/api/notes/${currentTicketId}`, {
+                method: 'DELETE',
+                headers: { 'x-maya-token': getToken() }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { showTicketAlert(data.error, 'error'); return; }
+                showToast('Ticket Deleted');
+                fetchTickets();
+                openNewTicket();
+            })
+            .catch(() => showTicketAlert('Failed to delete ticket', 'error'));
+        }
+
+        function showTicketAlert(m, t) {
+            var e = document.getElementById('ticket-alert');
+            document.getElementById('ticket-alert-text').textContent = m;
+            e.className = 'module-d-alert module-d-alert-' + (t || 'error') + ' show';
+            setTimeout(function() { e.classList.remove('show'); }, 4000);
         }
 
         // ===== UTILS =====
