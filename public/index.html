@@ -409,7 +409,7 @@
     </main>
 
     <section class="max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in no-print">
-        <a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
+        <a href="https://smnlwebapp1.inspiro.com/MAYA_KB/" target="_blank" rel="noopener noreferrer" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
             <div class="p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-emerald-400">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
             </div>
@@ -418,7 +418,7 @@
                 <p class="text-[10px] text-zinc-500">Latest CC Policies & Procedures</p>
             </div>
         </a>
-        <a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
+        <a href="https://inspiroinc.sharepoint.com/:x:/r/sites/MayaHotline/_layouts/15/Doc.aspx?sourcedoc=%7BF178FFCA-9A28-49FE-9FFC-F8B3819FE180%7D&file=AF%20and%20AMLI%20After%20Sales%20Handling%20and%20Escalation%20ao%200512.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1" target="_blank" rel="noopener noreferrer" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
             <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/20 text-red-400">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
@@ -427,7 +427,7 @@
                 <p class="text-[10px] text-zinc-500">Escalation Matrix & Red Flags</p>
             </div>
         </a>
-        <a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
+        <a href="javascript:void(0)" onclick="openITSupportModal()" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
             <div class="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
             </div>
@@ -470,6 +470,40 @@
         <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p></div>
     </footer>
 
+    <!-- IT Support Modal -->
+    <div id="itSupportModal" class="modal-backdrop-module-d">
+        <div class="modal-card-module-d" style="max-width: 420px;">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-white">IT Support Contacts</h2>
+                <button onclick="closeITSupportModal()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-sm">AC</div>
+                    <div>
+                        <p class="text-sm font-bold text-white">Ancel Claudio</p>
+                        <a href="mailto:ancel.claudio1@gmail.com" class="text-xs text-emerald-400 hover:underline">ancel.claudio1@gmail.com</a>
+                    </div>
+                </div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">MU</div>
+                    <div>
+                        <p class="text-sm font-bold text-white">Marlom Ubana</p>
+                        <a href="mailto:marlonxt19@gmail.com" class="text-xs text-blue-400 hover:underline">marlonxt19@gmail.com</a>
+                    </div>
+                </div>
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm">MD</div>
+                    <div>
+                        <p class="text-sm font-bold text-white">Marcux Dimaapi</p>
+                        <a href="mailto:marcux2003@gmail.com" class="text-xs text-purple-400 hover:underline">marcux2003@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
     <div id="receiptModal" class="modal-backdrop-module-d">
         <div class="modal-card-module-d" style="max-width: 360px; padding: 0; background: #fff; overflow: hidden;">
             <div class="bg-zinc-900 p-3 flex justify-between items-center no-print">
@@ -624,6 +658,10 @@
         })();
 
         function handleLogout(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');}
+
+        // ===== IT SUPPORT MODAL =====
+        function openITSupportModal() { document.getElementById('itSupportModal').classList.add('open'); }
+        function closeITSupportModal() { document.getElementById('itSupportModal').classList.remove('open'); }
 
         // ===== CONTACT ADMIN =====
         function showContactAlert(m,t){var e=document.getElementById('contact-alert');document.getElementById('contact-alert-text').textContent=m;e.className='module-d-alert module-d-alert-'+(t||'error')+' show';setTimeout(function(){e.classList.remove('show');},4000);}
@@ -1083,6 +1121,7 @@
         document.getElementById('historyModal').addEventListener('click',function(e){if(e.target===this)toggleHistory();});
         document.getElementById('receiptModal').addEventListener('click',function(e){if(e.target===this)closeReceiptModal();});
         document.getElementById('sendReceiptModal').addEventListener('click',function(e){if(e.target===this)closeSendReceiptModal();});
+        document.getElementById('itSupportModal').addEventListener('click',function(e){if(e.target===this)closeITSupportModal();});
     </script>
 </body>
 </html>
