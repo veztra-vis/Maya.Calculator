@@ -303,9 +303,17 @@ app.put('/api/notes/:id', authMiddleware, async function(req, res) {
         const note = await db.collection('notes').findOne({ id: noteId });
         if (!note) return res.status(404).json({ error: 'Ticket not found' });
 
-        // If note is closed, only TL+ (role >= 3) can edit
-        if (note.status === 'Closed' && getRoleLevel(req.user.role) < 3) {
+        const isCreator = note.userId === req.user.id;
+        const isTLPlus = getRoleLevel(req.user.role) >= 3;
+
+        // RULE 1: If note is closed, ONLY TL+ can edit
+        if (note.status === 'Closed' && !isTLPlus) {
             return res.status(403).json({ error: 'Ticket is closed. Only TLs and above can edit.' });
+        }
+
+        // RULE 2: If user is NOT the creator AND NOT a TL+, they cannot edit
+        if (!isCreator && !isTLPlus) {
+            return res.status(403).json({ error: 'You can only view this ticket. Only the creator or TLs+ can edit.' });
         }
 
         const updateFields = { updatedAt: new Date().toISOString() };
