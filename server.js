@@ -17,22 +17,28 @@ const DB_NAME = 'maya-app';
 let mongoClient = null;
 
 // ========================================
-// IP WHITELISTING MIDDLEWARE (STRICT)
+// IP WHITELISTING MIDDLEWARE (TOGGLEABLE)
 // ========================================
+const IP_WHITELIST_ENABLED = process.env.IP_WHITELIST_ENABLED === 'false';
 const allowedIpsEnv = process.env.ALLOWED_IPS || '';
 const allowedIps = allowedIpsEnv.split(',').map(ip => ip.trim()).filter(Boolean);
 
-console.log('=== IP WHITELIST STATUS ===');
-console.log('ALLOWED_IPS env set:', allowedIpsEnv.length > 0 ? 'YES' : 'NO - ALL ACCESS WILL BE BLOCKED');
-if (allowedIps.length > 0) {
-    console.log('Whitelisted IPs:', allowedIps);
+console.log('=== IP WHITELIST ===');
+console.log('Enabled:', IP_WHITELIST_ENABLED ? 'YES' : 'NO (all IPs allowed)');
+if (IP_WHITELIST_ENABLED) {
+    console.log('Whitelisted IPs:', allowedIps.length > 0 ? allowedIps : '[NONE - ALL BLOCKED]');
 }
-console.log('==========================');
+console.log('====================');
 
 app.use((req, res, next) => {
-    // STRICT: Block everything if no whitelist is configured
+    // Toggle off = allow everyone
+    if (!IP_WHITELIST_ENABLED) {
+        return next();
+    }
+
+    // Toggle on but no IPs listed = block everyone
     if (allowedIps.length === 0) {
-        console.log('BLOCKED - No IP whitelist configured');
+        console.log('BLOCKED - Whitelist enabled but empty');
         return res.status(403).send(`
             <!DOCTYPE html>
             <html lang="en">
@@ -40,25 +46,20 @@ app.use((req, res, next) => {
             <body style="font-family: 'Inter', sans-serif; background-color: #08090A; color: #fca5a5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center;">
                 <div>
                     <h1 style="font-size: 24px; margin-bottom: 10px;">403 - Access Denied</h1>
-                    <p>IP whitelist is not configured on this server.</p>
-                    <p style="color: #71717a; font-size: 14px; margin-top: 20px;">Set the ALLOWED_IPS environment variable</p>
+                    <p>IP whitelist is enabled but no IPs are configured.</p>
+                    <p style="color: #71717a; font-size: 14px; margin-top: 20px;">Set ALLOWED_IPS environment variable</p>
                 </div>
             </body>
             </html>
         `);
     }
 
-    // Get real IP (handle multiple proxy headers)
+    // Get real IP
     let clientIp = req.headers['x-forwarded-for'] || 
                    req.headers['x-real-ip'] || 
                    req.socket.remoteAddress || 
                    '';
-    
-    // x-forwarded-for can contain multiple IPs: client, proxy1, proxy2
-    // The FIRST one is the real client IP
     clientIp = clientIp.split(',')[0].trim();
-    
-    // Clean IPv6-mapped IPv4 (e.g., ::ffff:192.168.1.1 -> 192.168.1.1)
     const cleanIp = clientIp.replace(/^::ffff:/, '');
 
     console.log(`[IP] ${cleanIp} -> ${req.path}`);
@@ -312,7 +313,16 @@ app.post('/api/chat', async function(req, res) {
 app.get('/api/health', async function(req, res) {
     var dbStatus = 'disconnected';
     try { await (await getDb()).command({ ping: 1 }); dbStatus = 'connected'; } catch (e) { dbStatus = 'error'; }
-    res.json({ status: 'online', database: dbStatus, groqKeySet: !!process.env.GROQ_API_KEY, authKeySet: !!process.env.RENDER_AUTH_KEY });
+    res.json({ 
+        status: 'online', 
+        database: dbStatus, 
+        groqKeySet: !!process.env.GROQ_API_KEY, 
+        authKeySet: !!process.env.RENDER_AUTH_KEY,
+        ipWhitelist: {
+            enabled: IP_WHITELIST_ENABLED,
+            allowedIps: IP_WHITELIST_ENABLED ? allowedIps : 'disabled'
+        }
+    });
 });
 
 // ========================================
