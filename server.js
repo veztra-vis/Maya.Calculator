@@ -3,6 +3,7 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
 const crypto = require('crypto');
+const fs = require('fs');
 const { MongoClient } = require('mongodb');
 
 const app = express();
@@ -19,7 +20,15 @@ let mongoClient = null;
 // ========================================
 // IP WHITELISTING MIDDLEWARE (TOGGLEABLE)
 // ========================================
-const IP_WHITELIST_ENABLED = process.env.IP_WHITELIST_ENABLED === 'false';
+// [v1.1 FIX] Was: process.env.IP_WHITELIST_ENABLED === 'false'
+// The old comparison was INVERTED:
+//   - Setting IP_WHITELIST_ENABLED=false actually ENABLED the whitelist
+//     (and with an empty ALLOWED_IPS list it blocked EVERYONE - total lockout).
+//   - Setting IP_WHITELIST_ENABLED=true kept it DISABLED (could never be turned on).
+// Correct behavior now:
+//   - unset or "false"  -> whitelist OFF (all IPs allowed)
+//   - "true"            -> whitelist ON  (only ALLOWED_IPS get through)
+const IP_WHITELIST_ENABLED = process.env.IP_WHITELIST_ENABLED === 'true';
 const allowedIpsEnv = process.env.ALLOWED_IPS || '';
 const allowedIps = allowedIpsEnv.split(',').map(ip => ip.trim()).filter(Boolean);
 
@@ -55,9 +64,9 @@ app.use((req, res, next) => {
     }
 
     // Get real IP
-    let clientIp = req.headers['x-forwarded-for'] || 
-                   req.headers['x-real-ip'] || 
-                   req.socket.remoteAddress || 
+    let clientIp = req.headers['x-forwarded-for'] ||
+                   req.headers['x-real-ip'] ||
+                   req.socket.remoteAddress ||
                    '';
     clientIp = clientIp.split(',')[0].trim();
     const cleanIp = clientIp.replace(/^::ffff:/, '');
@@ -84,6 +93,20 @@ app.use((req, res, next) => {
     }
 });
 
+// [v1.2] announcements shown on the Home dashboard (edit as needed)
+const ANNOUNCEMENTS = [
+    { title: 'v3.9.1 - Login loop fixed', body: 'Signing in now always lands on the terminal, even when the older server routing is still deployed.', date: '2026-11-13' },
+    { title: 'v3.9.0 - Tool Navigator & Home Dashboard', body: 'Press Ctrl+K to open the tool navigator. Star your favorite tools to pin them to the Home dashboard.', date: '2026-11-13' },
+    { title: 'Quick Notepad added', body: 'A private scratchpad is now available from the tool navigator. It autosaves on this device, per account.', date: '2026-11-13' },
+    { title: 'Change password in-app', body: 'Click your name in the header, then Change Password. No admin needed.', date: '2026-11-13' }
+];
+
+// [v1.2] real client IP (Render sits behind a proxy; trust proxy is enabled)
+function clientIp(req) {
+    var raw = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.socket.remoteAddress || '';
+    return raw.split(',')[0].trim().replace(/^::ffff:/, '') || 'unknown';
+}
+
 async function getDb() {
     if (!mongoClient) {
         mongoClient = new MongoClient(MONGO_URI);
@@ -109,9 +132,18 @@ async function seedAdmin() {
                 createdAt: new Date().toISOString()
             });
             console.log('Seed admin created');
-        } else if (!existing.securityQuestion) {
-            await users.updateOne({ employeeId: 'ancel' }, { $set: { securityQuestion: 'What is your pet\'s name?', securityAnswer: 'maya' } });
-            console.log('Seed admin security question added');
+        } else {
+            // [v1.2] SELF-HEAL: the owner (ancel) is always ADMIN.
+            // Fixes databases where the role was stored lowercase, edited
+            // by mistake, or created by an older version without a role.
+            var fixes = {};
+            if (existing.role !== 'ADMIN') fixes.role = 'ADMIN';
+            if (!existing.id) fixes.id = 'USR001';
+            if (!existing.securityQuestion) { fixes.securityQuestion = 'What is your pet\'s name?'; fixes.securityAnswer = 'maya'; }
+            if (Object.keys(fixes).length) {
+                await users.updateOne({ employeeId: 'ancel' }, { $set: fixes });
+                console.log('Seed admin self-healed:', Object.keys(fixes).join(', '));
+            }
         }
     } catch (e) {
         console.error('MONGO FAILED:', e.message);
@@ -121,7 +153,7 @@ async function seedAdmin() {
 
 function getRoleLevel(role) {
     var levels = { 'ADMIN': 6, 'CLIENT': 5, 'OPERATIONS MANAGER': 4, 'TEAM LEADER': 3, 'AGENT': 2, 'TRAINING': 1 };
-    return levels[role] || 0;
+    return levels[String(role || '').toUpperCase()] || 0;
 }
 
 function generateToken(user) {
@@ -152,8 +184,25 @@ function authMiddleware(req, res, next) {
     next();
 }
 
-app.get('/', function(req, res) { res.sendFile(path.join(__dirname, 'public', 'login.html')); });
-app.get('/app', function(req, res) { res.sendFile(path.join(__dirname, 'public', 'index.html')); });
+// ========================================
+// STATIC PAGES
+// ========================================
+// [v1.2] Robust page resolution: works with BOTH file layouts.
+//   layout A (flat):    public/index.html + public/login.html
+//   layout B (folders): public/index.html + public/login/index.html
+// The terminal opens at / and the login page at /login, matching the
+// v3.8+ frontend redirect logic (old "/"=login + "/app"=terminal layout
+// caused an infinite login loop and is no longer supported).
+function resolvePage() {
+    for (var i = 0; i < arguments.length; i++) {
+        var p = path.join(__dirname, 'public', arguments[i]);
+        if (fs.existsSync(p)) return p;
+    }
+    return path.join(__dirname, 'public', arguments[0]);
+}
+app.get('/', function(req, res) { res.sendFile(resolvePage('index.html')); });
+app.get(['/login', '/login/'], function(req, res) { res.sendFile(resolvePage('login.html', 'login/index.html')); });
+app.get(['/app', '/app/'], function(req, res) { res.redirect(302, '/'); });
 
 app.post('/api/auth/login', async function(req, res) {
     var employeeId = (req.body.employeeId || '').toLowerCase();
@@ -163,11 +212,49 @@ app.post('/api/auth/login', async function(req, res) {
         const db = await getDb();
         var user = await db.collection('users').findOne({ employeeId: employeeId });
         if (!user || user.password !== password) return res.status(401).json({ error: 'Invalid Employee ID or Password' });
-        res.json({ token: generateToken(user), user: { employeeId: user.employeeId, fullName: user.fullName, role: user.role } });
+        // [v1.2] track sign-ins for the profile popup (last 5, newest first)
+        var now = new Date().toISOString();
+        var history = [{ time: now, ip: clientIp(req) }].concat(user.loginHistory || []).slice(0, 5);
+        await db.collection('users').updateOne({ employeeId: employeeId }, { $set: { lastLogin: now, loginHistory: history } });
+        res.json({
+            token: generateToken(user),
+            user: { employeeId: user.employeeId, fullName: user.fullName, role: String(user.role || '').toUpperCase(), lastLogin: now, loginHistory: history }
+        });
     } catch (e) { res.status(500).json({ error: 'Database error' }); }
 });
 
-app.get('/api/auth/verify', authMiddleware, function(req, res) { res.json({ valid: true, user: req.user }); });
+// [v1.2] change password (profile popup) - requires the current password
+app.post('/api/auth/change-password', authMiddleware, async function(req, res) {
+    var currentPassword = req.body.currentPassword;
+    var newPassword = req.body.newPassword;
+    if (!currentPassword || !newPassword) return res.status(400).json({ error: 'All fields required' });
+    if (newPassword.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
+    try {
+        const db = await getDb();
+        var user = await db.collection('users').findOne({ employeeId: req.user.id });
+        if (!user) return res.status(404).json({ error: 'No account found' });
+        if (user.password !== currentPassword) return res.status(401).json({ error: 'Current password is incorrect' });
+        await db.collection('users').updateOne({ employeeId: req.user.id }, { $set: { password: newPassword } });
+        res.json({ message: 'Password changed successfully' });
+    } catch (e) { res.status(500).json({ error: 'Database error' }); }
+});
+
+// [v1.2] verify now enriches the token payload with fresh DB data
+// (lastLogin + loginHistory for the profile popup) and normalizes role casing
+app.get('/api/auth/verify', authMiddleware, async function(req, res) {
+    var extra = { lastLogin: null, loginHistory: [] };
+    try {
+        var u = await (await getDb()).collection('users').findOne({ employeeId: req.user.id });
+        if (u) extra = { lastLogin: u.lastLogin || null, loginHistory: u.loginHistory || [] };
+    } catch (e) {}
+    res.json({ valid: true, user: {
+        id: req.user.id,
+        name: req.user.name,
+        role: String(req.user.role || '').toUpperCase(),
+        lastLogin: extra.lastLogin,
+        loginHistory: extra.loginHistory
+    } });
+});
 
 app.get('/api/auth/users', authMiddleware, async function(req, res) {
     if (getRoleLevel(req.user.role) < 3) return res.status(403).json({ error: 'Not authorized' });
@@ -178,9 +265,9 @@ app.get('/api/auth/users', authMiddleware, async function(req, res) {
                 id: u.id,
                 employeeId: u.employeeId,
                 fullName: u.fullName,
-                role: u.role,
                 securityQuestion: u.securityQuestion || null,
-                createdAt: u.createdAt
+                createdAt: u.createdAt,
+                role: String(u.role || '').toUpperCase()
             };
         }));
     } catch (e) { res.status(500).json({ error: 'Database error' }); }
@@ -194,7 +281,9 @@ app.post('/api/auth/users', authMiddleware, async function(req, res) {
     var securityQuestion = req.body.securityQuestion, securityAnswer = req.body.securityAnswer;
     if (!fullName || !employeeId || !password) return res.status(400).json({ error: 'All fields required' });
     if (password.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
+    // [v1.1] normalize role casing so lookups/role levels always match
     if (!role) role = 'AGENT';
+    role = String(role).toUpperCase();
     if (getRoleLevel(role) >= creatorLevel) return res.status(403).json({ error: 'Cannot create equal or higher role' });
     if (!securityQuestion || !securityAnswer) return res.status(400).json({ error: 'Security question and answer required' });
     try {
@@ -229,8 +318,10 @@ app.put('/api/auth/users/:employeeId', authMiddleware, async function(req, res) 
         var updateFields = {};
         if (req.body.fullName) updateFields.fullName = req.body.fullName;
         if (req.body.role) {
-            if (getRoleLevel(req.body.role) >= creatorLevel) return res.status(403).json({ error: 'Cannot assign equal or higher role' });
-            updateFields.role = req.body.role;
+            // [v1.1] normalize role casing
+            var newRole = String(req.body.role).toUpperCase();
+            if (getRoleLevel(newRole) >= creatorLevel) return res.status(403).json({ error: 'Cannot assign equal or higher role' });
+            updateFields.role = newRole;
         }
         if (req.body.password) {
             if (req.body.password.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
@@ -313,10 +404,13 @@ app.post('/api/chat', async function(req, res) {
 app.get('/api/health', async function(req, res) {
     var dbStatus = 'disconnected';
     try { await (await getDb()).command({ ping: 1 }); dbStatus = 'connected'; } catch (e) { dbStatus = 'error'; }
-    res.json({ 
-        status: 'online', 
-        database: dbStatus, 
-        groqKeySet: !!process.env.GROQ_API_KEY, 
+    res.json({
+        status: 'online',
+        version: 'v1.2.1',
+        frontend: 'v3.9.1',
+        database: dbStatus,
+        announcements: ANNOUNCEMENTS,
+        groqKeySet: !!process.env.GROQ_API_KEY,
         authKeySet: !!process.env.RENDER_AUTH_KEY,
         ipWhitelist: {
             enabled: IP_WHITELIST_ENABLED,
@@ -360,8 +454,13 @@ app.post('/api/notes', authMiddleware, async function(req, res) {
     if (!subject) return res.status(400).json({ error: 'Subject is required' });
     try {
         const db = await getDb();
+        // [v1.1] retry until the random ticket id is unique (avoids duplicates)
+        var noteId;
+        do {
+            noteId = 'TKT-' + Math.floor(Math.random() * 900000 + 100000);
+        } while (await db.collection('notes').findOne({ id: noteId }));
         const newNote = {
-            id: 'TKT-' + Math.floor(Math.random() * 900000 + 100000),
+            id: noteId,
             userId: req.user.id,
             userName: req.user.name,
             subject,
@@ -476,6 +575,12 @@ app.post('/api/email/send', authMiddleware, async function(req, res) {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// [v1.1] unknown /api/* paths return JSON (not the static 404 HTML),
+// so the frontend fetch handlers always get parseable error bodies
+app.use('/api', function(req, res) {
+    res.status(404).json({ error: 'Not found' });
+});
 
 var PORT = process.env.PORT || 10000;
 app.listen(PORT, async function() {
