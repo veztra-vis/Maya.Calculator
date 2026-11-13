@@ -130,6 +130,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 .alert.show{display:flex;animation:alertIn .32s cubic-bezier(.16,1,.3,1)}
 .alert-error{background:rgba(224,86,79,.09);border:1px solid rgba(224,86,79,.28);color:#f1a0a0}
 .alert-success{background:rgba(87,184,132,.09);border:1px solid rgba(87,184,132,.3);color:#93d9b6}
+.alert-warn{background:rgba(224,164,86,.08);border:1px solid rgba(224,164,86,.3);color:#e8c48f}
 
 /* ---------- footer ---------- */
 .footer-status{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:28px;font-size:11px;color:#5d6066;font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
@@ -220,6 +221,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             <p class="brand-sub">Authenticate to access internal systems</p>
         </div>
         <div class="card">
+            <div id="layout-warn" class="alert alert-warn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0;margin-top:2px"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span><b>Routing notice:</b> this login page is being served at the site root (/). With backend v1.2+ the terminal belongs at / (file <b>public/index.html</b>) and this page at /login (file <b>public/login.html</b>). You can still sign in below &mdash; you will be taken to the terminal at <b>/app</b>.</span></div>
             <div id="login-alert" class="alert alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0;margin-top:2px"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="login-alert-text"></span></div>
             <form id="loginForm" autocomplete="off">
                 <div class="field"><label class="field-label" for="loginUser">Employee ID</label><div class="input-wrap"><svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg><input type="text" id="loginUser" class="field-input padded-left" placeholder="Enter your Employee ID" required></div></div>
@@ -232,7 +234,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             </form>
         </div>
         <div class="footer-status"><span class="dot-live"></span>Secure Connection &bull; TLS 1.3 &bull; AES-256</div>
-        <p class="footer-copy">Maya Infrastructure v3.8.0 &bull; Internal Use Only</p>
+        <p class="footer-copy">Maya Infrastructure v3.9.1 &bull; Internal Use Only</p>
     </div>
 
     <!-- Forgot Password Modal -->
@@ -321,6 +323,24 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
         function showAlert(id,text,type){var el=document.getElementById(id);el.querySelector('span').textContent=text;el.className='alert alert-'+(type||'error')+' show';}
         function hideAlert(id){document.getElementById(id).classList.remove('show');}
 
+        // [v3.9.1] Loop-proof redirect targets.
+        // Old server layout: login page at / and terminal at /app.
+        // Current layout (backend v1.2+): terminal at / and this page at /login (/app redirects to /).
+        // Sub-folder hosting (e.g. /demo/login/): terminal is the sibling index page.
+        function mayaTerminalUrl(){
+            var p=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');
+            if(p===''||p==='/login')return '/app';
+            var base=p.replace(/\/[^\/]*$/,'');
+            return (base===''?'':base+'/');
+        }
+        // [v3.9.1] If the login page itself is being served at the site root, the
+        // server routing is old/swapped. Show a notice (never auto-redirect -
+        // auto-redirecting from / to / is what caused the infinite login loop).
+        (function(){
+            var p=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'')||'/';
+            if(p==='/'){var w=document.getElementById('layout-warn');if(w)w.classList.add('show');}
+        })();
+
         document.getElementById('loginForm').addEventListener('submit',function(e){
             e.preventDefault();hideAlert('login-alert');
             var uid=document.getElementById('loginUser').value.trim(),pass=document.getElementById('loginPass').value,btn=document.getElementById('loginBtn');
@@ -328,7 +348,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             btn.classList.add('busy');
             fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employeeId:uid,password:pass})})
             .then(function(r){return r.json();})
-            .then(function(data){if(data.error){showAlert('login-alert',data.error,'error');btn.classList.remove('busy');return;}var storage=document.getElementById('rememberMe').checked?localStorage:sessionStorage;storage.setItem('maya_token',data.token);storage.setItem('maya_user_id',data.user.employeeId);storage.setItem('maya_user_name',data.user.fullName);storage.setItem('maya_user_role',data.user.role);var tp=location.pathname.replace(/\/index\.html?$/i,'/').replace(/\/+$/,'').replace(/\/[^\/]*$/,'');window.location.replace((tp===''?'/':tp+'/'));;})
+            .then(function(data){if(data.error){showAlert('login-alert',data.error,'error');btn.classList.remove('busy');return;}var storage=document.getElementById('rememberMe').checked?localStorage:sessionStorage;storage.setItem('maya_token',data.token);storage.setItem('maya_user_id',data.user.employeeId);storage.setItem('maya_user_name',data.user.fullName);storage.setItem('maya_user_role',data.user.role);window.location.replace(mayaTerminalUrl());})
             .catch(function(){showAlert('login-alert','Cannot connect to server.','error');btn.classList.remove('busy');});
         });
 
