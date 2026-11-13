@@ -1,9 +1,22 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+    /* desktop-only guard — blocks phones & tablets before first paint */
+    (function(){
+        var ua = navigator.userAgent || '';
+        var phone = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+        var tablet = /iPad|Tablet|PlayBook|Silk/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+        var coarse = !!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches);
+        var narrow = !!(window.matchMedia && window.matchMedia('(max-width:820px)').matches);
+        if (phone || tablet || (coarse && narrow)) {
+            document.documentElement.classList.add('mobile-blocked');
+            window.MAYA_MOBILE_BLOCKED = true;
+        }
+    })();
+    </script>
     <title>Maya | Secure Login</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317181b'/%3E%3Cpath d='M18 46V19l14 19 14-19v27' fill='none' stroke='%23e6e7e9' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +39,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 /* ---------- loader (minimal: wordmark + thin bar) ---------- */
 .loader-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200;transition:opacity .6s ease-out,visibility .6s}
 .loader-overlay.dismissed{opacity:0;visibility:hidden;pointer-events:none}
-.boot-card{display:flex;flex-direction:column;align-items:center}
+.boot-card{display:flex;flex-direction:column;align-items:center;animation:softIn .45s cubic-bezier(.16,1,.3,1) backwards}
 .boot-word{font-family:'Inter',sans-serif;font-weight:700;font-size:15px;letter-spacing:.32em;text-indent:.32em;color:var(--ink);margin-bottom:22px}
 .boot-word span{color:var(--ink-faint);font-weight:500}
 .boot-bar{width:232px;height:3px;background:#24262a;border-radius:2px;overflow:hidden}
@@ -35,8 +48,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 @keyframes progressFill{to{width:100%}}
 
 /* ---------- page ---------- */
-.page-content{position:relative;z-index:1;width:100%;max-width:440px;padding:0 24px;opacity:0;transform:translateY(30px);transition:opacity .6s ease-out,transform .6s ease-out}
-.page-content.visible{opacity:1;transform:translateY(0)}
+.page-content{position:relative;z-index:1;width:100%;max-width:440px;padding:0 24px}
+/* entrance choreography — children stagger in once the loader lifts */
+.brand-block,.card,.footer-status,.footer-copy{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+.page-content.visible .brand-block{opacity:1;transform:translateY(0);transition-delay:.05s}
+.page-content.visible .card{opacity:1;transform:translateY(0);transition-delay:.16s}
+.page-content.visible .footer-status{opacity:1;transform:translateY(0);transition-delay:.28s}
+.page-content.visible .footer-copy{opacity:1;transform:translateY(0);transition-delay:.34s}
 
 /* ---------- brand ---------- */
 .brand-block{text-align:center;margin-bottom:36px}
@@ -55,6 +73,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 .field-input{width:100%;background:#131417;border:1px solid #2a2c30;border-radius:9px;padding:14px 18px;font-size:14px;color:var(--ink);font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .15s ease,box-shadow .15s ease}
 .field-input:focus{border-color:#8a8e95;box-shadow:0 0 0 3px rgba(230,231,233,.09)}
 .field-input::placeholder{color:#54575d}
+.field-input:hover:not(:focus):not(:disabled),.field-select:hover:not(:focus):not(:disabled){border-color:#34373d}
 .field-input.padded-left{padding-left:46px}
 .field-input.padded-right{padding-right:50px}
 .field-select{width:100%;background:#131417;border:1px solid #2a2c30;border-radius:9px;padding:14px 18px;font-size:14px;color:var(--ink);font-family:'Inter',sans-serif;outline:none;transition:border-color .15s ease,box-shadow .15s ease;cursor:pointer;appearance:none;-webkit-appearance:none;padding-right:38px;
@@ -71,6 +90,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 .options-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
 .check-label{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--ink-dim);user-select:none;transition:color .2s}
 .check-label:hover{color:var(--ink)}
+.check-label:hover .check-box{border-color:#45484f}
 .check-label input{display:none}
 .check-box{width:18px;height:18px;border:1px solid #34373d;border-radius:5px;background:#131417;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .check-label input:checked+.check-box{background:#e6e7e9;border-color:#e6e7e9}
@@ -81,9 +101,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 
 /* ---------- submit ---------- */
 .submit-btn{width:100%;background:#e6e7e9;color:#141517;border:1px solid #e6e7e9;border-radius:10px;padding:15px;font-size:13px;font-weight:700;cursor:pointer;
-    transition:background .15s ease;color:#141517;text-transform:uppercase;letter-spacing:.06em;position:relative;overflow:hidden;font-family:'Inter',sans-serif}
-.submit-btn:hover:not(.busy){background:#ffffff}
-.submit-btn:active:not(.busy){background:#d4d6da}
+    transition:background .15s ease,transform .15s ease,box-shadow .15s ease;color:#141517;text-transform:uppercase;letter-spacing:.06em;position:relative;overflow:hidden;font-family:'Inter',sans-serif}
+.submit-btn:hover:not(.busy){background:#ffffff;transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(0,0,0,.55)}
+.submit-btn:active:not(.busy){background:#d4d6da;transform:translateY(0) scale(.985)}
 .submit-btn.busy{pointer-events:none;opacity:.92}
 .btn-label{transition:opacity .25s}
 .submit-btn.busy .btn-label{opacity:0}
@@ -97,7 +117,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 
 /* ---------- alerts ---------- */
 .alert{padding:14px 18px;border-radius:9px;font-size:13px;margin-bottom:24px;display:none;align-items:flex-start;gap:12px;line-height:1.5}
-.alert.show{display:flex}
+.alert.show{display:flex;animation:alertIn .32s cubic-bezier(.16,1,.3,1)}
 .alert-error{background:rgba(224,86,79,.09);border:1px solid rgba(224,86,79,.28);color:#f1a0a0}
 .alert-success{background:rgba(87,184,132,.09);border:1px solid rgba(87,184,132,.3);color:#93d9b6}
 
@@ -109,18 +129,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 
 /* ---------- modal ---------- */
 .modal-backdrop{position:fixed;inset:0;z-index:300;background:rgba(8,9,10,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.open{display:flex}
+.modal-backdrop.open{display:flex;animation:backdropIn .25s ease-out}
 .modal-card{background:#1b1d20;border:1px solid var(--line-hi);border-radius:14px;padding:36px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;
-    box-shadow:0 30px 70px -15px rgba(0,0,0,.7);animation:modalIn .25s ease-out}
+    box-shadow:0 30px 70px -15px rgba(0,0,0,.7);animation:modalIn .3s cubic-bezier(.16,1,.3,1)}
 @keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .modal-title{font-family:'Inter',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px}
 .modal-desc{font-size:14px;color:var(--ink-faint);margin-bottom:28px;line-height:1.6}
 .modal-actions{display:flex;gap:12px;margin-top:28px}
 .modal-actions .submit-btn{flex:1}
 .btn-ghost{flex:1;background:transparent;color:var(--ink-dim);border:1px solid var(--line-hi);border-radius:10px;padding:15px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s ease;font-family:'Inter',sans-serif}
-.btn-ghost:hover{background:var(--surface-2);border-color:#45484f;color:var(--ink)}
-.btn-ghost:active{background:#222428}
-.view{display:none}.view.active{display:block}
+.btn-ghost:hover{background:var(--surface-2);border-color:#45484f;color:var(--ink);transform:translateY(-1px)}
+.btn-ghost:active{background:#222428;transform:translateY(0) scale(.985)}
+.view{display:none}.view.active{display:block;animation:viewIn .3s cubic-bezier(.16,1,.3,1)}
 
 /* ---------- security + misc ---------- */
 .security-box{background:rgba(255,255,255,.03);border:1px solid #2c2f34;border-radius:9px;padding:14px 16px;margin-bottom:24px}
@@ -134,9 +154,48 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
 
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#101113}::-webkit-scrollbar-thumb{background:#2b2e33;border-radius:3px}
 @media (max-width:480px){.card,.modal-card{padding:28px 24px}.brand-title{font-size:24px}.brand-title span{font-size:17px}}
+
+/* ---------- motion system (subtle, physical, monochrome) ---------- */
+@keyframes softIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+@keyframes alertIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+@keyframes backdropIn{from{opacity:0;}to{opacity:1;}}
+@keyframes viewIn{from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:translateX(0);}}
+
+/* ---------- desktop-only guard (phones & tablets) ---------- */
+html.mobile-blocked{overflow:hidden;height:100%;}
+html.mobile-blocked body{overflow:hidden !important;}
+html.mobile-blocked body > *:not(#mobile-block-screen){display:none !important;}
+#mobile-block-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:none;align-items:center;justify-content:center;padding:24px;text-align:center;}
+html.mobile-blocked #mobile-block-screen{display:flex;}
+.mbs-card{max-width:420px;display:flex;flex-direction:column;align-items:center;animation:mbsIn .5s cubic-bezier(.16,1,.3,1) backwards;}
+.mbs-icon{width:78px;height:78px;border-radius:18px;background:var(--surface);border:1px solid var(--line-hi);display:flex;align-items:center;justify-content:center;color:#d4d6da;margin-bottom:28px;animation:mbsIcon 3.2s ease-in-out infinite;}
+@keyframes mbsIcon{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.mbs-word{font-family:'Inter',sans-serif;font-weight:700;font-size:13px;letter-spacing:.32em;text-indent:.32em;color:var(--ink);margin-bottom:20px;}
+.mbs-word span{color:var(--ink-faint);font-weight:500;}
+.mbs-title{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.01em;margin-bottom:12px;font-family:'Inter',sans-serif;}
+.mbs-text{font-size:13.5px;color:var(--ink-dim);line-height:1.65;margin-bottom:26px;}
+.mbs-hint{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#c9ccd1;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:11px 18px;}
+@keyframes mbsIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+    html{scroll-behavior:auto;}
+}
+@media (prefers-reduced-motion:reduce){.brand-block,.card,.footer-status,.footer-copy{opacity:1 !important;transform:none !important;}}
     </style>
 </head>
 <body>
+    <!-- ===== desktop-only guard screen (phones / tablets are blocked) ===== -->
+    <div id="mobile-block-screen">
+        <div class="mbs-card">
+            <div class="mbs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+            <div class="mbs-word">MAYA <span>UTILITY TERMINAL</span></div>
+            <h1 class="mbs-title">Desktop access only</h1>
+            <p class="mbs-text">This terminal is restricted to desktop and laptop computers. Mobile phones and tablets are not supported.</p>
+            <div class="mbs-hint">Open this page on a PC or desktop browser to continue</div>
+        </div>
+    </div>
+
     <div id="loader" class="loader-overlay">
         <div class="boot-card">
             <div class="boot-word">MAYA <span>UTILITY TERMINAL</span></div>
@@ -163,7 +222,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;displa
             </form>
         </div>
         <div class="footer-status"><span class="dot-live"></span>Secure Connection &bull; TLS 1.3 &bull; AES-256</div>
-        <p class="footer-copy">Maya Infrastructure v3.6.0 &bull; Internal Use Only</p>
+        <p class="footer-copy">Maya Infrastructure v3.7.0 &bull; Internal Use Only</p>
     </div>
 
     <!-- Forgot Password Modal -->
