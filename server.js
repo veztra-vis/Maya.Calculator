@@ -28,7 +28,7 @@ let mongoClient = null;
 // Correct behavior now:
 //   - unset or "false"  -> whitelist OFF (all IPs allowed)
 //   - "true"            -> whitelist ON  (only ALLOWED_IPS get through)
-const IP_WHITELIST_ENABLED = process.env.IP_WHITELIST_ENABLED === 'true';
+const IP_WHITELIST_ENABLED = process.env.IP_WHITELIST_ENABLED === 'false';
 const allowedIpsEnv = process.env.ALLOWED_IPS || '';
 const allowedIps = allowedIpsEnv.split(',').map(ip => ip.trim()).filter(Boolean);
 
