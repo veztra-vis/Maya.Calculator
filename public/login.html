@@ -17,6 +17,16 @@
         }
     })();
     </script>
+    <script>
+    /* clean urls — hide .html from the address bar (pairs with the /login folder) */
+    (function(){
+        if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+        var p = location.pathname, np = null;
+        if (/index\.html$/i.test(p)) np = p.replace(/index\.html$/i, '');
+        else if (/login\.html$/i.test(p)) np = p.replace(/login\.html$/i, 'login/');
+        if (np !== null && np !== '') { try { history.replaceState(null, '', np); } catch (e) {} }
+    })();
+    </script>
     <title>Maya | Secure Login</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317181b'/%3E%3Cpath d='M18 46V19l14 19 14-19v27' fill='none' stroke='%23e6e7e9' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -222,7 +232,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             </form>
         </div>
         <div class="footer-status"><span class="dot-live"></span>Secure Connection &bull; TLS 1.3 &bull; AES-256</div>
-        <p class="footer-copy">Maya Infrastructure v3.7.0 &bull; Internal Use Only</p>
+        <p class="footer-copy">Maya Infrastructure v3.8.0 &bull; Internal Use Only</p>
     </div>
 
     <!-- Forgot Password Modal -->
@@ -318,7 +328,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             btn.classList.add('busy');
             fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employeeId:uid,password:pass})})
             .then(function(r){return r.json();})
-            .then(function(data){if(data.error){showAlert('login-alert',data.error,'error');btn.classList.remove('busy');return;}var storage=document.getElementById('rememberMe').checked?localStorage:sessionStorage;storage.setItem('maya_token',data.token);storage.setItem('maya_user_id',data.user.employeeId);storage.setItem('maya_user_name',data.user.fullName);storage.setItem('maya_user_role',data.user.role);window.location.replace('index.html');})
+            .then(function(data){if(data.error){showAlert('login-alert',data.error,'error');btn.classList.remove('busy');return;}var storage=document.getElementById('rememberMe').checked?localStorage:sessionStorage;storage.setItem('maya_token',data.token);storage.setItem('maya_user_id',data.user.employeeId);storage.setItem('maya_user_name',data.user.fullName);storage.setItem('maya_user_role',data.user.role);var tp=location.pathname.replace(/\/index\.html?$/i,'/').replace(/\/+$/,'').replace(/\/[^\/]*$/,'');window.location.replace((tp===''?'/':tp+'/'));;})
             .catch(function(){showAlert('login-alert','Cannot connect to server.','error');btn.classList.remove('busy');});
         });
 
