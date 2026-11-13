@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -301,7 +302,85 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
     html{scroll-behavior:auto;}
 }
 @media (prefers-reduced-motion:reduce){.glass-panel{opacity:1 !important;transform:none !important;}}
-    </style>
+    
+/* ===== v3.9 tool navigator drawer ===== */
+.td-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:60;}
+.td-backdrop.open{opacity:1;pointer-events:auto;}
+.tdrawer{position:fixed;top:0;left:0;bottom:0;width:min(360px,92vw);background:var(--surface);border-right:1px solid var(--line);z-index:61;display:flex;flex-direction:column;transform:translateX(-102%);transition:transform .3s cubic-bezier(.22,.61,.36,1);box-shadow:24px 0 60px -30px rgba(0,0,0,.7);}
+.tdrawer.open{transform:translateX(0);}
+.td-head{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 12px;border-bottom:1px solid var(--line);}
+.td-title{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.02em;font-family:'Inter',sans-serif;}
+.td-sub{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--ink-dim);margin-top:2px;}
+.td-close{background:transparent;border:1px solid var(--line);border-radius:8px;color:var(--ink-dim);cursor:pointer;padding:6px;display:flex;transition:all .15s ease;}
+.td-close:hover{background:var(--surface-2);color:var(--ink);border-color:var(--line-hi);}
+.td-search{padding:12px 18px;border-bottom:1px solid var(--line);}
+.td-search input{width:100%;background:var(--well);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--ink);outline:none;transition:border-color .15s ease;font-family:'Inter',sans-serif;}
+.td-search input:focus{border-color:var(--line-hi);}
+.td-search input::placeholder{color:var(--ink-dim);}
+.td-body{flex:1;overflow-y:auto;padding:6px 10px 16px;}
+.td-body::-webkit-scrollbar{width:8px;}
+.td-body::-webkit-scrollbar-thumb{background:var(--line-hi);border-radius:4px;}
+.td-cat{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-dim);font-weight:600;margin:16px 8px 6px;font-family:'JetBrains Mono',monospace;}
+.td-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:9px;border:1px solid transparent;cursor:pointer;transition:background .13s ease,border-color .13s ease,transform .13s ease;animation:itemIn .28s ease both;}
+.td-item:hover{background:var(--surface-2);border-color:var(--line);}
+.td-item:active{transform:scale(.985);}
+.td-ico{width:32px;height:32px;border-radius:8px;background:var(--well);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-dim);flex-shrink:0;transition:color .13s ease;}
+.td-item:hover .td-ico{color:var(--ink);}
+.td-meta{flex:1;min-width:0;}
+.td-name{font-size:12px;font-weight:600;color:var(--ink);display:block;line-height:1.25;font-family:'Inter',sans-serif;}
+.td-desc{font-size:10px;color:var(--ink-dim);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Inter',sans-serif;}
+.td-star{background:none;border:none;color:var(--ink-dim);opacity:.5;padding:4px;border-radius:6px;cursor:pointer;display:flex;transition:opacity .13s ease,color .13s ease,transform .13s ease;}
+.td-star:hover{opacity:1;transform:scale(1.15);}
+.td-star.is-fav{color:var(--ink);opacity:1;}
+.td-empty{padding:20px 10px;text-align:center;font-size:11px;color:var(--ink-dim);font-family:'Inter',sans-serif;}
+.td-foot{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-top:1px solid var(--line);font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--ink-dim);}
+.td-foot kbd{border:1px solid var(--line-hi);background:var(--well);border-radius:4px;padding:1px 5px;font-size:9px;font-family:'JetBrains Mono',monospace;}
+
+/* ===== v3.9 home dashboard ===== */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;}
+.home-card{display:flex;align-items:center;gap:11px;padding:12px;border-radius:11px;background:var(--well);border:1px solid var(--line);cursor:pointer;transition:transform .15s ease,border-color .15s ease,background .15s ease;animation:itemIn .3s ease both;}
+.home-card:hover{transform:translateY(-2px);border-color:var(--line-hi);background:var(--surface-2);}
+.home-card:active{transform:scale(.985);}
+.home-card-ico{width:34px;height:34px;border-radius:9px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-dim);flex-shrink:0;transition:color .13s ease;}
+.home-card:hover .home-card-ico{color:var(--ink);}
+.home-card-meta{flex:1;min-width:0;}
+.home-card-name{font-size:12px;font-weight:600;color:var(--ink);display:block;font-family:'Inter',sans-serif;}
+.home-card-desc{font-size:10px;color:var(--ink-dim);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Inter',sans-serif;}
+.home-chip{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--ink-dim);background:var(--surface);border:1px solid var(--line);border-radius:9999px;padding:4px 11px;}
+.home-chip .ok-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:fBlink 2.4s ease-in-out infinite;}
+.home-chip .bad-dot{width:6px;height:6px;border-radius:50%;background:var(--bad);}
+.home-sec-label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-dim);font-weight:600;margin:20px 0 9px;font-family:'JetBrains Mono',monospace;}
+.home-ann{border:1px solid var(--line);border-radius:10px;background:var(--well);padding:12px 14px;display:flex;gap:11px;align-items:flex-start;animation:itemIn .3s ease both;}
+.home-ann-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);margin-top:5px;flex-shrink:0;}
+.home-ann-title{font-size:12px;font-weight:600;color:var(--ink);font-family:'Inter',sans-serif;}
+.home-ann-text{font-size:11px;color:var(--ink-dim);margin-top:2px;line-height:1.5;font-family:'Inter',sans-serif;}
+.home-ann-date{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--ink-dim);margin-top:5px;opacity:.7;}
+.home-ann-empty{font-size:11px;color:var(--ink-dim);font-family:'Inter',sans-serif;padding:14px;text-align:center;}
+
+/* ===== v3.9 profile popup ===== */
+.profile-pop{position:fixed;top:78px;right:16px;width:290px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 60px -18px rgba(0,0,0,.75);z-index:55;padding:16px;opacity:0;transform:translateY(-6px) scale(.98);pointer-events:none;transition:opacity .18s ease,transform .18s ease;}
+.profile-pop.open{opacity:1;transform:none;pointer-events:auto;}
+.pp-head{display:flex;align-items:center;gap:11px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.pp-avatar{width:38px;height:38px;border-radius:10px;background:var(--well);border:1px solid var(--line-hi);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--ink);font-family:'Inter',sans-serif;flex-shrink:0;}
+.pp-who{flex:1;min-width:0;}
+.pp-name{font-size:13px;font-weight:700;color:var(--ink);font-family:'Inter',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pp-id{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--ink-dim);margin-top:1px;}
+.pp-sec{padding:12px 0 4px;}
+.pp-label{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-dim);font-weight:600;font-family:'JetBrains Mono',monospace;}
+.pp-hist{list-style:none;margin:7px 0 0;padding:0;font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--ink-dim);}
+.pp-hist li{padding:4px 0;border-bottom:1px dashed var(--line);}
+.pp-hist li:last-child{border-bottom:none;}
+.pp-btn{width:100%;margin-top:10px;padding:9px;border-radius:8px;border:1px solid var(--line-hi);background:transparent;color:var(--ink);font-size:11px;font-weight:600;cursor:pointer;transition:all .13s ease;font-family:'Inter',sans-serif;}
+.pp-btn:hover{background:var(--surface-2);}
+.pp-btn:active{transform:scale(.98);}
+.pp-btn-danger{border-color:#3a2c2c;color:#d99390 !important;}
+.pp-btn-danger:hover{background:rgba(224,86,79,.07);}
+
+@media (prefers-reduced-motion:reduce){
+    .tdrawer,.td-backdrop,.profile-pop{transition:none !important;}
+    .td-item,.home-card,.home-ann{animation:none !important;transition:none !important;}
+}
+</style>
 </head>
 <body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-zinc-500/40 selection:text-zinc-100">
 
@@ -325,19 +404,75 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
     </div>
 
 
+    <!-- ===== v3.9 tool navigator drawer ===== -->
+    <div id="td-backdrop" class="td-backdrop no-print" onclick="closeToolDrawer()"></div>
+    <aside id="toolDrawer" class="tdrawer no-print" aria-label="Tool navigator">
+        <div class="td-head">
+            <div>
+                <p class="td-title">Tool Navigator</p>
+                <p class="td-sub" id="td-count">tools</p>
+            </div>
+            <button type="button" class="td-close" onclick="closeToolDrawer()" title="Close (Esc)"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <div class="td-search">
+            <input type="text" id="td-search" placeholder="Search tools, categories..." autocomplete="off">
+        </div>
+        <div class="td-body" id="td-body"></div>
+        <div class="td-foot"><span>v3.9.0</span><span><kbd>Ctrl</kbd> + <kbd>K</kbd> to toggle</span></div>
+    </aside>
+
+    <!-- ===== v3.9 profile popup ===== -->
+    <div id="profilePop" class="profile-pop no-print">
+        <div class="pp-head">
+            <div class="pp-avatar" id="pp-initials">?</div>
+            <div class="pp-who"><p class="pp-name" id="pp-name">Unknown</p><p class="pp-id" id="pp-id">&mdash;</p></div>
+            <span class="f-tag" id="pp-role">&mdash;</span>
+        </div>
+        <div class="pp-sec">
+            <p class="pp-label">Recent sign-ins</p>
+            <ul class="pp-hist" id="pp-history"><li>No sign-in history yet.</li></ul>
+        </div>
+        <button type="button" class="pp-btn" onclick="openChangePassword()">Change Password</button>
+        <button type="button" class="pp-btn pp-btn-danger" onclick="closeProfilePop();handleLogout()">Log out</button>
+    </div>
+
+    <!-- ===== v3.9 change password modal ===== -->
+    <div id="cpModal" class="modal-backdrop-module-d no-print" onclick="if(event.target===this)closeChangePassword()">
+        <div class="modal-card-module-d" style="max-width:400px;">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-lg font-bold text-white">Change Password</h2>
+                <button type="button" onclick="closeChangePassword()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div id="cp-alert" class="module-d-alert module-d-alert-error mb-4"><span id="cp-alert-text"></span></div>
+            <div class="space-y-4">
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Password</label><input type="password" id="cp-current" autocomplete="current-password" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Password</label><input type="password" id="cp-new" autocomplete="new-password" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Confirm New Password</label><input type="password" id="cp-confirm" autocomplete="new-password" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"></div>
+            </div>
+            <div class="mt-6 flex gap-3">
+                <button type="button" onclick="closeChangePassword()" class="flex-1 px-4 py-2.5 f-btn-ghost text-xs font-bold uppercase rounded-lg">Cancel</button>
+                <button type="button" id="cp-submit-btn" onclick="submitChangePassword()" class="flex-1 px-4 py-2.5 f-btn-primary text-xs font-bold uppercase rounded-lg">Update Password</button>
+            </div>
+        </div>
+    </div>
+
     <header class="max-w-6xl mx-auto mb-6 border-b border-zinc-800 pb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
         <div class="flex items-center gap-4">
             <div>
                 <h1 class="font-display text-[26px] font-bold tracking-tight text-white leading-none">Maya <span class="text-zinc-500 font-medium text-lg">Utility Terminal</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="f-status-dot"></span>
-                    <p class="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">system online · v3.8.0</p>
+                    <p class="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">system online · v3.9.0</p>
                     <span id="role-badge" class="hidden f-tag"></span>
                 </div>
             </div>
         </div>
         <div class="flex items-center gap-3 flex-wrap justify-center">
-            <div id="user-info" class="hidden text-right f-pill px-4 py-2 flex flex-col">
+            <button type="button" onclick="toggleToolDrawer()" class="px-3 py-2 f-btn-ghost text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2" title="Tool Navigator (Ctrl+K)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Tools
+            </button>
+            <div id="user-info" class="hidden text-right f-pill px-4 py-2 flex flex-col cursor-pointer hover:border-zinc-600 transition-colors" onclick="toggleProfilePop(event)" title="Account & password">
                 <span class="text-xs font-medium text-zinc-300"><span id="user-name"></span> <span class="text-zinc-600 mx-1">•</span> <span id="shift-timer" class="font-mono text-zinc-100 text-[10px]">Shift: 00:00:00</span></span>
                 <span id="live-date-time" class="text-[10px] font-mono text-zinc-500 mt-0.5">Syncing...</span>
             </div>
@@ -357,6 +492,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
 
     <div class="sticky top-0 z-30 f-topnav border-y border-zinc-800/70 mb-6 -mx-4 md:-mx-8 px-4 md:px-8 py-3 no-print opacity-0 animate-fade-in" style="animation-delay:.12s;">
         <div class="max-w-6xl mx-auto flex gap-2 overflow-x-auto">
+            <a href="#module-home" class="quick-nav-btn">Home</a>
             <a href="#module-d" id="nav-module-d" class="quick-nav-btn hidden">Admin Mgmt</a>
             <a href="#module-a" class="quick-nav-btn">Miles</a>
             <a href="#module-b" class="quick-nav-btn">Finance</a>
@@ -365,12 +501,39 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             <a href="#module-f" class="quick-nav-btn">Billing</a>
             <a href="#module-g" class="quick-nav-btn">Due Date</a>
             <a href="#module-h" class="quick-nav-btn">FX Trans</a>
+            <a href="#module-note" class="quick-nav-btn">Notepad</a>
             <a href="#module-i" class="quick-nav-btn">Tickets</a>
         </div>
     </div>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+        <!-- v3.9 HOME DASHBOARD -->
+        <div id="module-home" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col" style="scroll-margin-top:96px;">
+            <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white" id="home-greet">Welcome</h2></div><span class="f-tag">Home</span></div>
+            <p class="text-xs text-zinc-500 mt-2 mb-4" id="home-sub"></p>
+            <div id="home-chips" class="flex flex-wrap gap-2 mb-1"></div>
+            <p class="home-sec-label">Quick Access</p>
+            <div id="home-grid" class="home-grid"></div>
+            <div id="home-fav-wrap" class="hidden"><p class="home-sec-label">Favorites</p><div id="home-fav" class="home-grid"></div></div>
+            <div id="home-rec-wrap" class="hidden"><p class="home-sec-label">Recently Used</p><div id="home-rec" class="home-grid"></div></div>
+            <p class="home-sec-label">Announcements</p>
+            <div id="home-ann" class="space-y-2"><div class="home-ann home-ann-empty">Loading announcements...</div></div>
+        </div>
+
+        <!-- v3.9 QUICK NOTEPAD -->
+        <div id="module-note" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full" style="scroll-margin-top:96px;">
+            <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Quick Notepad</h2></div><span class="f-tag">Personal</span></div>
+            <div class="flex items-center justify-between mb-2">
+                <span id="note-status" class="text-[10px] font-mono text-zinc-500">autosaves on this device</span>
+                <span id="note-count" class="text-[10px] font-mono text-zinc-500">0 words &middot; 0 chars</span>
+            </div>
+            <textarea id="note-area" rows="10" placeholder="Jot down call notes, reminders, and account details. This notepad is private to your account on this device." class="w-full f-slot rounded-lg p-4 text-sm text-zinc-100 font-mono leading-relaxed focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600 flex-grow"></textarea>
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <button type="button" onclick="copyNote()" class="w-full px-4 py-2 f-btn-ghost text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Copy</button>
+                <button type="button" onclick="clearNote()" class="w-full px-4 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear</button>
+            </div>
+        </div>
+
         <!-- MODULE D: ACCOUNT MANAGEMENT -->
         <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
             <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="f-tag">Module D</span></div>
@@ -904,6 +1067,8 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
                 document.getElementById('contact-name').value=data.user.name;
                 document.getElementById('contact-eid').value=data.user.id;
                 document.getElementById('user-info').classList.remove('hidden');
+                sessionStorage.setItem('maya_last_login', data.user.lastLogin || '');
+                try { sessionStorage.setItem('maya_login_history', JSON.stringify(data.user.loginHistory || [])); } catch (e) {}
                 document.getElementById('logout-btn').classList.remove('hidden');
                 var rb=document.getElementById('role-badge');rb.textContent=data.user.role;rb.classList.remove('hidden');
                 var ar=['ADMIN','CLIENT','OPERATIONS MANAGER','TEAM LEADER'];
@@ -912,7 +1077,9 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
                     document.getElementById('nav-module-d').classList.remove('hidden');
                     renderUserTable();
                 }
-                fetchTickets(); // Fetch tickets on load
+                fetchTickets().then(function(){ renderHomePanel(); }).catch(function(){});
+                renderHomePanel();
+                fetchHomeHealth();
             })
             .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();var lp=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');window.location.replace((lp===''?'':lp)+'/login/');;});
         })();
@@ -1585,6 +1752,274 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
         document.getElementById('receiptModal').addEventListener('click',function(e){if(e.target===this)closeReceiptModal();});
         document.getElementById('sendReceiptModal').addEventListener('click',function(e){if(e.target===this)closeSendReceiptModal();});
         document.getElementById('itSupportModal').addEventListener('click',function(e){if(e.target===this)closeITSupportModal();});
+
+        // ===== v3.9 TOOL REGISTRY =====
+        var MAYA_TOOLS = [
+            { id:'emi',     name:'EMI Calculator',    desc:'Monthly installment & amortization',  cat:'Calculators',    target:'module-e',    icon:'calc' },
+            { id:'miles',   name:'Maya Miles',        desc:'Spend to miles & cash value',         cat:'Calculators',    target:'module-a',    icon:'miles' },
+            { id:'finance', name:'Finance Charge',    desc:'Interest & remaining principal',      cat:'Calculators',    target:'module-b',    icon:'finance' },
+            { id:'landers', name:'Landers',           desc:'Landers transaction computations',    cat:'Calculators',    target:'module-c',    icon:'landers' },
+            { id:'billing', name:'Billing',           desc:'Statement & billing computations',    cat:'Calculators',    target:'module-f',    icon:'billing' },
+            { id:'due',     name:'Due Date',          desc:'Statement date + grace days',         cat:'Calculators',    target:'module-g',    icon:'due' },
+            { id:'fx',      name:'FX Transaction',    desc:'Foreign currency to PHP, live rates', cat:'Calculators',    target:'module-h',    icon:'fx' },
+            { id:'tickets', name:'Tickets & Notes',   desc:'Internal ticketing system',           cat:'Productivity',   target:'module-i',    icon:'ticket' },
+            { id:'note',    name:'Quick Notepad',     desc:'Private auto-saved scratchpad',       cat:'Productivity',   target:'module-note', icon:'note' },
+            { id:'history', name:'Calculation History', desc:'Saved calculations & reload',       cat:'Productivity',   target:null, action:'history', icon:'history' },
+            { id:'admin',   name:'Account Management', desc:'Create & manage employee accounts',  cat:'Administration', target:'module-d', adminOnly:true, icon:'admin' }
+        ];
+        var TOOL_ICONS = {
+            calc:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="12" x2="8" y2="12.01"/><line x1="12" y1="12" x2="12" y2="12.01"/><line x1="16" y1="12" x2="16" y2="12.01"/><line x1="8" y1="16" x2="8" y2="16.01"/><line x1="12" y1="16" x2="12" y2="16.01"/><line x1="16" y1="16" x2="16" y2="16.01"/></svg>',
+            miles:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>',
+            finance:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
+            landers:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 13H7.2L6 7z"/><path d="M9 7a3 3 0 016 0"/></svg>',
+            billing:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg>',
+            due:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+            fx:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 010 18"/><path d="M12 3a15 15 0 000 18"/></svg>',
+            ticket:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 000 6v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 000-6z"/><line x1="13" y1="6" x2="13" y2="18" stroke-dasharray="2 2"/></svg>',
+            note:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+            history:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+            admin:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+            star:'<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.3l-5.8 3.1 1.1-6.5L2.6 9.3l6.5-.9L12 2.5z"/></svg>'
+        };
+
+        // ===== v3.9 STORAGE HELPERS (per-user, fail-safe) =====
+        function currentUid(){return sessionStorage.getItem('maya_user_id')||'anon';}
+        function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
+        function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+        function getFavs(){try{return JSON.parse(lsGet('maya_fav_'+currentUid(),'[]'))||[];}catch(e){return [];}}
+        function setFavs(f){lsSet('maya_fav_'+currentUid(),JSON.stringify(f));}
+        function getRecents(){try{return JSON.parse(lsGet('maya_recent_'+currentUid(),'[]'))||[];}catch(e){return [];}}
+        function setRecents(r){lsSet('maya_recent_'+currentUid(),JSON.stringify(r));}
+        function pushRecent(id){var r=getRecents().filter(function(x){return x!==id;});r.unshift(id);setRecents(r.slice(0,6));}
+        function canSeeAdmin(){return getRoleLevel(sessionStorage.getItem('maya_user_role'))>=3;}
+        function visibleTools(){return MAYA_TOOLS.filter(function(t){return !t.adminOnly||canSeeAdmin();});}
+        function toolById(id){for(var i=0;i<MAYA_TOOLS.length;i++){if(MAYA_TOOLS[i].id===id)return MAYA_TOOLS[i];}return null;}
+        function fmtDT(iso){if(!iso)return '\u2014';try{var d=new Date(iso);return d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return '\u2014';}}
+
+        // ===== v3.9 TOOL DRAWER =====
+        function toggleToolDrawer(){var d=document.getElementById('toolDrawer');if(d.classList.contains('open'))closeToolDrawer();else openToolDrawer();}
+        function openToolDrawer(){document.getElementById('toolDrawer').classList.add('open');document.getElementById('td-backdrop').classList.add('open');renderDrawer();setTimeout(function(){var s=document.getElementById('td-search');if(s)s.focus();},190);}
+        function closeToolDrawer(){document.getElementById('toolDrawer').classList.remove('open');document.getElementById('td-backdrop').classList.remove('open');}
+        function drawerItemHTML(t,favs){
+            var isFav=favs.indexOf(t.id)>-1;
+            return '<div class="td-item" onclick="openTool(\''+t.id+'\')"><span class="td-ico">'+(TOOL_ICONS[t.icon]||TOOL_ICONS.calc)+'</span><span class="td-meta"><span class="td-name">'+escapeHtml(t.name)+'</span><span class="td-desc">'+escapeHtml(t.desc)+'</span></span><button type="button" class="td-star'+(isFav?' is-fav':'')+'" onclick="event.stopPropagation();toggleFav(\''+t.id+'\')" title="'+(isFav?'Remove from favorites':'Add to favorites')+'">'+TOOL_ICONS.star+'</button></div>';
+        }
+        function renderDrawer(){
+            var body=document.getElementById('td-body');if(!body)return;
+            var q=(document.getElementById('td-search').value||'').toLowerCase().trim();
+            var vis=visibleTools();
+            var list=q?vis.filter(function(t){return (t.name+' '+t.desc+' '+t.cat).toLowerCase().indexOf(q)>-1;}):vis;
+            var favs=getFavs(),recents=getRecents();
+            document.getElementById('td-count').textContent=vis.length+' tools available';
+            if(q&&list.length===0){body.innerHTML='<div class="td-empty">No tools match "'+escapeHtml(q)+'".<br>Try a different keyword.</div>';return;}
+            var h='';
+            if(!q){
+                var fl=list.filter(function(t){return favs.indexOf(t.id)>-1;});
+                if(fl.length){h+='<div class="td-cat">Favorites</div>';for(var i=0;i<fl.length;i++)h+=drawerItemHTML(fl[i],favs);}
+                var rl=recents.map(toolById).filter(function(t){return t&&list.indexOf(t)>-1&&favs.indexOf(t.id)===-1;});
+                if(rl.length){h+='<div class="td-cat">Recently Used</div>';for(var j=0;j<rl.length;j++)h+=drawerItemHTML(rl[j],favs);}
+            }
+            var cats=['Calculators','Productivity','Administration'];
+            for(var c=0;c<cats.length;c++){
+                (function(cat){
+                    var cl=list.filter(function(t){return t.cat===cat;});
+                    if(!cl.length)return;
+                    h+='<div class="td-cat">'+cat+'</div>';
+                    for(var k=0;k<cl.length;k++)h+=drawerItemHTML(cl[k],favs);
+                })(cats[c]);
+            }
+            body.innerHTML=h;
+        }
+        function openTool(id){
+            var t=toolById(id);if(!t)return;
+            pushRecent(id);closeToolDrawer();
+            if(t.action==='history'){toggleHistory();return;}
+            var el=t.target?document.getElementById(t.target):null;
+            if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+        }
+        function toggleFav(id){
+            var f=getFavs(),i=f.indexOf(id);
+            if(i>-1){f.splice(i,1);showToast('Removed from Favorites');}else{f.unshift(id);showToast('Added to Favorites');}
+            setFavs(f);renderDrawer();renderHomePanel();
+        }
+
+        // ===== v3.9 HOME DASHBOARD =====
+        var homeHealth=null;
+        function fetchHomeHealth(){
+            fetch('/api/health').then(function(r){return r.json();}).then(function(d){homeHealth=d;renderHomeChips();renderHomeAnnouncements();}).catch(function(){homeHealth={error:true};renderHomeChips();renderHomeAnnouncements();});
+        }
+        function homeCardHTML(t,isFav){
+            return '<div class="home-card" onclick="openTool(\''+t.id+'\')"><span class="home-card-ico">'+(TOOL_ICONS[t.icon]||TOOL_ICONS.calc)+'</span><span class="home-card-meta"><span class="home-card-name">'+escapeHtml(t.name)+'</span><span class="home-card-desc">'+escapeHtml(t.desc)+'</span></span><button type="button" class="td-star'+(isFav?' is-fav':'')+'" onclick="event.stopPropagation();toggleFav(\''+t.id+'\')" title="'+(isFav?'Remove from favorites':'Add to favorites')+'">'+TOOL_ICONS.star+'</button></div>';
+        }
+        function renderHomeChips(){
+            var c=document.getElementById('home-chips');if(!c)return;
+            var h='';
+            if(homeHealth&&homeHealth.error){h+='<span class="home-chip"><span class="bad-dot"></span>API unreachable</span>';}
+            else if(homeHealth){h+='<span class="home-chip"><span class="ok-dot"></span>System online</span>';}
+            else{h+='<span class="home-chip"><span class="ok-dot"></span>Connecting...</span>';}
+            h+='<span class="home-chip">v3.9.0</span>';
+            var role=sessionStorage.getItem('maya_user_role');
+            if(role)h+='<span class="home-chip">'+escapeHtml(role)+'</span>';
+            var open=0;
+            if(typeof allTickets!=='undefined'&&allTickets&&allTickets.length)open=allTickets.filter(function(t){return t.status==='Open';}).length;
+            h+='<span class="home-chip">'+open+' open tickets</span>';
+            h+='<span class="home-chip">Last sign-in: '+fmtDT(sessionStorage.getItem('maya_last_login'))+'</span>';
+            c.innerHTML=h;
+        }
+        function renderHomeAnnouncements(){
+            var a=document.getElementById('home-ann');if(!a)return;
+            if(!homeHealth||homeHealth.error){a.innerHTML='<div class="home-ann home-ann-empty">No announcements available right now.</div>';return;}
+            var list=homeHealth.announcements||[];
+            if(!list.length){a.innerHTML='<div class="home-ann home-ann-empty">No announcements. You are all caught up.</div>';return;}
+            a.innerHTML=list.map(function(n){
+                return '<div class="home-ann"><span class="home-ann-dot"></span><div><p class="home-ann-title">'+escapeHtml(n.title)+'</p><p class="home-ann-text">'+escapeHtml(n.body)+'</p><p class="home-ann-date">'+escapeHtml(n.date||'')+'</p></div></div>';
+            }).join('');
+        }
+        function renderHomePanel(){
+            var g=document.getElementById('home-greet');if(!g)return;
+            var name=sessionStorage.getItem('maya_user_name')||'there';
+            var first=name.split(' ')[0];
+            var hr=new Date().getHours();
+            var part=hr<12?'Good morning':(hr<18?'Good afternoon':'Good evening');
+            g.textContent=part+', '+first;
+            var now=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+            document.getElementById('home-sub').innerHTML=escapeHtml(now)+' &middot; Employee ID <span class="font-mono text-zinc-300">'+escapeHtml(sessionStorage.getItem('maya_user_id')||'')+'</span>';
+            renderHomeChips();
+            var favs=getFavs(),vis=visibleTools();
+            document.getElementById('home-grid').innerHTML=vis.map(function(t){return homeCardHTML(t,favs.indexOf(t.id)>-1);}).join('');
+            var fl=vis.filter(function(t){return favs.indexOf(t.id)>-1;});
+            document.getElementById('home-fav-wrap').classList.toggle('hidden',fl.length===0);
+            document.getElementById('home-fav').innerHTML=fl.map(function(t){return homeCardHTML(t,true);}).join('');
+            var rl=getRecents().map(toolById).filter(function(t){return t&&vis.indexOf(t)>-1;});
+            document.getElementById('home-rec-wrap').classList.toggle('hidden',rl.length===0);
+            document.getElementById('home-rec').innerHTML=rl.map(function(t){return homeCardHTML(t,favs.indexOf(t.id)>-1);}).join('');
+            renderHomeAnnouncements();
+        }
+
+        // ===== v3.9 QUICK NOTEPAD =====
+        var noteTimer=null;
+        function noteKey(){return 'maya_note_'+currentUid();}
+        function updateNoteCount(){
+            var v=document.getElementById('note-area').value;
+            var w=v.trim()?v.trim().split(/\s+/).length:0;
+            document.getElementById('note-count').textContent=w+' words \u00b7 '+v.length+' chars';
+        }
+        function initNotepad(){
+            var a=document.getElementById('note-area');if(!a)return;
+            a.value=lsGet(noteKey(),'');
+            updateNoteCount();
+            a.addEventListener('input',function(){
+                document.getElementById('note-status').textContent='saving...';
+                updateNoteCount();
+                clearTimeout(noteTimer);
+                noteTimer=setTimeout(function(){lsSet(noteKey(),a.value);document.getElementById('note-status').textContent='saved locally';},400);
+            });
+        }
+        function copyNote(){
+            var v=document.getElementById('note-area').value;
+            if(!v){showToast('Notepad is empty');return;}
+            if(navigator.clipboard&&navigator.clipboard.writeText){
+                navigator.clipboard.writeText(v).then(function(){showToast('Notepad Copied');}).catch(function(){showToast('Copy failed');});
+            }else{
+                document.getElementById('note-area').select();
+                try{document.execCommand('copy');showToast('Notepad Copied');}catch(e){showToast('Copy failed');}
+            }
+        }
+        function clearNote(){
+            var a=document.getElementById('note-area');
+            if(!a.value)return;
+            if(!confirm('Clear the notepad? This cannot be undone.'))return;
+            a.value='';lsSet(noteKey(),'');updateNoteCount();
+            document.getElementById('note-status').textContent='cleared';
+            showToast('Notepad Cleared');
+        }
+
+        // ===== v3.9 PROFILE POPUP & CHANGE PASSWORD =====
+        function toggleProfilePop(e){
+            if(e)e.stopPropagation();
+            var p=document.getElementById('profilePop');
+            if(p.classList.contains('open')){closeProfilePop();return;}
+            updateProfilePop();p.classList.add('open');
+        }
+        function closeProfilePop(){document.getElementById('profilePop').classList.remove('open');}
+        function updateProfilePop(){
+            var name=sessionStorage.getItem('maya_user_name')||'Unknown';
+            document.getElementById('pp-name').textContent=name;
+            document.getElementById('pp-id').textContent=sessionStorage.getItem('maya_user_id')||'\u2014';
+            document.getElementById('pp-role').textContent=sessionStorage.getItem('maya_user_role')||'\u2014';
+            var parts=name.split(' ').filter(Boolean);
+            var ini=(parts[0]?parts[0].charAt(0):'?')+(parts[1]?parts[1].charAt(0):'');
+            document.getElementById('pp-initials').textContent=ini.toUpperCase();
+            var hist=[];try{hist=JSON.parse(sessionStorage.getItem('maya_login_history')||'[]')||[];}catch(e){}
+            var uh=document.getElementById('pp-history');
+            if(!hist.length){uh.innerHTML='<li>No sign-in history yet.</li>';}
+            else{uh.innerHTML=hist.slice(0,5).map(function(x){return '<li>'+fmtDT(x.time)+' \u00b7 '+escapeHtml(x.ip||'unknown IP')+'</li>';}).join('');}
+        }
+        function openChangePassword(){
+            closeProfilePop();
+            document.getElementById('cp-current').value='';
+            document.getElementById('cp-new').value='';
+            document.getElementById('cp-confirm').value='';
+            var al=document.getElementById('cp-alert');al.className='module-d-alert module-d-alert-error';
+            document.getElementById('cpModal').classList.add('open');
+            setTimeout(function(){document.getElementById('cp-current').focus();},120);
+        }
+        function closeChangePassword(){document.getElementById('cpModal').classList.remove('open');}
+        function showCpAlert(m,t){var e=document.getElementById('cp-alert');document.getElementById('cp-alert-text').textContent=m;e.className='module-d-alert module-d-alert-'+(t||'error')+' show';setTimeout(function(){e.classList.remove('show');},4000);}
+        function submitChangePassword(){
+            var cur=document.getElementById('cp-current').value,np=document.getElementById('cp-new').value,cp=document.getElementById('cp-confirm').value,btn=document.getElementById('cp-submit-btn');
+            if(!cur){showCpAlert('Please enter your current password.','error');return;}
+            if(!np||np.length<6){showCpAlert('New password must be at least 6 characters.','error');return;}
+            if(np!==cp){showCpAlert('New passwords do not match.','error');return;}
+            btn.disabled=true;btn.textContent='Updating...';
+            fetch('/api/auth/change-password',{method:'POST',headers:{'Content-Type':'application/json','x-maya-token':getToken()},body:JSON.stringify({currentPassword:cur,newPassword:np})})
+            .then(function(r){return r.json();})
+            .then(function(d){
+                btn.disabled=false;btn.textContent='Update Password';
+                if(d.error){showCpAlert(d.error,'error');return;}
+                closeChangePassword();showToast('Password Updated');
+            })
+            .catch(function(){btn.disabled=false;btn.textContent='Update Password';showCpAlert('Cannot connect to server.','error');});
+        }
+
+        // ===== v3.9 KEYBOARD SHORTCUTS & WIRING =====
+        document.addEventListener('keydown',function(e){
+            if((e.ctrlKey||e.metaKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();toggleToolDrawer();return;}
+            if(e.key==='Escape'){
+                var cp=document.getElementById('cpModal');
+                if(cp&&cp.classList.contains('open')){closeChangePassword();return;}
+                if(document.getElementById('profilePop').classList.contains('open')){closeProfilePop();return;}
+                if(document.getElementById('toolDrawer').classList.contains('open')){closeToolDrawer();}
+            }
+        });
+        document.addEventListener('click',function(e){
+            if(!e.target.closest('#profilePop')&&!e.target.closest('#user-info'))closeProfilePop();
+        });
+        (function(){
+            var s=document.getElementById('td-search');
+            if(s){
+                s.addEventListener('input',renderDrawer);
+                s.addEventListener('keydown',function(e){
+                    if(e.key==='Enter'){
+                        e.preventDefault();
+                        var q=s.value.toLowerCase().trim();
+                        var m=visibleTools().filter(function(t){return !q||(t.name+' '+t.desc+' '+t.cat).toLowerCase().indexOf(q)>-1;});
+                        if(m.length)openTool(m[0].id);
+                    }
+                });
+            }
+            var nav=document.querySelector('.f-topnav');
+            if(nav){
+                nav.addEventListener('click',function(e){
+                    var a=e.target.closest('.quick-nav-btn');if(!a)return;
+                    var m=(a.getAttribute('href')||'').replace('#','');
+                    for(var i=0;i<MAYA_TOOLS.length;i++){
+                        if(MAYA_TOOLS[i].target===m){pushRecent(MAYA_TOOLS[i].id);break;}
+                    }
+                });
+            }
+            initNotepad();
+        })();
 
         // ===== NAV SCROLL-SPY (highlight the module you're looking at) =====
         (function(){
