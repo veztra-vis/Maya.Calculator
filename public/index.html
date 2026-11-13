@@ -17,6 +17,16 @@
         }
     })();
     </script>
+    <script>
+    /* clean urls — hide .html from the address bar (pairs with the /login folder) */
+    (function(){
+        if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+        var p = location.pathname, np = null;
+        if (/index\.html$/i.test(p)) np = p.replace(/index\.html$/i, '');
+        else if (/login\.html$/i.test(p)) np = p.replace(/login\.html$/i, 'login/');
+        if (np !== null && np !== '') { try { history.replaceState(null, '', np); } catch (e) {} }
+    })();
+    </script>
     <title>Maya | Utility Terminal</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317181b'/%3E%3Cpath d='M18 46V19l14 19 14-19v27' fill='none' stroke='%23e6e7e9' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -256,6 +266,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.
 /* ---------- motion system (subtle, physical, monochrome) ---------- */
 @keyframes softIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
 @keyframes itemIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
 @keyframes alertIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
 @keyframes backdropIn{from{opacity:0;}to{opacity:1;}}
 .f-slot:hover:not(:focus):not(:disabled){border-color:#34373d !important;}
@@ -320,7 +331,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
                 <h1 class="font-display text-[26px] font-bold tracking-tight text-white leading-none">Maya <span class="text-zinc-500 font-medium text-lg">Utility Terminal</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="f-status-dot"></span>
-                    <p class="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">system online · v3.7.0</p>
+                    <p class="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">system online · v3.8.0</p>
                     <span id="role-badge" class="hidden f-tag"></span>
                 </div>
             </div>
@@ -583,10 +594,16 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             <div class="md:w-1/3 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Tickets & Notes</h2></div>
-                    <button onclick="openNewTicket()" class="px-3 py-1.5 f-btn-primary text-xs font-bold uppercase rounded-md transition-colors flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                        New
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="refreshTickets()" id="ticket-refresh-btn" title="Reload the ticket list (picks up tickets from other users)" class="px-3 py-1.5 f-btn-ghost text-xs font-bold uppercase rounded-md flex items-center gap-1">
+                            <svg id="ticket-refresh-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                            Refresh
+                        </button>
+                        <button onclick="openNewTicket()" class="px-3 py-1.5 f-btn-primary text-xs font-bold uppercase rounded-md transition-colors flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            New
+                        </button>
+                    </div>
                 </div>
                 <input type="text" id="ticket-search" placeholder="Search tickets..." class="w-full f-slot rounded-lg py-2 px-3 text-sm text-white mb-4 focus:outline-none focus:border-emerald-500" oninput="searchTickets()">
                 <div id="ticket-list" class="flex-grow overflow-y-auto space-y-2 pr-2" style="max-height: 450px;">
@@ -875,7 +892,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
         (function(){
             if(window.MAYA_MOBILE_BLOCKED){return;}
             var token=getToken();
-            if(!token){window.location.replace('login.html');return;}
+            if(!token){var lp=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');window.location.replace((lp===''?'':lp)+'/login/');;return;}
             fetch('/api/auth/verify',{headers:{'x-maya-token':token}})
             .then(function(r){if(r.status===401)throw new Error('expired');return r.json();})
             .then(function(data){
@@ -897,13 +914,13 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
                 }
                 fetchTickets(); // Fetch tickets on load
             })
-            .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('login.html');});
+            .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();var lp=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');window.location.replace((lp===''?'':lp)+'/login/');;});
         })();
 
         function handleLogout(){document.getElementById('logoutModal').classList.add('open');}
         function closeLogoutModal(){document.getElementById('logoutModal').classList.remove('open');}
         function cancelLogout(){closeLogoutModal();}
-        function doLogout(){closeLogoutModal();localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('login.html');}
+        function doLogout(){closeLogoutModal();localStorage.removeItem('maya_token');sessionStorage.clear();var lp=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');window.location.replace((lp===''?'':lp)+'/login/');;}
 
         // ===== IT SUPPORT MODAL =====
         function openITSupportModal() { document.getElementById('itSupportModal').classList.add('open'); }
@@ -1028,7 +1045,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
 
         // ===== TICKETING & NOTES LOGIC =====
         function fetchTickets() {
-            fetch('/api/notes', { headers: { 'x-maya-token': getToken() } })
+            return fetch('/api/notes', { headers: { 'x-maya-token': getToken() } })
             .then(r => r.json())
             .then(tickets => {
                 allTickets = tickets;
@@ -1037,6 +1054,25 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             .catch(function() {
                 document.getElementById('ticket-list').innerHTML = '<div class="text-center text-zinc-500 py-8 text-sm">Could not load tickets. Try refreshing.</div>';
             });
+        }
+
+        function refreshTickets() {
+            var icon = document.getElementById('ticket-refresh-icon');
+            if (icon) icon.style.animation = 'spin .8s linear infinite';
+            fetch('/api/notes', { headers: { 'x-maya-token': getToken() } })
+            .then(r => r.json())
+            .then(tickets => {
+                allTickets = tickets;
+                if (currentTicketId) {
+                    if (tickets.some(t => t.id === currentTicketId)) { loadTicket(currentTicketId); }
+                    else { openNewTicket(); }
+                }
+                if (document.getElementById('ticket-search').value.trim()) { searchTickets(); }
+                else { renderTicketList(allTickets); }
+                showToast('Tickets Refreshed');
+            })
+            .catch(function() { showToast('Could not refresh tickets'); })
+            .then(function() { if (icon) icon.style.animation = 'none'; });
         }
 
         function renderTicketList(tickets) {
@@ -1110,8 +1146,10 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             const isCreator = ticket.userId === currentUserId;
             const isTLPlus = getRoleLevel(sessionStorage.getItem('maya_user_role')) >= 3;
             
-            // RULE: Can edit if TL+ (regardless of open/closed) OR if creator and ticket is Open
+            // RULES: edit if TL+ (any state) or creator while ticket is Open.
+            // Close / Reopen: your OWN ticket always, or ANY ticket if TL+.
             const canEdit = isTLPlus || (isCreator && ticket.status === 'Open');
+            const canToggleStatus = isTLPlus || isCreator;
             
             document.getElementById('ticket-subject').disabled = !canEdit;
             document.getElementById('ticket-details').disabled = !canEdit;
@@ -1120,7 +1158,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             document.getElementById('ticket-view-only-msg').classList.toggle('hidden', canEdit);
             
             document.getElementById('ticket-save-btn').classList.toggle('hidden', !canEdit);
-            document.getElementById('ticket-close-btn').classList.toggle('hidden', !isTLPlus);
+            document.getElementById('ticket-close-btn').classList.toggle('hidden', !canToggleStatus);
             document.getElementById('ticket-close-btn').textContent = ticket.status === 'Closed' ? 'Reopen Ticket' : 'Close Ticket';
             document.getElementById('ticket-delete-btn').classList.toggle('hidden', !isTLPlus);
             
@@ -1144,10 +1182,9 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             .then(data => {
                 if (data.error) { showTicketAlert(data.error, 'error'); return; }
                 showToast(currentTicketId ? 'Ticket Updated' : 'Ticket Created');
-                fetchTickets();
-                if (!currentTicketId && data.note) {
-                    loadTicket(data.note.id);
-                }
+                fetchTickets().then(function() {
+                    if (!currentTicketId && data.note) { loadTicket(data.note.id); }
+                });
             })
             .catch(() => showTicketAlert('Failed to save ticket', 'error'));
         }
@@ -1166,8 +1203,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             .then(data => {
                 if (data.error) { showTicketAlert(data.error, 'error'); return; }
                 showToast(`Ticket ${newStatus}`);
-                fetchTickets();
-                loadTicket(currentTicketId);
+                fetchTickets().then(function() { loadTicket(currentTicketId); });
             })
             .catch(() => showTicketAlert('Failed to update status', 'error'));
         }
@@ -1184,8 +1220,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             .then(data => {
                 if (data.error) { showTicketAlert(data.error, 'error'); return; }
                 showToast('Ticket Deleted');
-                fetchTickets();
-                openNewTicket();
+                fetchTickets().then(openNewTicket);
             })
             .catch(() => showTicketAlert('Failed to delete ticket', 'error'));
         }
