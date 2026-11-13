@@ -634,6 +634,23 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.
         <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marlon Ubaña</p><p class="text-[10px] text-zinc-600 mt-1.5">Spotted something off? Drop a ticket in Module I &mdash; we read every one.</p></div>
     </footer>
 
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop-module-d no-print" onclick="if(event.target===this)closeLogoutModal()">
+        <div class="modal-card-module-d" style="max-width:380px;">
+            <div class="text-center">
+                <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-red-500/25 bg-red-500/10 text-red-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                </div>
+                <h3 class="text-lg font-bold text-white">Log out of Maya?</h3>
+                <p class="mt-1.5 text-sm text-zinc-500 leading-relaxed">Your shift timer will end and you'll be returned to the login page.</p>
+                <div class="mt-6 flex gap-3">
+                    <button type="button" onclick="cancelLogout()" class="flex-1 px-4 py-2.5 f-btn-ghost text-xs font-bold uppercase rounded-lg">No, stay</button>
+                    <button type="button" onclick="doLogout()" class="flex-1 px-4 py-2.5 f-btn-danger text-xs font-bold uppercase rounded-lg">Yes, log out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- IT Support Modal -->
     <div id="itSupportModal" class="modal-backdrop-module-d">
         <div class="modal-card-module-d" style="max-width: 420px;">
@@ -816,7 +833,10 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.
             .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('login.html');});
         })();
 
-        function handleLogout(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('login.html');}
+        function handleLogout(){document.getElementById('logoutModal').classList.add('open');}
+        function closeLogoutModal(){document.getElementById('logoutModal').classList.remove('open');}
+        function cancelLogout(){closeLogoutModal();}
+        function doLogout(){closeLogoutModal();localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('login.html');}
 
         // ===== IT SUPPORT MODAL =====
         function openITSupportModal() { document.getElementById('itSupportModal').classList.add('open'); }
