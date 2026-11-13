@@ -418,7 +418,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             <input type="text" id="td-search" placeholder="Search tools, categories..." autocomplete="off">
         </div>
         <div class="td-body" id="td-body"></div>
-        <div class="td-foot"><span>v3.9.0</span><span><kbd>Ctrl</kbd> + <kbd>K</kbd> to toggle</span></div>
+        <div class="td-foot"><span>v3.9.1</span><span><kbd>Ctrl</kbd> + <kbd>K</kbd> to toggle</span></div>
     </aside>
 
     <!-- ===== v3.9 profile popup ===== -->
@@ -462,7 +462,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
                 <h1 class="font-display text-[26px] font-bold tracking-tight text-white leading-none">Maya <span class="text-zinc-500 font-medium text-lg">Utility Terminal</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                     <span class="f-status-dot"></span>
-                    <p class="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">system online · v3.9.0</p>
+                    <p class="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">system online · v3.9.1</p>
                     <span id="role-badge" class="hidden f-tag"></span>
                 </div>
             </div>
@@ -1051,11 +1051,21 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
 
         function getToken(){return localStorage.getItem('maya_token')||sessionStorage.getItem('maya_token');}
 
+        // [v3.9.1] Loop-proof login redirect. Works with the current layout
+        // (terminal at /, login at /login) AND the old server layout
+        // (terminal at /app, login page at /) so signing out / expiring a
+        // session can never bounce between two copies of the same page.
+        function mayaLoginUrl(){
+            var p=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');
+            if(/\/app$/.test(p))return '/';
+            return (p===''?'':p)+'/login/';
+        }
+
         // ===== AUTH CHECK =====
         (function(){
             if(window.MAYA_MOBILE_BLOCKED){return;}
             var token=getToken();
-            if(!token){var lp=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');window.location.replace((lp===''?'':lp)+'/login/');;return;}
+            if(!token){window.location.replace(mayaLoginUrl());return;}
             fetch('/api/auth/verify',{headers:{'x-maya-token':token}})
             .then(function(r){if(r.status===401)throw new Error('expired');return r.json();})
             .then(function(data){
@@ -1081,13 +1091,13 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
                 renderHomePanel();
                 fetchHomeHealth();
             })
-            .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();var lp=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');window.location.replace((lp===''?'':lp)+'/login/');;});
+            .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace(mayaLoginUrl());});
         })();
 
         function handleLogout(){document.getElementById('logoutModal').classList.add('open');}
         function closeLogoutModal(){document.getElementById('logoutModal').classList.remove('open');}
         function cancelLogout(){closeLogoutModal();}
-        function doLogout(){closeLogoutModal();localStorage.removeItem('maya_token');sessionStorage.clear();var lp=location.pathname.replace(/\/index\.html?$/i,'').replace(/\/+$/,'');window.location.replace((lp===''?'':lp)+'/login/');;}
+        function doLogout(){closeLogoutModal();localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace(mayaLoginUrl());}
 
         // ===== IT SUPPORT MODAL =====
         function openITSupportModal() { document.getElementById('itSupportModal').classList.add('open'); }
@@ -1857,7 +1867,7 @@ html.mobile-blocked #mobile-block-screen{display:flex;}
             if(homeHealth&&homeHealth.error){h+='<span class="home-chip"><span class="bad-dot"></span>API unreachable</span>';}
             else if(homeHealth){h+='<span class="home-chip"><span class="ok-dot"></span>System online</span>';}
             else{h+='<span class="home-chip"><span class="ok-dot"></span>Connecting...</span>';}
-            h+='<span class="home-chip">v3.9.0</span>';
+            h+='<span class="home-chip">v3.9.1</span>';
             var role=sessionStorage.getItem('maya_user_role');
             if(role)h+='<span class="home-chip">'+escapeHtml(role)+'</span>';
             var open=0;
