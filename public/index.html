@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maya | Utility Terminal</title>
-    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317181b'/%3E%3Cpath d='M18 46V19l14 19 14-19v27' fill='none' stroke='%23e6e7e9' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'], display: ['Inter', 'sans-serif'] },
                     colors: { zinc: { 850: '#111113', 950: '#08090A' } },
                     animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
                     keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
@@ -24,162 +25,260 @@
         }
     </script>
     <style>
-        html { scroll-behavior: smooth; }
-        body { background: radial-gradient(circle at 50% 50%, #111113 0%, #08090A 100%); background-attachment: fixed; }
-        .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 80% 20%, rgba(0, 209, 122, 0.03) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(0, 209, 122, 0.03) 0%, transparent 40%); z-index: -1; pointer-events: none; }
-        @keyframes floatOrb { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(20px, -30px) scale(1.1); } }
-        .orb { position: fixed; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.4; animation: floatOrb 10s ease-in-out infinite; pointer-events: none; }
-        .orb-1 { width: 300px; height: 300px; background: rgba(0, 209, 122, 0.2); top: -50px; left: -50px; }
-        .orb-2 { width: 400px; height: 400px; background: rgba(0, 153, 90, 0.15); bottom: -100px; right: -100px; animation-delay: 2s; }
-        .orb-3 { width: 250px; height: 250px; background: rgba(0, 245, 144, 0.15); top: 40%; right: 20%; animation-delay: 4s; }
-        .glass-panel { background: rgba(17, 17, 19, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(30, 30, 32, 1); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; scroll-margin-top: 100px; }
-        .glass-panel:hover { border-color: rgba(0, 209, 122, 0.4); box-shadow: 0 0 30px rgba(0, 209, 122, 0.1); transform: translateY(-3px); }
-        button:hover { transition: all 0.2s ease; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #08090A; }
-        ::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
-        .loader-overlay { transition: opacity 0.6s ease-out, visibility 0.6s; }
-        .hidden-loader { opacity: 0; visibility: hidden; pointer-events: none; }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        .data-font { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
-        .header-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; }
-        .logo-fallback { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #00D17A; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
-        @keyframes spinRing { to { transform: rotate(360deg); } }
-        @keyframes arcDash { 0% { stroke-dasharray: 1 210; stroke-dashoffset: 0; } 50% { stroke-dasharray: 120 210; stroke-dashoffset: -40; } 100% { stroke-dasharray: 120 210; stroke-dashoffset: -130; } }
-        .module-d-alert { padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; display: none; align-items: center; gap: 8px; line-height: 1.45; }
-        .module-d-alert.show { display: flex; }
-        .module-d-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; }
-        .module-d-alert-success { background: rgba(0, 209, 122, 0.1); border: 1px solid rgba(0, 209, 122, 0.2); color: #6ee7b7; }
-        .user-table-wrap { max-height: 400px; overflow-y: auto; border-radius: 8px; border: 1px solid #1f1f22; }
-        .user-table-wrap::-webkit-scrollbar { width: 4px; }
-        .user-table-wrap::-webkit-scrollbar-track { background: transparent; }
-        .user-table-wrap::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .user-row { transition: background 0.15s; cursor: pointer; }
-        .user-row:hover { background: rgba(0, 209, 122, 0.08); }
-        .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-        .role-tag-admin { background: rgba(0, 209, 122, 0.15); color: #00D17A; border: 1px solid rgba(0, 209, 122, 0.3); }
-        .role-tag-client { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .role-tag-om { background: rgba(0, 153, 90, 0.15); color: #34d399; border: 1px solid rgba(0, 153, 90, 0.3); }
-        .role-tag-tl { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .role-tag-agent { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; border: 1px solid rgba(113, 113, 122, 0.3); }
-        .role-tag-training { background: rgba(236, 72, 153, 0.15); color: #f9a8d4; border: 1px solid rgba(236, 72, 153, 0.3); }
-        .btn-action-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(0, 209, 122, 0.2); color: #00D17A; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-        .btn-action-user:hover { background: rgba(0, 209, 122, 0.1); border-color: rgba(0, 209, 122, 0.4); }
-        .btn-action-user:disabled { opacity: 0.3; cursor: not-allowed; }
-        .btn-delete-user { padding: 4px 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s; font-family: 'Inter', sans-serif; }
-        .btn-delete-user:hover { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
-        .btn-delete-user:disabled { opacity: 0.3; cursor: not-allowed; }
-        .modal-backdrop-module-d { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-backdrop-module-d.open { display: flex; }
-        .modal-card-module-d { background: rgba(17, 17, 19, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 20px; padding: 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7); animation: modalSlideIn 0.3s ease-out; }
-        @keyframes modalSlideIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .modal-card-module-d::-webkit-scrollbar { width: 4px; }
-        .modal-card-module-d::-webkit-scrollbar-track { background: transparent; }
-        .modal-card-module-d::-webkit-scrollbar-thumb { background: #1f1f22; border-radius: 2px; }
-        .edit-field-input { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; }
-        .edit-field-input:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .edit-field-input:disabled { opacity: 0.5; cursor: not-allowed; }
-        .edit-field-input.mono { font-family: 'JetBrains Mono', monospace; }
-        .edit-field-select { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%2352525b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px; }
-        .edit-field-select:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .edit-field-select option { background: #08090A; color: #f4f4f5; }
-        .info-box { background: rgba(0, 209, 122, 0.06); border: 1px solid rgba(0, 209, 122, 0.15); border-radius: 10px; padding: 14px 16px; }
-        .info-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #00D17A; margin-bottom: 6px; font-weight: 600; }
-        .info-box-text { font-size: 14px; color: #f4f4f5; }
-        .contact-textarea { width: 100%; background: rgba(8, 9, 10, 0.8); border: 1px solid rgba(30, 30, 32, 0.8); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #f4f4f5; font-family: 'Inter', sans-serif; outline: none; transition: all 0.2s; resize: vertical; min-height: 100px; }
-        .contact-textarea:focus { border-color: rgba(0, 209, 122, 0.5); box-shadow: 0 0 0 3px rgba(0, 209, 122, 0.1); }
-        .contact-textarea::placeholder { color: #3f3f46; }
-        .contact-textarea:disabled { opacity: 0.5; cursor: not-allowed; }
+/* ==================================================================
+   MAYA UTILITY TERMINAL — clean dark monochrome
+   Flat surfaces, hairline borders, no gradients, no glows.
+   Color is reserved for status only (green ok / red error / yellow warn).
+   ================================================================== */
+:root{
+    --bg:#101113;
+    --surface:#17181b;
+    --surface-2:#1c1e21;
+    --well:#131417;
+    --line:#26282c;
+    --line-hi:#34373d;
+    --ink:#e6e7e9;
+    --ink-dim:#9b9ea4;
+    --ink-faint:#6d7076;
+    --ok:#57b884;
+    --bad:#e0564f;
+    --warn:#d9a93d;
+}
+html{scroll-behavior:smooth;color-scheme:dark;}
+body{background:var(--bg);}
 
-        /* --- FEATURE STYLES --- */
-        .input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; background: rgba(239, 68, 68, 0.05) !important; }
-        .err-msg { color: #fca5a5; font-size: 10px; margin-top: 4px; display: none; font-family: 'Inter', sans-serif; }
-        .formula-card { background: rgba(0, 0, 0, 0.2); border: 1px solid #1f1f22; padding: 12px; border-radius: 8px; margin-top: 12px; }
-        .formula-card summary { cursor: pointer; color: #00D17A; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; outline: none; user-select: none; }
-        .formula-card summary:hover { color: #00F590; }
-        .formula-text { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a1a1aa; white-space: pre-wrap; line-height: 1.6; background: #08090A; padding: 12px; border-radius: 6px; border: 1px dashed #27272a; }
-        .formula-text span { color: #00D17A; font-weight: bold; }
-        .hist-item { background: #111113; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #00D17A; cursor: pointer; transition: all 0.2s; }
-        .hist-item:hover { background: #18181b; transform: translateX(4px); }
-        .hist-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #00D17A; }
-        .hist-date { font-size: 9px; color: #71717a; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
-        .hist-summary { font-size: 12px; color: #d4d4d8; margin-top: 6px; }
-        .receipt-container { width: 100%; max-width: 320px; margin: 0 auto; background: #fff; color: #000; font-family: 'Courier New', Courier, monospace; font-size: 12px; padding: 15px; line-height: 1.4; }
-        .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
-        .receipt-title { font-size: 18px; font-weight: bold; color: #00995A; text-transform: uppercase; letter-spacing: 1px; }
-        .receipt-sub { font-size: 10px; color: #555; }
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .receipt-label { font-weight: bold; color: #333; }
-        .receipt-val { color: #000; }
-        .receipt-divider { border-top: 1px dashed #000; margin: 10px 0; }
-        .receipt-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
-        .receipt-table th, .receipt-table td { border-bottom: 1px solid #eee; padding: 4px 2px; text-align: left; }
-        .receipt-table th { border-bottom: 2px solid #000; font-weight: bold; }
-        .receipt-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; background: #f0f0f0; padding: 8px; margin-top: 5px; border-radius: 4px; }
-        .receipt-footer { text-align: center; font-size: 10px; margin-top: 15px; color: #555; }
-        @media print {
-            body * { visibility: hidden; }
-            #receipt-print-area, #receipt-print-area * { visibility: visible; }
-            #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; background: white !important; }
-            .no-print { display: none !important; }
-        }
-        .quick-nav-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #a1a1aa; background: rgba(39, 39, 42, 0.5); border: 1px solid rgba(39, 39, 42, 0.8); transition: all 0.2s; white-space: nowrap; }
-        .quick-nav-btn:hover { color: #00D17A; border-color: rgba(0, 209, 122, 0.4); background: rgba(0, 209, 122, 0.05); }
+/* ---------- type ---------- */
+h2{letter-spacing:-0.01em;}
+label{text-transform:none !important;letter-spacing:.01em !important;font-size:11.5px !important;font-weight:500 !important;color:#96999f !important;margin-bottom:4px !important;}
+.font-display{font-family:'Inter',sans-serif;}
+
+/* ---------- panels ---------- */
+.glass-panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    scroll-margin-top:100px;
+    transition:border-color .2s ease;
+}
+.glass-panel:hover{border-color:var(--line-hi);}
+/* module accent bar — simple neutral rule */
+.f-bar{background:#d4d6da;border-radius:1px;}
+
+/* ---------- module tag ---------- */
+.f-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#c9ccd1;background:#24262a;border:1px solid #34373d;border-radius:4px;padding:3px 8px;line-height:1.2;}
+.f-tag-open{color:var(--ok);background:rgba(87,184,132,.08);border-color:rgba(87,184,132,.3);}
+.f-tag-muted{color:#8b8e94;background:#212327;border-color:#323539;}
+
+/* ---------- inputs ---------- */
+.f-slot{background:#131417 !important;border:1px solid #2a2c30 !important;border-radius:8px !important;color:var(--ink);transition:border-color .15s ease, box-shadow .15s ease;}
+.f-slot:focus{border-color:#8a8e95 !important;outline:none;box-shadow:0 0 0 3px rgba(230,231,233,.09) !important;}
+.f-slot::placeholder{color:#54575d;}
+.f-slot:disabled{opacity:.5;cursor:not-allowed;}
+.f-readonly{background:#16171a !important;}
+select.f-slot{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%236d7076'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;background-size:12px;padding-right:34px !important;cursor:pointer;
+}
+select.f-slot option{background:#17181b;color:var(--ink);}
+
+/* ---------- wells ---------- */
+.f-well{background:var(--well);border:1px solid #24262a !important;border-radius:10px;}
+.f-thead{background:var(--surface-2) !important;}
+.f-thead th{border-bottom:1px solid var(--line);}
+
+/* ---------- buttons ---------- */
+.f-btn-primary{background:#e6e7e9;color:#141517 !important;border:1px solid #e6e7e9;border-radius:8px !important;font-weight:700;cursor:pointer;transition:background .15s ease;}
+.f-btn-primary:hover{background:#ffffff;}
+.f-btn-primary:active{background:#d4d6da;}
+.f-btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.f-btn-ghost{background:transparent;border:1px solid var(--line-hi);color:var(--ink-dim) !important;border-radius:8px !important;cursor:pointer;transition:all .15s ease;}
+.f-btn-ghost:hover{background:var(--surface-2);border-color:#45484f;color:var(--ink) !important;}
+.f-btn-ghost:active{background:#222428;}
+.f-btn-ghost:disabled{opacity:.4;cursor:not-allowed;}
+.f-btn-danger{background:var(--bad);color:#ffffff !important;border:1px solid #c74a44;border-radius:8px !important;font-weight:700;cursor:pointer;transition:filter .15s ease;}
+.f-btn-danger:hover{filter:brightness(1.08);}
+.f-btn-danger:active{filter:brightness(.95);}
+.f-btn-danger:disabled{opacity:.4;cursor:not-allowed;}
+.f-btn-danger-ghost{background:transparent;border:1px solid #3a2c2c;color:#d99390 !important;border-radius:8px !important;cursor:pointer;transition:all .15s ease;}
+.f-btn-danger-ghost:hover{background:rgba(224,86,79,.07);border-color:#5a3b3a;color:#eeb1ae !important;}
+.f-btn-danger-ghost:active{background:rgba(224,86,79,.1);}
+.f-btn-danger-ghost:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ---------- header bits ---------- */
+.f-status-dot{width:8px;height:8px;border-radius:9999px;background:var(--ok);animation:fBlink 2.4s ease-in-out infinite;display:inline-block;}
+@keyframes fBlink{0%,100%{opacity:1;}50%{opacity:.45;}}
+.f-pill{background:var(--surface);border:1px solid var(--line);border-radius:10px !important;}
+
+/* ---------- top nav ---------- */
+.f-topnav{background:rgba(16,17,19,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:var(--line) !important;}
+.quick-nav-btn{padding:6px 12px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:.03em;
+    color:var(--ink-dim);background:var(--surface);border:1px solid var(--line);white-space:nowrap;transition:all .15s ease;cursor:pointer;}
+.quick-nav-btn:hover{color:var(--ink);border-color:var(--line-hi);background:var(--surface-2);}
+.quick-nav-btn.f-nav-active{color:var(--ink);border-color:#4a4e55;background:#26292e;}
+.quick-nav-btn:active{background:#222428;}
+
+/* ---------- icon chips ---------- */
+.f-chip{background:var(--surface-2);border:1px solid var(--line-hi);border-radius:10px;color:#c9ccd1;}
+
+/* ---------- toast ---------- */
+.f-toast{background:var(--surface-2);border:1px solid var(--line-hi);border-radius:10px !important;box-shadow:0 10px 26px -8px rgba(0,0,0,.6);}
+
+/* ---------- tickets ---------- */
+.f-ticket-item{background:var(--surface);border:1px solid var(--line);border-radius:9px;cursor:pointer;transition:border-color .15s ease, background .15s ease;}
+.f-ticket-item:hover{border-color:var(--line-hi);background:var(--surface-2);}
+.f-ticket-item.f-active{border-color:#5a5e66;box-shadow:0 0 0 1px rgba(230,231,233,.12);}
+
+/* ---------- alerts ---------- */
+.module-d-alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:16px;display:none;align-items:center;gap:8px;line-height:1.45;}
+.module-d-alert.show{display:flex;}
+.module-d-alert-error{background:rgba(224,86,79,.09);border:1px solid rgba(224,86,79,.28);color:#f1a0a0;}
+.module-d-alert-success{background:rgba(87,184,132,.09);border:1px solid rgba(87,184,132,.3);color:#93d9b6;}
+
+/* ---------- account table ---------- */
+.user-table-wrap{max-height:400px;overflow-y:auto;border-radius:9px;border:1px solid var(--line);}
+.user-table-wrap::-webkit-scrollbar{width:4px;}
+.user-table-wrap::-webkit-scrollbar-track{background:transparent;}
+.user-table-wrap::-webkit-scrollbar-thumb{background:#2b2e33;border-radius:2px;}
+.user-row{transition:background .15s;cursor:pointer;}
+.user-row:hover{background:rgba(255,255,255,.03);}
+.role-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-family:'JetBrains Mono',monospace;}
+.role-tag-admin{background:rgba(230,231,233,.14);color:#f2f3f4;border:1px solid rgba(230,231,233,.38);}
+.role-tag-client{background:rgba(230,231,233,.08);color:#c9ccd1;border:1px solid rgba(230,231,233,.22);}
+.role-tag-om{background:rgba(230,231,233,.1);color:#d4d6da;border:1px solid rgba(230,231,233,.28);}
+.role-tag-tl{background:rgba(230,231,233,.07);color:#bfc2c7;border:1px solid rgba(230,231,233,.2);}
+.role-tag-agent{background:rgba(230,231,233,.05);color:#a9adb3;border:1px solid rgba(230,231,233,.16);}
+.role-tag-training{background:rgba(230,231,233,.04);color:#94989e;border:1px solid rgba(230,231,233,.12);}
+.btn-action-user{padding:4px 8px;background:transparent;border:1px solid rgba(230,231,233,.22);color:#c9ccd1;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;transition:all .15s;font-family:'JetBrains Mono',monospace;}
+.btn-action-user:hover{background:rgba(255,255,255,.06);border-color:rgba(230,231,233,.4);color:var(--ink);}
+.btn-action-user:disabled{opacity:.42;cursor:not-allowed;}
+.btn-delete-user{padding:4px 8px;background:transparent;border:1px solid rgba(224,86,79,.28);color:#d99390;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;transition:all .15s;font-family:'JetBrains Mono',monospace;}
+.btn-delete-user:hover{background:rgba(224,86,79,.1);border-color:rgba(224,86,79,.45);}
+.btn-delete-user:disabled{opacity:.42;cursor:not-allowed;}
+
+/* ---------- modals ---------- */
+.modal-backdrop-module-d{position:fixed;inset:0;z-index:200;background:rgba(8,9,10,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-backdrop-module-d.open{display:flex;}
+.modal-card-module-d{background:#1b1d20;border:1px solid var(--line-hi);border-radius:14px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;
+    box-shadow:0 30px 70px -15px rgba(0,0,0,.7);animation:modalSlideIn .25s ease-out;}
+@keyframes modalSlideIn{from{opacity:0;transform:scale(.97) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-card-module-d::-webkit-scrollbar{width:4px;}
+.modal-card-module-d::-webkit-scrollbar-track{background:transparent;}
+.modal-card-module-d::-webkit-scrollbar-thumb{background:#2b2e33;border-radius:2px;}
+
+/* ---------- modal form fields ---------- */
+.edit-field-input,.contact-textarea{width:100%;background:#131417;border:1px solid #2a2c30;border-radius:8px;padding:11px 14px;font-size:14px;color:var(--ink);font-family:'Inter',sans-serif;outline:none;transition:border-color .15s ease, box-shadow .15s ease;}
+.edit-field-input:focus,.contact-textarea:focus{border-color:#8a8e95;box-shadow:0 0 0 3px rgba(230,231,233,.09);}
+.edit-field-input:disabled,.contact-textarea:disabled{opacity:.5;cursor:not-allowed;}
+.edit-field-input.mono{font-family:'JetBrains Mono',monospace;}
+.edit-field-select{width:100%;background:#131417;border:1px solid #2a2c30;border-radius:8px;padding:11px 14px;font-size:14px;color:var(--ink);font-family:'Inter',sans-serif;outline:none;transition:border-color .15s ease, box-shadow .15s ease;cursor:pointer;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%236d7076'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:12px;}
+.edit-field-select:focus{border-color:#8a8e95;box-shadow:0 0 0 3px rgba(230,231,233,.09);}
+.edit-field-select option{background:#17181b;color:var(--ink);}
+.info-box{background:rgba(255,255,255,.03);border:1px solid #2c2f34;border-radius:9px;padding:14px 16px;}
+.info-box-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#b9bcc2;margin-bottom:6px;font-weight:600;}
+.info-box-text{font-size:14px;color:var(--ink);}
+.contact-textarea{resize:vertical;min-height:100px;}
+.contact-textarea::placeholder{color:#54575d;}
+
+/* ---------- feature styles ---------- */
+.input-error{border-color:var(--bad) !important;box-shadow:0 0 0 2px rgba(224,86,79,.22) !important;background:rgba(224,86,79,.05) !important;}
+.err-msg{color:#f1a0a0;font-size:10px;margin-top:4px;display:none;font-family:'Inter',sans-serif;}
+.formula-card{background:rgba(0,0,0,.25);border:1px solid #24262a;padding:12px;border-radius:9px;margin-top:12px;}
+.formula-card summary{cursor:pointer;color:#c9ccd1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;outline:none;user-select:none;font-family:'JetBrains Mono',monospace;}
+.formula-card summary:hover{color:var(--ink);}
+.formula-text{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#9b9ea4;white-space:pre-wrap;line-height:1.6;background:#0f1012;padding:12px;border-radius:7px;border:1px dashed #2c2f34;}
+.formula-text span{color:#f2f3f4;font-weight:bold;}
+.hist-item{background:var(--surface);padding:12px;border-radius:8px;margin-bottom:8px;border:1px solid var(--line);border-left:3px solid #6d7076;cursor:pointer;transition:all .15s ease;}
+.hist-item:hover{background:var(--surface-2);transform:translateX(3px);}
+.hist-type{font-size:10px;font-weight:700;text-transform:uppercase;color:#b9bcc2;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;}
+.hist-date{font-size:9px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.hist-summary{font-size:12px;color:#c9ccd1;margin-top:6px;}
+
+/* ---------- receipt (printed paper — stays light) ---------- */
+.receipt-container{width:100%;max-width:320px;margin:0 auto;background:#fff;color:#000;font-family:'Courier New',Courier,monospace;font-size:12px;padding:15px;line-height:1.4;}
+.receipt-header{text-align:center;border-bottom:2px dashed #000;padding-bottom:10px;margin-bottom:10px;}
+.receipt-title{font-size:18px;font-weight:bold;color:#111;text-transform:uppercase;letter-spacing:1px;}
+.receipt-sub{font-size:10px;color:#555;}
+.receipt-row{display:flex;justify-content:space-between;margin-bottom:4px;}
+.receipt-label{font-weight:bold;color:#333;}
+.receipt-val{color:#000;}
+.receipt-divider{border-top:1px dashed #000;margin:10px 0;}
+.receipt-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:10px;}
+.receipt-table th,.receipt-table td{border-bottom:1px solid #eee;padding:4px 2px;text-align:left;}
+.receipt-table th{border-bottom:2px solid #000;font-weight:bold;}
+.receipt-total{display:flex;justify-content:space-between;font-size:14px;font-weight:bold;background:#f0f0f0;padding:8px;margin-top:5px;border-radius:4px;}
+.receipt-footer{text-align:center;font-size:10px;margin-top:15px;color:#555;}
+@media print{
+    body *{visibility:hidden;}
+    #receipt-print-area, #receipt-print-area *{visibility:visible;}
+    #receipt-print-area{position:absolute;left:0;top:0;width:100%;padding:0;margin:0;background:white !important;}
+    .no-print{display:none !important;}
+}
+
+/* ---------- loader (minimal: wordmark + thin bar) ---------- */
+.loader-overlay{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .55s ease-out, visibility .55s;}
+.hidden-loader{opacity:0;visibility:hidden;pointer-events:none;}
+.boot-card{display:flex;flex-direction:column;align-items:center;}
+.boot-word{font-family:'Inter',sans-serif;font-weight:700;font-size:15px;letter-spacing:.32em;text-indent:.32em;color:var(--ink);margin-bottom:22px;}
+.boot-word span{color:var(--ink-faint);font-weight:500;}
+.boot-bar{width:232px;height:3px;background:#24262a;border-radius:2px;overflow:hidden;}
+.boot-fill{height:100%;width:4%;background:#d4d6da;border-radius:2px;transition:width .32s ease;}
+.boot-note{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5d6066;}
+
+/* ---------- misc ---------- */
+button{cursor:pointer;}
+::-webkit-scrollbar{width:9px;height:9px;}
+::-webkit-scrollbar-track{background:#101113;}
+::-webkit-scrollbar-thumb{background:#2b2e33;border-radius:5px;border:2px solid #101113;}
+::-webkit-scrollbar-thumb:hover{background:#3a3e44;}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.data-font{font-feature-settings:"tnum";font-variant-numeric:tabular-nums;}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.6;cursor:pointer;}
+@keyframes arcDash{0%{stroke-dasharray:1 210;stroke-dashoffset:0;}50%{stroke-dasharray:120 210;stroke-dashoffset:-40;}100%{stroke-dasharray:120 210;stroke-dashoffset:-130;}}
     </style>
 </head>
-<body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-400">
+<body class="text-zinc-100 min-h-screen p-4 md:p-8 font-sans antialiased selection:bg-zinc-500/40 selection:text-zinc-100">
 
-    <div id="loader" class="fixed inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center loader-overlay">
-        <div class="relative w-20 h-20 mb-8">
-            <svg class="w-full h-full" style="animation:spinRing 2s linear infinite" viewBox="0 0 50 50">
-                <defs><linearGradient id="loaderGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00D17A"/><stop offset="50%" stop-color="#00F590"/><stop offset="100%" stop-color="#00995A"/></linearGradient></defs>
-                <circle cx="25" cy="25" r="20" fill="none" stroke="#1f1f22" stroke-width="3.5"/>
-                <circle cx="25" cy="25" r="20" fill="none" stroke="url(#loaderGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="120 210" style="animation:arcDash 1.6s ease-in-out infinite"/>
-            </svg>
-            <div class="absolute inset-0 flex items-center justify-center"><div class="logo-fallback w-12 h-12 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-sm">M</div></div>
+    <div id="loader" class="loader-overlay">
+        <div class="boot-card">
+            <div class="boot-word">MAYA <span>UTILITY TERMINAL</span></div>
+            <div class="boot-bar"><div class="boot-fill" id="boot-fill"></div></div>
+            <p class="boot-note">establishing connection&hellip;</p>
         </div>
-        <p class="text-zinc-500 text-[10px] uppercase tracking-[0.3em] animate-pulse">Initializing Maya Link...</p>
     </div>
 
-    <div class="ambient-glow"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
 
     <header class="max-w-6xl mx-auto mb-6 border-b border-zinc-800 pb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
         <div class="flex items-center gap-4">
-            <div class="header-logo flex items-center justify-center overflow-hidden bg-zinc-800/50"><div class="logo-fallback w-10 h-10 rounded-[10px] bg-emerald-600/20 border border-emerald-500/30 text-sm">M</div></div>
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-white">Maya <span class="text-zinc-600 font-light">| Internal Agent</span></h1>
+                <h1 class="font-display text-[26px] font-bold tracking-tight text-white leading-none">Maya <span class="text-zinc-500 font-medium text-lg">Utility Terminal</span></h1>
                 <div class="flex items-center gap-3 mt-0.5 flex-wrap">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p class="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">System Online • v3.5.0</p>
-                    <span id="role-badge" class="hidden px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] uppercase font-bold rounded"></span>
+                    <span class="f-status-dot"></span>
+                    <p class="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">system online · v3.6.0</p>
+                    <span id="role-badge" class="hidden f-tag"></span>
                 </div>
             </div>
         </div>
         <div class="flex items-center gap-3 flex-wrap justify-center">
-            <div id="user-info" class="hidden text-right bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800 flex flex-col">
-                <span class="text-xs font-medium text-zinc-300"><span id="user-name"></span> <span class="text-zinc-600 mx-1">•</span> <span id="shift-timer" class="font-mono text-emerald-400 text-[10px]">Shift: 00:00:00</span></span>
+            <div id="user-info" class="hidden text-right f-pill px-4 py-2 flex flex-col">
+                <span class="text-xs font-medium text-zinc-300"><span id="user-name"></span> <span class="text-zinc-600 mx-1">•</span> <span id="shift-timer" class="font-mono text-zinc-100 text-[10px]">Shift: 00:00:00</span></span>
                 <span id="live-date-time" class="text-[10px] font-mono text-zinc-500 mt-0.5">Syncing...</span>
             </div>
-            <button onclick="copyAgentSummary()" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
+            <button onclick="copyAgentSummary()" class="px-3 py-2 f-btn-ghost text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                 Copy Summary
             </button>
-            <button onclick="toggleHistory()" class="px-3 py-2 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
+            <button onclick="toggleHistory()" class="px-3 py-2 f-btn-ghost text-zinc-300 hover:text-white text-[10px] uppercase font-bold rounded-full transition-all flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 History
             </button>
-            <button onclick="handleLogout()" id="logout-btn" class="hidden px-3 py-2 bg-zinc-900/50 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-500 hover:text-red-400 text-[10px] uppercase font-bold rounded-full transition-all" title="Logout">
+            <button onclick="handleLogout()" id="logout-btn" class="hidden px-3 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-500 hover:text-red-400 text-[10px] uppercase font-bold rounded-full transition-all" title="Logout">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
             </button>
         </div>
     </header>
 
-    <div class="sticky top-0 z-30 bg-zinc-950/80 backdrop-blur-md border-y border-zinc-800 mb-6 -mx-4 md:-mx-8 px-4 md:px-8 py-3 no-print">
+    <div class="sticky top-0 z-30 f-topnav border-y border-zinc-800/70 mb-6 -mx-4 md:-mx-8 px-4 md:px-8 py-3 no-print">
         <div class="max-w-6xl mx-auto flex gap-2 overflow-x-auto">
             <a href="#module-d" id="nav-module-d" class="quick-nav-btn hidden">Admin Mgmt</a>
             <a href="#module-a" class="quick-nav-btn">Miles</a>
@@ -197,160 +296,160 @@
         
         <!-- MODULE D: ACCOUNT MANAGEMENT -->
         <div id="module-d" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex-col" style="display:none">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module D</span></div>
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Account Management</h2></div><span class="f-tag">Module D</span></div>
             <div id="module-d-alert" class="module-d-alert module-d-alert-error"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span id="module-d-alert-text"></span></div>
             <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between">
-                <button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
-                <input type="text" id="user-search" placeholder="Search by ID or Name..." class="w-full md:w-1/3 bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                <button onclick="toggleCreateForm()" id="toggle-create-btn" class="px-4 py-2 f-btn-primary text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg> Create New Account</button>
+                <input type="text" id="user-search" placeholder="Search by ID or Name..." class="w-full md:w-1/3 f-slot rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:border-emerald-500">
             </div>
-            <div id="create-form" class="hidden mb-6 bg-zinc-950/50 border border-zinc-800 rounded-xl p-5 animate-fade-in">
+            <div id="create-form" class="hidden mb-6 f-well rounded-xl p-5 animate-fade-in">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="new-fullname" placeholder="Juan Dela Cruz" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="new-employeeid" placeholder="jdelacruz" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Initial Password</label><input type="text" id="new-password" placeholder="min. 6 characters" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="new-role" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="AGENT">Agent</option><option value="TRAINING">Training</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option></select></div>
                 </div>
-                <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
-                <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
+                <div class="border-t border-zinc-800 pt-4 mb-4"><p class="text-[10px] uppercase tracking-wider text-zinc-100 font-semibold mb-3">Security Question</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Question</label><select id="new-security-question" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-800 transition-colors"><option value="">Select a question...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Answer</label><input type="text" id="new-security-answer" placeholder="Enter the answer" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600"></div></div></div>
+                <div class="flex gap-3"><button onclick="createAccount()" class="px-5 py-2.5 f-btn-primary text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Create Account</button><button onclick="toggleCreateForm()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button></div>
             </div>
-            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
+            <div><div class="flex items-center justify-between mb-3"><p class="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Registered Accounts</p><span id="user-count" class="text-[10px] font-mono text-zinc-600">0 users</span></div><div class="user-table-wrap"><table class="w-full text-left text-xs font-mono"><thead class="f-thead sticky top-0 z-10 text-zinc-400 uppercase text-[9px] tracking-wider"><tr><th class="px-3 py-2.5 text-left">Employee ID</th><th class="px-3 py-2.5 text-left">Full Name</th><th class="px-3 py-2.5 text-center">Role</th><th class="px-3 py-2.5 text-right">Created</th><th class="px-3 py-2.5 text-center">Actions</th></tr></thead><tbody id="user-table-body" class="text-zinc-300"><tr><td colspan="5" class="text-center text-zinc-500 py-8 text-sm font-sans normal-case">Loading users...</td></tr></tbody></table></div></div>
         </div>
 
         <!-- MODULE A: MILES CALCULATOR -->
         <div id="module-a" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Module A</span></div>
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Maya Miles</h2></div><span class="f-tag">Module A</span></div>
             <div class="space-y-5 flex-grow">
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Customer Spend (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="spend-input-err"></div></div>
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-emerald-400 transition-colors">Multiplier Rate</label><select id="multiplier-select" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="1">1x (Base)</option><option value="2">2x (Preferred)</option><option value="5">5x (Elite)</option><option value="10">10x (Max)</option><option value="custom">Custom Multiplier</option></select><input type="number" id="custom-multiplier" placeholder="Enter Multiplier (e.g. 3)" class="hidden mt-2 w-full bg-zinc-950/50 border border-emerald-500/50 rounded-lg py-2 px-3 text-emerald-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 animate-fade-in"></div>
-                <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/50 mt-2"><label class="block text-[10px] uppercase tracking-wider text-zinc-600 mb-1">Miles Generated</label><div class="relative w-full"><input type="text" id="miles-input" readonly class="w-full bg-transparent border-none text-3xl font-mono font-bold text-emerald-400 focus:outline-none cursor-default data-font" value="0.00"><button onclick="copyToClipboard('miles-input')" class="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors p-1" title="Copy"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div></div>
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-zinc-100 transition-colors">Customer Spend (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="spend-input" autocomplete="off" placeholder="0.00" class="w-full f-slot rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="spend-input-err"></div></div>
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1 group-focus-within:text-zinc-100 transition-colors">Multiplier Rate</label><select id="multiplier-select" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="1">1x (Base)</option><option value="2">2x (Preferred)</option><option value="5">5x (Elite)</option><option value="10">10x (Max)</option><option value="custom">Custom Multiplier</option></select><input type="number" id="custom-multiplier" placeholder="Enter Multiplier (e.g. 3)" class="hidden mt-2 w-full f-slot rounded-lg py-2 px-3 text-zinc-100 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 animate-fade-in"></div>
+                <div class="f-well rounded-xl p-4 mt-2"><label class="block text-[10px] uppercase tracking-wider text-zinc-600 mb-1">Miles Generated</label><div class="relative w-full"><input type="text" id="miles-input" readonly class="w-full bg-transparent border-none text-3xl font-mono font-bold text-zinc-100 focus:outline-none cursor-default data-font" value="0.00"><button onclick="copyToClipboard('miles-input')" class="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors p-1" title="Copy"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div></div>
             </div>
-            <div class="grid grid-cols-2 gap-4 pt-5 border-t border-zinc-800 mt-4"><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Est. Cash Value</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="cash-value">0.00</span></p></div><div class="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Processed Spend</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="est-spend">0.00</span></p></div></div>
+            <div class="grid grid-cols-2 gap-4 pt-5 border-t border-zinc-800 mt-4"><div class="f-well p-3"><p class="text-[9px] uppercase text-zinc-500 mb-1">Est. Cash Value</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="cash-value">0.00</span></p></div><div class="f-well p-3"><p class="text-[9px] uppercase text-zinc-500 mb-1">Processed Spend</p><p class="text-sm font-bold text-zinc-300 data-font">₱<span id="est-spend">0.00</span></p></div></div>
             <div class="grid grid-cols-2 gap-4 mt-4">
-                <button onclick="saveMilesHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
-                <button onclick="resetMiles()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                <button onclick="saveMilesHistory()" class="w-full px-4 py-2 f-btn-ghost text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetMiles()" class="w-full px-4 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
             </div>
         </div>
 
         <!-- MODULE B: FINANCE CHARGE CALCULATOR -->
         <div id="module-b" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-red-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="px-2 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded">Module B</span></div>
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Finance Charge</h2></div><span class="f-tag">Module B</span></div>
             <div class="space-y-5 flex-grow">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="loan-credit-err"></div></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="partial-payment-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Credit (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="loan-credit" autocomplete="off" placeholder="0.00" class="w-full f-slot rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="loan-credit-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Partial Payment (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="partial-payment" autocomplete="off" placeholder="0.00" class="w-full f-slot rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="partial-payment-err"></div></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label><input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="loan-term-err"></div></div>
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label><input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="days-held-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Loan Term (Days)</label><input type="number" id="loan-term" value="30" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="loan-term-err"></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days Held</label><input type="number" id="days-held" value="20" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"><div class="err-msg" id="days-held-err"></div></div>
                 </div>
                 <div class="space-y-2"><div class="flex justify-between text-xs text-zinc-400"><span>Remaining Principal</span><span class="font-mono text-zinc-200" id="fb-principal">₱0.00</span></div><div class="flex justify-between text-xs text-zinc-400"><span>Interest Accrued (3%)</span><span class="font-mono text-zinc-200" id="fb-interest">₱0.00</span></div></div>
             </div>
             <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-red-500/80 mb-1">Total Payable Amount</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('finance-charge-result')"><p class="text-3xl font-mono font-bold text-white group-hover:text-red-400 transition-colors data-font">₱<span id="finance-charge-result">0.00</span></p></div></div>
             <div class="grid grid-cols-2 gap-4 mt-4">
-                <button onclick="saveFinanceHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
-                <button onclick="resetFinance()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                <button onclick="saveFinanceHistory()" class="w-full px-4 py-2 f-btn-ghost text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetFinance()" class="w-full px-4 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
             </div>
         </div>
 
         <!-- MODULE C: LANDERS REWARDS CALCULATOR -->
         <div id="module-c" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2 space-y-6">
-                <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-blue-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="px-2 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] uppercase font-bold rounded">Module C</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="landers-spend-err"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="total-card-spend-err"></div></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label><select id="landers-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors"><option value="landers">Landers Superstore (Progressive)</option><option value="dining">Dining (2%)</option><option value="other">Other Retail (1%)</option><option value="excluded">Excluded Categories (0%)</option><option value="custom">Custom Percentage...</option></select><div id="landers-custom-group" class="hidden mt-3 animate-fade-in"><label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label><div class="relative"><input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all"><span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span></div></div></div>
-                <div class="bg-zinc-950/50 p-4 rounded-lg border border-zinc-800"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em]">Waiting for input...</p></div>
+                <div class="flex items-center justify-between"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Landers Rewards</h2></div><span class="f-tag">Module C</span></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Current Transaction (A)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="landers-spend" autocomplete="off" placeholder="0.00" class="w-full f-slot rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="landers-spend-err"></div></div><div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Previous Accumulated (C)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="total-card-spend" autocomplete="off" placeholder="0.00" class="w-full f-slot rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="total-card-spend-err"></div></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Purchase Category</label><select id="landers-category" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none hover:bg-zinc-900 transition-colors"><option value="landers">Landers Superstore (Progressive)</option><option value="dining">Dining (2%)</option><option value="other">Other Retail (1%)</option><option value="excluded">Excluded Categories (0%)</option><option value="custom">Custom Percentage...</option></select><div id="landers-custom-group" class="hidden mt-3 animate-fade-in"><label class="block text-[10px] uppercase tracking-wider text-orange-400 mb-1">Custom Rate Override</label><div class="relative"><input type="number" step="0.1" id="landers-custom-rate" placeholder="0.0" class="w-full bg-zinc-950/50 border border-orange-500/30 rounded-lg py-2 px-3 text-orange-400 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/50 transition-all"><span class="absolute right-3 top-2.5 text-zinc-500 text-sm">%</span></div></div></div>
+                <div class="f-well p-4 rounded-lg"><p class="text-[10px] uppercase text-zinc-500 mb-2">Computation Breakdown</p><p id="tier-breakdown" class="text-xs font-mono text-zinc-300 leading-relaxed min-h-[1.5em]">Waiting for input...</p></div>
             </div>
-            <div class="md:w-1/2 bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center border border-dashed border-zinc-800 relative">
+            <div class="md:w-1/2 f-well rounded-xl p-6 flex flex-col justify-center relative">
                 <p class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Points Earned</p>
-                <div class="flex items-end justify-between mb-4"><p class="text-4xl md:text-5xl font-mono font-bold text-blue-400 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')"><span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span></p><button onclick="copyToClipboard('landers-result')" class="mb-2 p-2 hover:bg-blue-500/20 rounded-lg transition-colors text-blue-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div>
+                <div class="flex items-end justify-between mb-4"><p class="text-4xl md:text-5xl font-mono font-bold text-zinc-100 tracking-tighter data-font group cursor-pointer" onclick="copyToClipboard('landers-result')"><span id="landers-result">0.00</span> <span class="text-2xl text-zinc-500">pts</span></p><button onclick="copyToClipboard('landers-result')" class="mb-2 p-2 hover:bg-zinc-700/40 rounded-lg transition-colors text-zinc-100"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button></div>
                 <div class="w-full h-px bg-zinc-800 my-4"></div>
                 <div class="flex justify-between items-center"><div><p class="text-[10px] uppercase text-zinc-500">Vouchers Earned</p><p class="text-[9px] text-zinc-600 mt-1">500 pts = 1 Voucher (₱500)</p></div><div class="text-right"><p class="text-2xl font-mono font-bold text-white" id="voucher-result">0</p><span class="text-[10px] text-zinc-500 uppercase">Vouchers</span></div></div>
                 <div class="grid grid-cols-2 gap-4 mt-6">
-                    <button onclick="saveLandersHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save History</button>
-                    <button onclick="resetLanders()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                    <button onclick="saveLandersHistory()" class="w-full px-4 py-2 f-btn-ghost text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save History</button>
+                    <button onclick="resetLanders()" class="w-full px-4 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
                 </div>
             </div>
         </div>
 
         <!-- MODULE E: MINI PAYMENTS CALCULATOR (EMI) -->
         <div id="module-e" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
-            <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-amber-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] uppercase font-bold rounded">Module E</span></div>
+            <div class="flex items-center justify-between mb-6 no-print"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Mini Payments (EMI)</h2></div><span class="f-tag">Module E</span></div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 no-print">
-                <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="emi-principal-err"></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-rate-err"></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"><div class="err-msg" id="emi-months-err"></div></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"></div>
+                <div class="col-span-2 md:col-span-1"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Principal Amount</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="emi-principal" autocomplete="off" placeholder="10,000.00" class="w-full f-slot rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="emi-principal-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Monthly EIR (%)</label><input type="number" step="0.01" id="emi-rate" value="1.69" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all"><div class="err-msg" id="emi-rate-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Installments</label><input type="number" id="emi-months" value="6" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all"><div class="err-msg" id="emi-months-err"></div></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Days in Year</label><input type="number" id="emi-days-year" value="365" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all"></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Start Date</label><input type="date" id="emi-start-date" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all"></div>
             </div>
             <div class="flex flex-wrap gap-2 mb-4 no-print">
-                <button onclick="generateReceipt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Generate Official Receipt</button>
-                <button onclick="saveEMIHistory()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History</button>
-                <button onclick="resetEMI()" class="px-3 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-300 hover:text-red-400 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>Clear Fields</button>
-                <button onclick="exportEMICSV()" class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export Data (CSV)</button>
+                <button onclick="generateReceipt()" class="px-4 py-2 f-btn-primary text-[11px] font-bold uppercase rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Generate Official Receipt</button>
+                <button onclick="saveEMIHistory()" class="px-3 py-2 f-btn-ghost text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Save to History</button>
+                <button onclick="resetEMI()" class="px-3 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-300 hover:text-red-400 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>Clear Fields</button>
+                <button onclick="exportEMICSV()" class="px-3 py-2 f-btn-ghost text-zinc-300 text-[10px] uppercase font-bold rounded-md transition-colors flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Export Data (CSV)</button>
             </div>
             <details class="formula-card mb-4 no-print"><summary>Show Calculation Breakdown</summary><div class="formula-text" id="emi-breakdown">Enter loan details to generate formula breakdown...</div></details>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div>
-                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p></div>
-                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-amber-400 data-font">₱<span id="emi-fixed-amount">0.00</span></p></div>
-                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p></div>
+                <div class="f-well p-3"><p class="text-[9px] uppercase text-zinc-500 mb-1">Nominal Annual Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-nominal-rate">0.00</span>%</p></div>
+                <div class="f-well p-3"><p class="text-[9px] uppercase text-zinc-500 mb-1">Daily Interest Rate</p><p class="text-sm font-bold text-zinc-300 data-font"><span id="emi-daily-rate">0.000000</span></p></div>
+                <div class="f-well p-3"><p class="text-[9px] uppercase text-zinc-500 mb-1">Monthly EMI</p><p class="text-sm font-bold text-zinc-200 data-font">₱<span id="emi-fixed-amount">0.00</span></p></div>
+                <div class="f-well p-3"><p class="text-[9px] uppercase text-zinc-500 mb-1">Total Interest Paid</p><p class="text-sm font-bold text-red-400 data-font">₱<span id="emi-total-interest">0.00</span></p></div>
             </div>
-            <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="bg-zinc-900 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
+            <div class="overflow-x-auto rounded-lg border border-zinc-800 max-h-[400px] overflow-y-auto no-print"><table class="w-full text-left text-xs font-mono min-w-[800px]"><thead class="f-thead sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-wider"><tr><th class="px-3 py-3 text-center">#</th><th class="px-3 py-3">Due Date</th><th class="px-3 py-3 text-right">Days</th><th class="px-3 py-3 text-right">Principal Amt</th><th class="px-3 py-3 text-right">Interest Amt</th><th class="px-3 py-3 text-right">Principal Paid</th><th class="px-3 py-3 text-right">Installment Amt</th><th class="px-3 py-3 text-right">Remaining Prin</th></tr></thead><tbody id="emi-table-body" class="text-zinc-300"><tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr></tbody></table></div>
         </div>
 
         <!-- MODULE F: BILLING & LATE FEES CALCULATOR -->
         <div id="module-f" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-purple-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Billing & Late Fees</h2></div><span class="px-2 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] uppercase font-bold rounded">Module F</span></div>
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Billing & Late Fees</h2></div><span class="f-tag">Module F</span></div>
             <div class="space-y-5 flex-grow">
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Outstanding Balance (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="bil-outstanding" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="bil-outstanding-err"></div></div>
-                <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/50 space-y-3">
-                    <div class="flex justify-between text-sm"><span class="text-zinc-400">Minimum Amount Due (MAD)</span><span class="font-mono text-purple-400 font-bold">₱<span id="bil-mad">0.00</span></span></div>
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Outstanding Balance (PHP)</label><div class="relative"><span class="absolute left-3 top-2.5 text-zinc-500">₱</span><input type="text" inputmode="decimal" id="bil-outstanding" autocomplete="off" placeholder="0.00" class="w-full f-slot rounded-lg py-2.5 pl-8 pr-4 text-white font-mono focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder-zinc-700"></div><div class="err-msg" id="bil-outstanding-err"></div></div>
+                <div class="f-well rounded-xl p-4 space-y-3">
+                    <div class="flex justify-between text-sm"><span class="text-zinc-400">Minimum Amount Due (MAD)</span><span class="font-mono text-zinc-100 font-bold">₱<span id="bil-mad">0.00</span></span></div>
                     <div class="text-[9px] text-zinc-600">Rule: 5% of balance or ₱500, whichever is higher.</div>
                 </div>
-                <div class="flex items-center gap-3 bg-zinc-950/50 p-3 rounded-lg border border-zinc-800">
-                    <input type="checkbox" id="bil-is-past-due" class="w-4 h-4 accent-purple-500 cursor-pointer">
+                <div class="flex items-center gap-3 f-well p-3">
+                    <input type="checkbox" id="bil-is-past-due" class="w-4 h-4 accent-zinc-400 cursor-pointer">
                     <label for="bil-is-past-due" class="text-xs text-zinc-300 cursor-pointer">Previous MAD is Unpaid (Past Due)</label>
                 </div>
             </div>
             <div class="pt-5 border-t border-zinc-800 mt-4 space-y-2">
                 <div class="flex justify-between text-xs text-zinc-400"><span>Late Payment Fee (LPF)</span><span class="font-mono text-red-400 font-bold">₱<span id="bil-lpf">0.00</span></span></div>
-                <div class="flex justify-between items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('bil-total-due')"><label class="block text-[10px] uppercase tracking-wider text-purple-500/80">Total Amount Due</label><p class="text-2xl font-mono font-bold text-white group-hover:text-purple-400 transition-colors data-font ml-auto">₱<span id="bil-total-due">0.00</span></p></div>
+                <div class="flex justify-between items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('bil-total-due')"><label class="block text-[10px] uppercase tracking-wider text-purple-500/80">Total Amount Due</label><p class="text-2xl font-mono font-bold text-white group-hover:text-zinc-100 transition-colors data-font ml-auto">₱<span id="bil-total-due">0.00</span></p></div>
             </div>
             <div class="grid grid-cols-2 gap-4 mt-4">
-                <button onclick="saveBillingHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
-                <button onclick="resetBilling()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                <button onclick="saveBillingHistory()" class="w-full px-4 py-2 f-btn-ghost text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetBilling()" class="w-full px-4 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
             </div>
         </div>
 
         <!-- MODULE G: PAYMENT DUE DATE ESTIMATOR -->
         <div id="module-g" class="glass-panel rounded-2xl p-6 shadow-2xl flex flex-col h-full">
-            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-pink-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Due Date Estimator</h2></div><span class="px-2 py-1 bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] uppercase font-bold rounded">Module G</span></div>
+            <div class="flex items-center justify-between mb-6"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Due Date Estimator</h2></div><span class="f-tag">Module G</span></div>
             <div class="space-y-5 flex-grow">
-                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Statement Cut-off Date</label><input type="date" id="due-stmt-date" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"></div>
+                <div class="group"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Statement Cut-off Date</label><input type="date" id="due-stmt-date" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Grace Period (Days)</label><input type="number" id="due-grace-days" value="21" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"></div>
-                    <div class="flex items-end"><div class="w-full p-2 bg-zinc-950/50 rounded-lg border border-zinc-800 text-center"><p class="text-[9px] uppercase text-zinc-500 mb-1">Days Remaining</p><p class="text-sm font-bold text-pink-400 data-font"><span id="due-remaining">0</span> days</p></div></div>
+                    <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Grace Period (Days)</label><input type="number" id="due-grace-days" value="21" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"></div>
+                    <div class="flex items-end"><div class="w-full p-2 f-well rounded-lg text-center"><p class="text-[9px] uppercase text-zinc-500 mb-1">Days Remaining</p><p class="text-sm font-bold text-zinc-100 data-font"><span id="due-remaining">0</span> days</p></div></div>
                 </div>
                 <div id="due-weekend-alert" class="hidden p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-400 text-[10px] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg> Falls on a weekend. Payment processing may be delayed to the next banking day.</div>
             </div>
-            <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-pink-500/80 mb-1">Estimated Payment Due Date</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('due-result-date')"><p class="text-3xl font-mono font-bold text-white group-hover:text-pink-400 transition-colors data-font" id="due-result-date">--</p></div></div>
+            <div class="pt-5 border-t border-zinc-800 mt-4"><label class="block text-[10px] uppercase tracking-wider text-pink-500/80 mb-1">Estimated Payment Due Date</label><div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('due-result-date')"><p class="text-3xl font-mono font-bold text-white group-hover:text-zinc-100 transition-colors data-font" id="due-result-date">--</p></div></div>
             <div class="grid grid-cols-2 gap-4 mt-4">
-                <button onclick="saveDueDateHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
-                <button onclick="resetDueDate()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                <button onclick="saveDueDateHistory()" class="w-full px-4 py-2 f-btn-ghost text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                <button onclick="resetDueDate()" class="w-full px-4 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
             </div>
         </div>
 
         <!-- MODULE H: FX TRANSACTION CALCULATOR -->
         <div id="module-h" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col">
-            <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-cyan-500 rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="px-2 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold rounded">Module H</span></div>
-            <div id="fx-live-alert" class="mb-4 p-3 bg-cyan-500/5 border border-cyan-500/10 rounded-lg text-cyan-400 text-[10px] flex items-center gap-2">
+            <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">FX Transaction</h2></div><span class="f-tag">Module H</span></div>
+            <div id="fx-live-alert" class="mb-4 p-3 bg-zinc-800/40 border border-zinc-700 rounded-lg text-zinc-100 text-[10px] flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 <span id="fx-live-status">Fetching live global exchange rates...</span>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                 <div class="col-span-2 md:col-span-1">
                     <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Currency</label>
-                    <select id="fx-currency-select" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors">
+                    <select id="fx-currency-select" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors">
                         <option value="USD">USD - US Dollar</option>
                         <option value="EUR">EUR - Euro</option>
                         <option value="GBP">GBP - British Pound</option>
@@ -377,25 +476,25 @@
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Foreign Amount</label>
-                    <input type="text" inputmode="decimal" id="fx-foreign-amt" autocomplete="off" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-zinc-700">
+                    <input type="text" inputmode="decimal" id="fx-foreign-amt" autocomplete="off" placeholder="0.00" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-zinc-700">
                     <div class="err-msg" id="fx-foreign-amt-err"></div>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Exchange Rate (to PHP)</label>
                     <div class="relative">
-                        <input type="number" step="0.0001" id="fx-rate" placeholder="55.00" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all pr-12">
+                        <input type="number" step="0.0001" id="fx-rate" placeholder="55.00" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all pr-12">
                         <span class="absolute right-3 top-2.5 text-zinc-500 text-xs">PHP</span>
                     </div>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">FX Fee (%)</label>
-                    <input type="number" step="0.01" id="fx-fee" value="1.75" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
+                    <input type="number" step="0.01" id="fx-fee" value="1.75" class="w-full f-slot rounded-lg py-2.5 px-3 text-white font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Base PHP Amount</label>
                     <div class="relative">
                         <span class="absolute left-3 top-2.5 text-zinc-500">₱</span>
-                        <input type="text" id="fx-base-php" readonly class="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg py-2.5 pl-8 pr-4 text-zinc-400 font-mono focus:outline-none cursor-default" value="0.00">
+                        <input type="text" id="fx-base-php" readonly class="w-full f-slot f-readonly rounded-lg py-2.5 pl-8 pr-4 text-zinc-400 font-mono focus:outline-none cursor-default" value="0.00">
                     </div>
                 </div>
             </div>
@@ -403,12 +502,12 @@
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-cyan-500/80 mb-1">Total Billed in PHP</label>
                     <div class="flex items-baseline gap-2 group cursor-pointer" onclick="copyToClipboard('fx-total')">
-                        <p class="text-3xl font-mono font-bold text-white group-hover:text-cyan-400 transition-colors data-font">₱<span id="fx-total">0.00</span></p>
+                        <p class="text-3xl font-mono font-bold text-white group-hover:text-zinc-100 transition-colors data-font">₱<span id="fx-total">0.00</span></p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mt-4 md:mt-0 w-full md:w-1/2">
-                    <button onclick="saveFXHistory()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
-                    <button onclick="resetFX()" class="w-full px-4 py-2 bg-zinc-900 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
+                    <button onclick="saveFXHistory()" class="w-full px-4 py-2 f-btn-ghost text-zinc-400 hover:text-white text-[10px] uppercase font-bold rounded-lg transition-colors">Save to History</button>
+                    <button onclick="resetFX()" class="w-full px-4 py-2 f-btn-danger-ghost hover:border-red-500/30 text-zinc-400 hover:text-red-400 text-[10px] uppercase font-bold rounded-lg transition-colors">Clear Fields</button>
                 </div>
             </div>
         </div>
@@ -417,22 +516,22 @@
         <div id="module-i" class="glass-panel rounded-2xl p-6 shadow-2xl lg:col-span-2 flex flex-col md:flex-row gap-6">
             <div class="md:w-1/3 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center gap-3"><span class="w-1.5 h-8 bg-yellow-500 rounded-full"></span><h2 class="text-lg font-bold text-white">Tickets & Notes</h2></div>
-                    <button onclick="openNewTicket()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-md transition-colors flex items-center gap-1">
+                    <div class="flex items-center gap-3"><span class="w-1.5 h-8 f-bar rounded-full"></span><h2 class="text-lg font-bold text-white">Tickets & Notes</h2></div>
+                    <button onclick="openNewTicket()" class="px-3 py-1.5 f-btn-primary text-xs font-bold uppercase rounded-md transition-colors flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                         New
                     </button>
                 </div>
-                <input type="text" id="ticket-search" placeholder="Search tickets..." class="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-3 text-sm text-white mb-4 focus:outline-none focus:border-emerald-500" oninput="searchTickets()">
+                <input type="text" id="ticket-search" placeholder="Search tickets..." class="w-full f-slot rounded-lg py-2 px-3 text-sm text-white mb-4 focus:outline-none focus:border-emerald-500" oninput="searchTickets()">
                 <div id="ticket-list" class="flex-grow overflow-y-auto space-y-2 pr-2" style="max-height: 450px;">
                     <div class="text-center text-zinc-500 py-8 text-sm">Loading tickets...</div>
                 </div>
             </div>
             
-            <div class="md:w-2/3 bg-zinc-900/30 rounded-xl p-6 border border-zinc-800 flex flex-col">
+            <div class="md:w-2/3 f-well rounded-xl p-6 flex flex-col">
                 <div id="ticket-form-header" class="flex justify-between items-center mb-4">
                     <h3 class="text-md font-bold text-white">New Ticket</h3>
-                    <span id="ticket-status-badge" class="hidden px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] uppercase font-bold rounded">Open</span>
+                    <span id="ticket-status-badge" class="hidden f-tag f-tag-open">Open</span>
                 </div>
                 
                 <div id="ticket-view-only-msg" class="hidden mb-4 text-[10px] text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 p-2 rounded">
@@ -464,9 +563,9 @@
                 <div id="ticket-alert" class="module-d-alert module-d-alert-error mb-4"><span id="ticket-alert-text"></span></div>
                 
                 <div class="flex justify-end gap-3 mt-auto">
-                    <button id="ticket-delete-btn" onclick="deleteTicket()" class="hidden px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold uppercase rounded-lg transition-colors">Delete</button>
-                    <button id="ticket-close-btn" onclick="toggleTicketStatus()" class="hidden px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white text-xs font-bold uppercase rounded-lg transition-colors">Close Ticket</button>
-                    <button id="ticket-save-btn" onclick="saveTicket()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-lg transition-colors">Save Ticket</button>
+                    <button id="ticket-delete-btn" onclick="deleteTicket()" class="hidden px-4 py-2 f-btn-danger-ghost text-xs font-bold uppercase rounded-lg transition-colors">Delete</button>
+                    <button id="ticket-close-btn" onclick="toggleTicketStatus()" class="hidden px-4 py-2 f-btn-ghost text-white text-xs font-bold uppercase rounded-lg transition-colors">Close Ticket</button>
+                    <button id="ticket-save-btn" onclick="saveTicket()" class="px-4 py-2 f-btn-primary text-xs font-bold uppercase rounded-lg transition-colors">Save Ticket</button>
                 </div>
             </div>
         </div>
@@ -474,8 +573,8 @@
     </main>
 
     <section class="max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in no-print">
-        <a href="https://smnlwebapp1.inspiro.com/MAYA_KB/" target="_blank" rel="noopener noreferrer" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
-            <div class="p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-emerald-400">
+        <a href="https://smnlwebapp1.inspiro.com/MAYA_KB/" target="_blank" rel="noopener noreferrer" class="glass-panel p-4 flex items-center gap-4 hover:border-zinc-600 transition-colors">
+            <div class="p-3 f-chip">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
             </div>
             <div>
@@ -483,8 +582,8 @@
                 <p class="text-[10px] text-zinc-500">Latest CC Policies & Procedures</p>
             </div>
         </a>
-        <a href="https://inspiroinc.sharepoint.com/:x:/r/sites/MayaHotline/_layouts/15/Doc.aspx?sourcedoc=%7BF178FFCA-9A28-49FE-9FFC-F8B3819FE180%7D&file=AF%20and%20AMLI%20After%20Sales%20Handling%20and%20Escalation%20ao%200512.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1" target="_blank" rel="noopener noreferrer" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
-            <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/20 text-red-400">
+        <a href="https://inspiroinc.sharepoint.com/:x:/r/sites/MayaHotline/_layouts/15/Doc.aspx?sourcedoc=%7BF178FFCA-9A28-49FE-9FFC-F8B3819FE180%7D&file=AF%20and%20AMLI%20After%20Sales%20Handling%20and%20Escalation%20ao%200512.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1" target="_blank" rel="noopener noreferrer" class="glass-panel p-4 flex items-center gap-4 hover:border-zinc-600 transition-colors">
+            <div class="p-3 f-chip">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
             <div>
@@ -492,8 +591,8 @@
                 <p class="text-[10px] text-zinc-500">Escalation Matrix & Red Flags</p>
             </div>
         </a>
-        <a href="javascript:void(0)" onclick="openITSupportModal()" class="glass-panel p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
-            <div class="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 text-blue-400">
+        <a href="javascript:void(0)" onclick="openITSupportModal()" class="glass-panel p-4 flex items-center gap-4 hover:border-zinc-600 transition-colors">
+            <div class="p-3 f-chip">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
             </div>
             <div>
@@ -507,22 +606,22 @@
         <div class="glass-panel rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
-                    <span class="w-1.5 h-8 bg-emerald-500 rounded-full"></span>
+                    <span class="w-1.5 h-8 f-bar rounded-full"></span>
                     <h2 class="text-lg font-bold text-white">Contact Admin</h2>
                 </div>
-                <span class="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold rounded">Support</span>
+                <span class="f-tag">Support</span>
             </div>
             <p class="text-xs text-zinc-500 mb-5 leading-relaxed">Having issues with your account or the website? Send a message directly to the admin. All fields are required.</p>
             <div id="contact-alert" class="module-d-alert module-d-alert-error" style="margin-bottom:16px"><span id="contact-alert-text"></span></div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
-                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Role Change Request">Role Change Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Website Problem">Website Problem</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Your Name</label><input type="text" id="contact-name" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Employee ID</label><input type="text" id="contact-eid" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder-zinc-600" placeholder="Auto-filled" readonly></div>
+                <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Subject</label><select id="contact-subject" class="w-full f-slot rounded-lg py-2.5 px-3 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors"><option value="">Select a subject...</option><option value="Account Access Issue">Account Access Issue</option><option value="Password Reset Request">Password Reset Request</option><option value="Role Change Request">Role Change Request</option><option value="Calculator Bug/Issue">Calculator Bug / Issue</option><option value="Website Problem">Website Problem</option><option value="Feature Request">Feature Request</option><option value="Other Concern">Other Concern</option></select></div>
             </div>
             <div class="mb-4"><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Message</label><textarea id="contact-message" class="contact-textarea" placeholder="Describe your concern in detail..." rows="4"></textarea></div>
             <div class="flex items-center justify-between">
                 <p class="text-[10px] text-zinc-600">Messages are sent directly to the admin via email.</p>
-                <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                <button onclick="sendContactMessage()" id="contact-send-btn" class="px-6 py-2.5 f-btn-primary text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
                     Send Message
                 </button>
@@ -532,7 +631,7 @@
 
     <footer class="max-w-6xl mx-auto mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-600 animate-fade-in no-print" style="animation-delay: 0.4s;">
         <div class="flex items-center gap-3"><div class="px-2 py-1 rounded border border-zinc-800 bg-zinc-950/50"><p class="text-[9px] font-mono uppercase text-emerald-500">System Normal</p></div><p class="text-[10px] uppercase tracking-widest">Maya Infrastructure • For Internal Use Only</p></div>
-        <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marcux Dimaapi • Marlon Ubaña</p></div>
+        <div class="text-center md:text-right"><p class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-1">Engineering Team</p><p class="text-xs font-medium text-zinc-400">Ancel Claudio • Marlon Ubaña</p><p class="text-[10px] text-zinc-600 mt-1.5">Spotted something off? Drop a ticket in Module I &mdash; we read every one.</p></div>
     </footer>
 
     <!-- IT Support Modal -->
@@ -544,24 +643,17 @@
             </div>
             <div class="space-y-4">
                 <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-sm">AC</div>
+                    <div class="w-10 h-10 rounded-full bg-zinc-700/50 border border-zinc-600 flex items-center justify-center text-zinc-100 font-bold text-sm">AC</div>
                     <div>
                         <p class="text-sm font-bold text-white">Ancel Claudio</p>
-                        <a href="mailto:ancel.claudio1@gmail.com" class="text-xs text-emerald-400 hover:underline">ancel.claudio1@gmail.com</a>
+                        <a href="mailto:ancel.claudio1@gmail.com" class="text-xs text-zinc-100 hover:underline">ancel.claudio1@gmail.com</a>
                     </div>
                 </div>
                 <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">MU</div>
+                    <div class="w-10 h-10 rounded-full bg-zinc-700/50 border border-zinc-600 flex items-center justify-center text-zinc-100 font-bold text-sm">MU</div>
                     <div>
                         <p class="text-sm font-bold text-white">Marlom Ubana</p>
-                        <a href="mailto:marlonxt19@gmail.com" class="text-xs text-blue-400 hover:underline">marlonxt19@gmail.com</a>
-                    </div>
-                </div>
-                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm">MD</div>
-                    <div>
-                        <p class="text-sm font-bold text-white">Marcux Dimaapi</p>
-                        <a href="mailto:marcux2003@gmail.com" class="text-xs text-purple-400 hover:underline">marcux2003@gmail.com</a>
+                        <a href="mailto:marlonxt19@gmail.com" class="text-xs text-zinc-100 hover:underline">marlonxt19@gmail.com</a>
                     </div>
                 </div>
             </div>
@@ -600,9 +692,9 @@
                 </div>
             </div>
             <div class="bg-zinc-100 p-3 flex flex-col gap-2 no-print border-t border-zinc-300">
-                <button onclick="window.print()" class="w-full px-4 py-2 bg-zinc-800 hover:bg-zinc-900 text-white text-xs font-bold uppercase rounded-md transition-colors">Print Receipt</button>
-                <button onclick="downloadReceiptPDF()" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase rounded-md transition-colors">Download PDF</button>
-                <button onclick="openSendReceiptModal()" class="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase rounded-md transition-colors">Send to Customer</button>
+                <button onclick="window.print()" class="w-full px-4 py-2 f-btn-ghost text-white text-xs font-bold uppercase rounded-md transition-colors">Print Receipt</button>
+                <button onclick="downloadReceiptPDF()" class="w-full px-4 py-2 f-btn-danger text-white text-xs font-bold uppercase rounded-md transition-colors">Download PDF</button>
+                <button onclick="openSendReceiptModal()" class="w-full px-4 py-2 f-btn-primary text-xs font-bold uppercase rounded-md transition-colors">Send to Customer</button>
             </div>
         </div>
     </div>
@@ -619,8 +711,8 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Customer Mobile (WhatsApp/SMS)</label><input type="text" id="send-cust-phone" class="edit-field-input mono" placeholder="639171234567"></div>
             </div>
             <div class="flex flex-col gap-3 mt-6">
-                <button onclick="sendReceiptEmail()" class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>Send via Email</button>
-                <button onclick="sendReceiptWhatsApp()" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C5.589 2 2 5.589 2 10c0 1.463.416 2.835 1.131 4.043L2 18l3.957-1.131A7.974 7.974 0 0010 18c4.411 0 8-3.589 8-8s-3.589-8-8-8zm0 14c-1.292 0-2.52-.355-3.586-1.01l-.233-.14-2.346.671.671-2.346-.14-.233A6.964 6.964 0 013 10c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"/></svg>Send via WhatsApp/SMS</button>
+                <button onclick="sendReceiptEmail()" class="w-full px-4 py-2.5 f-btn-primary text-white text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>Send via Email</button>
+                <button onclick="sendReceiptWhatsApp()" class="w-full px-4 py-2.5 f-btn-primary text-xs font-bold uppercase rounded-lg transition-colors flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C5.589 2 2 5.589 2 10c0 1.463.416 2.835 1.131 4.043L2 18l3.957-1.131A7.974 7.974 0 0010 18c4.411 0 8-3.589 8-8s-3.589-8-8-8zm0 14c-1.292 0-2.52-.355-3.586-1.01l-.233-.14-2.346.671.671-2.346-.14-.233A6.964 6.964 0 013 10c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"/></svg>Send via WhatsApp/SMS</button>
             </div>
         </div>
     </div>
@@ -630,7 +722,7 @@
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-white">Calculation History</h2>
                 <div class="flex items-center gap-2">
-                    <button onclick="clearAllHistory()" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-[10px] uppercase font-bold rounded transition-colors">Clear All</button>
+                    <button onclick="clearAllHistory()" class="px-3 py-1.5 f-btn-danger-ghost text-[10px] uppercase font-bold rounded transition-colors">Clear All</button>
                     <button onclick="toggleHistory()" class="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
             </div>
@@ -650,7 +742,7 @@
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Full Name</label><input type="text" id="edit-fullname" class="edit-field-input" placeholder="Enter full name"></div>
                 <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Role</label><select id="edit-role" class="edit-field-select"><option value="TRAINING">Training</option><option value="AGENT">Agent</option><option value="TEAM LEADER">Team Leader</option><option value="OPERATIONS MANAGER">Operations Manager</option><option value="CLIENT">Client</option><option value="ADMIN">Admin</option></select></div>
                 <div class="border-t border-zinc-800 pt-4">
-                    <p class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-3">Security Question</p>
+                    <p class="text-[10px] uppercase tracking-wider text-zinc-100 font-semibold mb-3">Security Question</p>
                     <div class="info-box mb-4"><div class="info-box-label">Current Question</div><div class="info-box-text" id="edit-security-question-display">-</div></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Question (optional)</label><select id="edit-security-question" class="edit-field-select"><option value="">Keep current...</option><option value="What is your pet's name?">What is your pet's name?</option><option value="What city were you born in?">What city were you born in?</option><option value="What is your mother's maiden name?">What is your mother's maiden name?</option><option value="What was your first car?">What was your first car?</option><option value="What is your favorite food?">What is your favorite food?</option></select></div>
@@ -658,7 +750,7 @@
                     </div>
                 </div>
                 <div class="border-t border-zinc-800 pt-4">
-                    <p class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold mb-3">Reset Password (optional)</p>
+                    <p class="text-[10px] uppercase tracking-wider text-zinc-200 font-semibold mb-3">Reset Password (optional)</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">New Password</label><input type="password" id="edit-new-password" class="edit-field-input" placeholder="Leave blank to keep current"></div>
                         <div><label class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Created</label><input type="text" id="edit-created" class="edit-field-input" disabled></div>
@@ -666,13 +758,13 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-6">
-                <button onclick="saveUserEdit()" class="flex-1 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Changes</button>
+                <button onclick="saveUserEdit()" class="flex-1 px-5 py-2.5 f-btn-primary text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Save Changes</button>
                 <button onclick="closeEditModal()" class="px-5 py-2.5 bg-transparent hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors">Cancel</button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events:none z-50 no-print"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 f-toast text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 opacity-0 transition-all duration-300 translate-y-4 pointer-events-none z-50 no-print"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-xs font-medium" id="toast-message">Value Copied</span></div>
 
     <script>
         // =============================================
@@ -699,7 +791,7 @@
         // ===== AUTH CHECK =====
         (function(){
             var token=getToken();
-            if(!token){window.location.replace('/');return;}
+            if(!token){window.location.replace('login.html');return;}
             fetch('/api/auth/verify',{headers:{'x-maya-token':token}})
             .then(function(r){if(r.status===401)throw new Error('expired');return r.json();})
             .then(function(data){
@@ -721,10 +813,10 @@
                 }
                 fetchTickets(); // Fetch tickets on load
             })
-            .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');});
+            .catch(function(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('login.html');});
         })();
 
-        function handleLogout(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('/');}
+        function handleLogout(){localStorage.removeItem('maya_token');sessionStorage.clear();window.location.replace('login.html');}
 
         // ===== IT SUPPORT MODAL =====
         function openITSupportModal() { document.getElementById('itSupportModal').classList.add('open'); }
@@ -739,7 +831,7 @@
             if(!subj){showContactAlert('Please select a subject.','error');return;}
             if(!msg){showContactAlert('Please enter your message.','error');return;}
             if(msg.length<10){showContactAlert('Message is too short. Please provide more details.','error');return;}
-            btn.disabled=true;btn.innerHTML='<svg class="h-4 w-4 animate-spin" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="50 80" style="animation:arcDashSmall 1s ease-in-out infinite"/></svg> Sending...';
+            btn.disabled=true;btn.innerHTML='<svg class="h-4 w-4 animate-spin" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="50 80" style="animation:arcDash 1s ease-in-out infinite"/></svg> Sending...';
             var templateParams={
                 from_name:document.getElementById('contact-name').value,
                 from_id:document.getElementById('contact-eid').value,
@@ -789,7 +881,7 @@
                 for(var i=0;i<users.length;i++){
                     var u=users[i];var canEditThis=canEdit&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);var canDeleteThis=canDelete&&u.employeeId!==cu&&getRoleLevel(u.role)<getRoleLevel(cr);
                     h+='<tr class="user-row border-t border-zinc-800/50"'+(canEditThis?' onclick="openEditModal(\''+escapeHtml(u.employeeId)+'\')"':'')+'">';
-                    h+='<td class="px-3 py-3 text-emerald-400">'+escapeHtml(u.employeeId)+'</td>';
+                    h+='<td class="px-3 py-3 text-zinc-100">'+escapeHtml(u.employeeId)+'</td>';
                     h+='<td class="px-3 py-3 text-zinc-300 font-sans">'+escapeHtml(u.fullName)+'</td>';
                     h+='<td class="px-3 py-3 text-center"><span class="role-tag '+getRoleTagClass(u.role)+'">'+getRoleShortName(u.role)+'</span></td>';
                     h+='<td class="px-3 py-3 text-right text-zinc-500">'+formatDate(u.createdAt)+'</td>';
@@ -854,6 +946,9 @@
             .then(tickets => {
                 allTickets = tickets;
                 renderTicketList(tickets);
+            })
+            .catch(function() {
+                document.getElementById('ticket-list').innerHTML = '<div class="text-center text-zinc-500 py-8 text-sm">Could not load tickets. Try refreshing.</div>';
             });
         }
 
@@ -864,9 +959,9 @@
                 return;
             }
             list.innerHTML = tickets.map(t => `
-                <div class="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 cursor-pointer hover:border-emerald-500/40 transition-colors ${t.id === currentTicketId ? 'border-emerald-500/40' : ''}" onclick="loadTicket('${t.id}')">
+                <div class="f-ticket-item ${t.id === currentTicketId ? 'f-active' : ''}" onclick="loadTicket('${t.id}')">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] font-mono text-emerald-400">${t.id}</span>
+                        <span class="text-[10px] font-mono text-zinc-100">${t.id}</span>
                         <span class="text-[9px] uppercase font-bold ${t.status === 'Open' ? 'text-emerald-400' : 'text-zinc-500'}">${t.status}</span>
                     </div>
                     <h4 class="text-sm font-bold text-white truncate">${escapeHtml(t.subject)}</h4>
@@ -919,9 +1014,9 @@
             statusBadge.classList.remove('hidden');
             statusBadge.textContent = ticket.status;
             if (ticket.status === 'Open') {
-                statusBadge.className = 'px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] uppercase font-bold rounded';
+                statusBadge.className = 'f-tag f-tag-open';
             } else {
-                statusBadge.className = 'px-2 py-1 bg-zinc-500/10 border border-zinc-500/20 text-zinc-400 text-[9px] uppercase font-bold rounded';
+                statusBadge.className = 'f-tag f-tag-muted';
             }
             
             const currentUserId = sessionStorage.getItem('maya_user_id');
@@ -1019,7 +1114,7 @@
         var formatCurrency=function(n){return new Intl.NumberFormat('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);};
         var parseCurrency=function(s){if(!s)return 0;return parseFloat(s.replace(/[^0-9.-]+/g,""))||0;};
         var setupCurrencyInput=function(id){var el=document.getElementById(id);if(!el)return;el.addEventListener('blur',function(){var v=parseCurrency(el.value);if(v>0)el.value=formatCurrency(v);else el.value="";});el.addEventListener('focus',function(){var v=parseCurrency(el.value);if(v>0)el.value=v;});el.addEventListener('input',function(){el.dispatchEvent(new Event('calculate'));});};
-        function showToast(m){var t=document.getElementById('toast');document.getElementById('toast-message').innerText=m||"Value Copied";t.classList.remove('opacity-0','translate-y-4','pointer-events:none');setTimeout(function(){t.classList.add('opacity-0','translate-y-4','pointer-events-none');},2000);}
+        function showToast(m){var t=document.getElementById('toast');document.getElementById('toast-message').innerText=m||"Value Copied";t.classList.remove('opacity-0','translate-y-4','pointer-events-none');setTimeout(function(){t.classList.add('opacity-0','translate-y-4','pointer-events-none');},2000);}
         window.copyToClipboard=function(id){var t=document.getElementById(id).innerText||document.getElementById(id).value;navigator.clipboard.writeText(t).then(function(){showToast("Value Copied");});};
 
         // ===== VALIDATION FUNCTIONS =====
@@ -1030,7 +1125,7 @@
             let val = parseCurrency(raw);
             const errEl = document.getElementById(id+'-err');
             let valid = true; let msg = '';
-            if(raw === '') val = 0;
+            if(raw === ''){ if(errEl){errEl.style.display='none';errEl.textContent='';} el.classList.remove('input-error'); return false; }
             if(val < min) { valid = false; msg = errMsg || `Value must be at least ${min}.`; }
             else if(val > max) { valid = false; msg = errMsg || `Value cannot exceed ${max}.`; }
             else if(integer && !Number.isInteger(val)) { valid = false; msg = 'Value must be a whole number.'; }
@@ -1041,6 +1136,7 @@
 
         // ===== CLOCK & SHIFT TIMER =====
         function pad(n){return n<10?'0'+n:n;}
+        function todayLocalISO(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
         function updateClock(){var n=new Date();document.getElementById('live-date-time').textContent=n.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
         function updateShiftTimer() {
             var elapsed = Date.now() - shiftStartTime;
@@ -1053,13 +1149,17 @@
 
         // ===== LOADER =====
         function hideLoader(){var e=document.getElementById('loader');if(e)e.classList.add('hidden-loader');}
-        window.addEventListener('load',function(){setTimeout(hideLoader,1200);fetchLiveFxRates();});setTimeout(hideLoader,5000);
+        var bootFill=document.getElementById('boot-fill');
+        var bootPct=6,bootTimer=setInterval(function(){bootPct=Math.min(bootPct+3+Math.random()*7,88);if(bootFill)bootFill.style.width=bootPct+'%';},150);
+        function finishBoot(){clearInterval(bootTimer);if(bootFill)bootFill.style.width='100%';setTimeout(hideLoader,400);}
+        window.addEventListener('load',function(){finishBoot();fetchLiveFxRates();});
+        setTimeout(finishBoot,4000);setTimeout(hideLoader,5200);
         
         // ===== MILES CALCULATOR =====
         var spendInput=document.getElementById('spend-input'),multSelect=document.getElementById('multiplier-select'),customMult=document.getElementById('custom-multiplier'),milesInput=document.getElementById('miles-input');
         setupCurrencyInput('spend-input');
         function calculateMiles(){
-            if(!validateNum('spend-input', 0.01, Infinity, false, 'Spend must be greater than ₱0.')) return;
+            if(!validateNum('spend-input', 0.01, Infinity, false, 'Spend must be greater than ₱0.')){milesInput.value='0.00';document.getElementById('cash-value').textContent='0.00';document.getElementById('est-spend').textContent='0.00';return;}
             var v=parseCurrency(spendInput.value),ic=multSelect.value==='custom',m=ic?(parseFloat(customMult.value)||0):parseFloat(multSelect.value),mi=(v/40)*m;
             milesInput.value=formatCurrency(mi);document.getElementById('cash-value').textContent=formatCurrency(mi*0.16);document.getElementById('est-spend').textContent=formatCurrency(v);
         }
@@ -1070,10 +1170,7 @@
         // ===== FINANCE CALCULATOR =====
         setupCurrencyInput('loan-credit');setupCurrencyInput('partial-payment');
         function calcFinance(){
-            if(!validateNum('loan-credit', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
-            if(!validateNum('partial-payment', 0, Infinity, false, 'Payment cannot be negative.')) return;
-            if(!validateNum('loan-term', 1, 365, true, 'Term must be a whole number of days.')) return;
-            if(!validateNum('days-held', 0, 365, true, 'Days held must be a whole number.')) return;
+            if(!validateNum('loan-credit', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')||!validateNum('partial-payment', 0, Infinity, false, 'Payment cannot be negative.')||!validateNum('loan-term', 1, 365, true, 'Term must be a whole number of days.')||!validateNum('days-held', 0, 365, true, 'Days held must be a whole number.')){document.getElementById('fb-principal').textContent='₱0.00';document.getElementById('fb-interest').textContent='₱0.00';document.getElementById('finance-charge-result').textContent='0.00';return;}
             var l=parseCurrency(document.getElementById('loan-credit').value),p=parseCurrency(document.getElementById('partial-payment').value),t=parseFloat(document.getElementById('loan-term').value)||0,d=parseFloat(document.getElementById('days-held').value)||0,rem=Math.max(0,l-p),int=rem*0.03*(d/t),tot=rem+int;
             document.getElementById('fb-principal').textContent='₱'+formatCurrency(rem);document.getElementById('fb-interest').textContent='₱'+formatCurrency(int);document.getElementById('finance-charge-result').textContent=formatCurrency(tot);
         }
@@ -1084,8 +1181,7 @@
         setupCurrencyInput('landers-spend');setupCurrencyInput('total-card-spend');
         var landersCat=document.getElementById('landers-category'),landersCustom=document.getElementById('landers-custom-group'),landersCustomRate=document.getElementById('landers-custom-rate');
         function calcLanders(){
-            if(!validateNum('landers-spend', 0.01, Infinity, false, 'Transaction must be greater than ₱0.')) return;
-            if(!validateNum('total-card-spend', 0, Infinity, false, 'Accumulated cannot be negative.')) return;
+            if(!validateNum('landers-spend', 0.01, Infinity, false, 'Transaction must be greater than ₱0.')||!validateNum('total-card-spend', 0, Infinity, false, 'Accumulated cannot be negative.')){document.getElementById('landers-result').textContent='0.00';document.getElementById('voucher-result').textContent='0';document.getElementById('tier-breakdown').textContent='—';return;}
             var a=parseCurrency(document.getElementById('landers-spend').value),c=parseCurrency(document.getElementById('total-card-spend').value),cat=landersCat.value,rate=0,pts=0,breakdown='';
             if(cat==='landers'){var total=a+c;var t1=Math.min(total,3000)*0.01;var t2=total>3000?Math.min(total-3000,7000)*0.015:0;var t3=total>10000?Math.min(total-10000,40000)*0.02:0;var t4=total>50000?(total-50000)*0.025:0;pts=t1+t2+t3+t4;rate='Progressive';breakdown='0-3K: 1% | 3K-10K: 1.5% | 10K-50K: 2% | 50K+: 2.5%';}
             else if(cat==='dining'){rate=2;pts=a*0.02;breakdown='Flat 2% on dining';}
@@ -1100,11 +1196,9 @@
 
         // ===== EMI CALCULATOR =====
         setupCurrencyInput('emi-principal');
-        document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('emi-start-date').value = todayLocalISO();
         function calcEMI(){
-            if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
-            if(!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')) return;
-            if(!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')) return;
+            if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')||!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')||!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')){document.getElementById('emi-nominal-rate').textContent='0.00';document.getElementById('emi-daily-rate').textContent='0.000000';document.getElementById('emi-fixed-amount').textContent='0.00';document.getElementById('emi-total-interest').textContent='0.00';document.getElementById('emi-table-body').innerHTML='<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';document.getElementById('emi-breakdown').textContent='Enter loan details to generate formula breakdown...';return;}
             var P=parseCurrency(document.getElementById('emi-principal').value),EIR=parseFloat(document.getElementById('emi-rate').value)||0,N=parseInt(document.getElementById('emi-months').value)||0,D=parseInt(document.getElementById('emi-days-year').value)||365,startDate=document.getElementById('emi-start-date').value;
             var r=Math.pow(1+EIR/100,1/12)-1;
             var nominal=(Math.pow(1+EIR/100,12)-1)*100;
@@ -1123,19 +1217,19 @@
                 bal-=prinPaid;
                 if(bal<0)bal=0;
                 var dueDate=curDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-                html+='<tr class="border-t border-zinc-800/50"><td class="px-3 py-2.5 text-center text-zinc-500">'+i+'</td><td class="px-3 py-2.5 text-zinc-300">'+dueDate+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+daysInMonth+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal+prinPaid)+'</td><td class="px-3 py-2.5 text-right text-amber-400/70">'+formatCurrency(intAmt)+'</td><td class="px-3 py-2.5 text-right text-emerald-400/70">'+formatCurrency(prinPaid)+'</td><td class="px-3 py-2.5 text-right text-zinc-200 font-medium">'+formatCurrency(emi)+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal)+'</td></tr>';
+                html+='<tr class="border-t border-zinc-800/50"><td class="px-3 py-2.5 text-center text-zinc-500">'+i+'</td><td class="px-3 py-2.5 text-zinc-300">'+dueDate+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+daysInMonth+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal+prinPaid)+'</td><td class="px-3 py-2.5 text-right text-zinc-300">'+formatCurrency(intAmt)+'</td><td class="px-3 py-2.5 text-right text-emerald-400/70">'+formatCurrency(prinPaid)+'</td><td class="px-3 py-2.5 text-right text-zinc-200 font-medium">'+formatCurrency(emi)+'</td><td class="px-3 py-2.5 text-right text-zinc-400">'+formatCurrency(bal)+'</td></tr>';
                 curDate.setMonth(curDate.getMonth()+1);
             }
             document.getElementById('emi-table-body').innerHTML=html;
             document.getElementById('emi-breakdown').innerHTML = `Assumptions:\n  - 1 Month = ${D}/12 days = ${(D/12).toFixed(2)} days\n  - Interest compounds monthly based on EIR.\n\nFormulas:\n  1. Monthly Rate (r) = (1 + EIR)^(1/12) - 1\n     => (1 + ${EIR}%)^(1/12) - 1 = <span>${(r*100).toFixed(6)}%</span>\n\n  2. Nominal Annual Rate = (1 + r)^12 - 1\n     => (1 + ${(r*100).toFixed(6)}%)^12 - 1 = <span>${nominal.toFixed(4)}%</span>\n\n  3. Daily Rate = r * 12 / Days in Year\n     => ${(r*100).toFixed(6)}% * 12 / ${D} = <span>${(daily*100).toFixed(8)}%</span>\n\n  4. Fixed Monthly EMI = P * r * (1+r)^N / ((1+r)^N - 1)\n     => ₱${formatCurrency(P)} * ${(r*100).toFixed(6)}% * (1+${(r*100).toFixed(6)}%)^${N} / ((1+${(r*100).toFixed(6)}%)^${N} - 1)\n     => EMI = <span>₱${formatCurrency(emi)}</span>\n\n  5. Total Interest = (EMI * N) - P\n     => (₱${formatCurrency(emi)} * ${N}) - ₱${formatCurrency(P)} = <span>₱${formatCurrency(totalInt)}</span>\n\n  6. Per Month Interest = Remaining Principal * Daily Rate * Days in Month`;
         }
-        function resetEMI() { document.getElementById('emi-principal').value=''; document.getElementById('emi-rate').value='1.69'; document.getElementById('emi-months').value='6'; document.getElementById('emi-days-year').value='365'; document.getElementById('emi-start-date').value = new Date().toISOString().split('T')[0]; calcEMI(); showToast('EMI Fields Cleared'); }
+        function resetEMI() { document.getElementById('emi-principal').value=''; document.getElementById('emi-rate').value='1.69'; document.getElementById('emi-months').value='6'; document.getElementById('emi-days-year').value='365'; document.getElementById('emi-start-date').value = todayLocalISO(); calcEMI(); showToast('EMI Fields Cleared'); }
         ['emi-principal','emi-rate','emi-months','emi-days-year','emi-start-date'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',calcEMI);el.addEventListener('change',calcEMI);});
 
         // ===== BILLING & LATE FEES CALCULATOR =====
         setupCurrencyInput('bil-outstanding');
         function calcBilling() {
-            if(!validateNum('bil-outstanding', 0.01, Infinity, false, 'Outstanding balance must be greater than ₱0.')) return;
+            if(!validateNum('bil-outstanding', 0.01, Infinity, false, 'Outstanding balance must be greater than ₱0.')){document.getElementById('bil-mad').textContent='0.00';document.getElementById('bil-lpf').textContent='0.00';document.getElementById('bil-total-due').textContent='0.00';return;}
             var bal = parseCurrency(document.getElementById('bil-outstanding').value);
             var isPastDue = document.getElementById('bil-is-past-due').checked;
             var mad = Math.max(bal * 0.05, 500);
@@ -1184,17 +1278,17 @@
                         var lastUpdate = new Date(data.time_last_update_unix * 1000).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
                         statusEl.textContent = 'Live global rates loaded. Last updated: ' + lastUpdate;
                         alertEl.classList.remove('text-red-400', 'bg-red-500/5', 'border-red-500/10');
-                        alertEl.classList.add('text-cyan-400', 'bg-cyan-500/5', 'border-cyan-500/10');
+                        alertEl.classList.add('text-zinc-100', 'bg-zinc-800/40', 'border-zinc-700');
                         updateFxRateFromDropdown(); // Auto-populate initial rate
                     } else {
                         statusEl.textContent = 'Failed to load live rates. Using manual input.';
-                        alertEl.classList.remove('text-cyan-400', 'bg-cyan-500/5', 'border-cyan-500/10');
+                        alertEl.classList.remove('text-zinc-100', 'bg-zinc-800/40', 'border-zinc-700');
                         alertEl.classList.add('text-red-400', 'bg-red-500/5', 'border-red-500/10');
                     }
                 })
                 .catch(function() {
                     statusEl.textContent = 'Error fetching live rates. Check connection or input manually.';
-                    alertEl.classList.remove('text-cyan-400', 'bg-cyan-500/5', 'border-cyan-500/10');
+                    alertEl.classList.remove('text-zinc-100', 'bg-zinc-800/40', 'border-zinc-700');
                     alertEl.classList.add('text-red-400', 'bg-red-500/5', 'border-red-500/10');
                 });
         }
@@ -1208,8 +1302,7 @@
             }
         }
         function calcFX() {
-            if(!validateNum('fx-foreign-amt', 0.01, Infinity, false, 'Foreign amount must be greater than 0.')) return;
-            if(!validateNum('fx-rate', 0.0001, Infinity, false, 'Exchange rate must be greater than 0.')) return;
+            if(!validateNum('fx-foreign-amt', 0.01, Infinity, false, 'Foreign amount must be greater than 0.')||!validateNum('fx-rate', 0.0001, Infinity, false, 'Exchange rate must be greater than 0.')){document.getElementById('fx-base-php').value='0.00';document.getElementById('fx-total').textContent='0.00';return;}
             var forAmt = parseCurrency(document.getElementById('fx-foreign-amt').value);
             var rate = parseFloat(document.getElementById('fx-rate').value) || 0;
             var fee = parseFloat(document.getElementById('fx-fee').value) || 0;
@@ -1267,9 +1360,7 @@
 
         // ===== RECEIPT & EXPORT FUNCTIONS =====
         function generateReceipt() {
-            if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')) return;
-            if(!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')) return;
-            if(!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')) return;
+            if(!validateNum('emi-principal', 0.01, Infinity, false, 'Loan amount must be greater than ₱0.')||!validateNum('emi-rate', 0.01, 100, false, 'Interest rate cannot exceed 100%.')||!validateNum('emi-months', 1, 600, true, 'Term must be a whole number of months.')){document.getElementById('emi-nominal-rate').textContent='0.00';document.getElementById('emi-daily-rate').textContent='0.000000';document.getElementById('emi-fixed-amount').textContent='0.00';document.getElementById('emi-total-interest').textContent='0.00';document.getElementById('emi-table-body').innerHTML='<tr><td colspan="8" class="text-center text-zinc-500 py-6 text-sm font-sans normal-case">Enter loan details to generate amortization schedule...</td></tr>';document.getElementById('emi-breakdown').textContent='Enter loan details to generate formula breakdown...';return;}
             var P = document.getElementById('emi-principal').value, EIR = document.getElementById('emi-rate').value, N = document.getElementById('emi-months').value, emi = document.getElementById('emi-fixed-amount').textContent, totInt = document.getElementById('emi-total-interest').textContent, totalPay = formatCurrency(parseCurrency(emi) * parseInt(N));
             document.getElementById('rcpt-ref').textContent = 'MX-' + Math.floor(Math.random() * 900000 + 100000);
             document.getElementById('rcpt-date').textContent = new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
@@ -1293,16 +1384,16 @@
             doc.setFontSize(18); doc.setTextColor(0, 153, 90); doc.text('MAYA', 120, 40);
             doc.setFontSize(10); doc.setTextColor(100); doc.text('Mini Payments Computation', 95, 55); doc.text('Ref: ' + document.getElementById('rcpt-ref').textContent, 110, 67); doc.text('Date: ' + document.getElementById('rcpt-date').textContent, 105, 79);
             doc.setDrawColor(0); doc.line(20, 90, 300, 90); doc.setFontSize(12); doc.setTextColor(0);
-            doc.text('Principal:', 20, 110); doc.text('₱' + document.getElementById('emi-principal').value, 200, 110, {align: 'right'});
+            doc.text('Principal:', 20, 110); doc.text('PHP ' + document.getElementById('emi-principal').value, 200, 110, {align: 'right'});
             doc.text('Monthly EIR:', 20, 125); doc.text(document.getElementById('emi-rate').value + '%', 200, 125, {align: 'right'});
             doc.text('Term:', 20, 140); doc.text(document.getElementById('emi-months').value + ' months', 200, 140, {align: 'right'});
             doc.line(20, 155, 300, 155); var rows = []; var mainTable = document.getElementById('emi-table-body');
             for(var i=0; i<mainTable.rows.length; i++) { var row = mainTable.rows[i]; rows.push([row.cells[0].innerText, row.cells[1].innerText, row.cells[6].innerText, row.cells[7].innerText]); }
             doc.autoTable({ head: [['#', 'Due Date', 'Installment', 'Balance']], body: rows, startY: 165, theme: 'plain', styles: { fontSize: 8, cellPadding: 3, textColor: 0 }, headStyles: { fillColor: [255, 255, 255], textColor: 0, lineWidth: 0.1, lineColor: [0,0,0] }, columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } } });
             var finalY = doc.lastAutoTable.finalY + 10; doc.line(20, finalY, 300, finalY); finalY += 20;
-            doc.text('Monthly EMI:', 20, finalY); doc.text('₱' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'}); finalY += 15;
-            doc.text('Total Interest:', 20, finalY); doc.text('₱' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'}); finalY += 15;
-            doc.setFontSize(14); doc.text('TOTAL PAYABLE:', 20, finalY); doc.text('₱' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
+            doc.text('Monthly EMI:', 20, finalY); doc.text('PHP ' + document.getElementById('emi-fixed-amount').textContent, 200, finalY, {align: 'right'}); finalY += 15;
+            doc.text('Total Interest:', 20, finalY); doc.text('PHP ' + document.getElementById('emi-total-interest').textContent, 200, finalY, {align: 'right'}); finalY += 15;
+            doc.setFontSize(14); doc.text('TOTAL PAYABLE:', 20, finalY); doc.text('PHP ' + formatCurrency(parseCurrency(document.getElementById('emi-fixed-amount').textContent) * parseInt(document.getElementById('emi-months').value)), 200, finalY, {align: 'right'});
             finalY += 20; doc.line(20, finalY, 300, finalY); finalY += 20; doc.setFontSize(9); doc.setTextColor(100);
             doc.text('This is a system-generated computation.', 60, finalY); finalY += 12; doc.text('Not an official billing statement.', 75, finalY);
             doc.save('Maya_Receipt.pdf'); showToast('PDF Downloaded');
@@ -1350,7 +1441,7 @@
             if(!hist.length){list.innerHTML='<div class="text-center text-zinc-500 py-8 text-sm">No history saved yet.</div>';return;}
             var h='';
             for(var i=0;i<hist.length;i++){ var item=hist[i];
-                h+=`<div class="hist-item" onclick='loadHistory(${item.id})'><div class="flex justify-between items-start"><div><span class="hist-type">${item.type}</span><p class="hist-date">${item.date}</p></div><button onclick='event.stopPropagation();deleteHistory(${item.id})' class="text-zinc-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></div><p class="hist-summary">${item.summary}</p></div>`;
+                h+=`<div class="hist-item" onclick='loadHistory(${item.id})'><div class="flex justify-between items-start"><div><span class="hist-type">${escapeHtml(item.type)}</span><p class="hist-date">${escapeHtml(item.date)}</p></div><button onclick='event.stopPropagation();deleteHistory(${item.id})' class="text-zinc-500 hover:text-red-400 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></div><p class="hist-summary">${escapeHtml(item.summary)}</p></div>`;
             } list.innerHTML=h;
         }
         function deleteHistory(id){ var hist=getHistory().filter(function(item){return item.id!==id;}); localStorage.setItem('maya_calc_history',JSON.stringify(hist)); renderHistory(); showToast('History Deleted'); }
@@ -1360,7 +1451,7 @@
             if(item.type==='Miles'){ document.getElementById('spend-input').value=item.inputs.spend||''; document.getElementById('multiplier-select').value=item.inputs.mult||'1'; if(item.inputs.mult==='custom'){document.getElementById('custom-multiplier').value=item.inputs.customMult||'';document.getElementById('custom-multiplier').classList.remove('hidden');} calculateMiles(); }
             else if(item.type==='Finance'){ document.getElementById('loan-credit').value=item.inputs.loan||''; document.getElementById('partial-payment').value=item.inputs.pay||''; document.getElementById('loan-term').value=item.inputs.term||'30'; document.getElementById('days-held').value=item.inputs.held||'20'; calcFinance(); }
             else if(item.type==='Landers'){ document.getElementById('landers-spend').value=item.inputs.spend||''; document.getElementById('total-card-spend').value=item.inputs.acc||''; document.getElementById('landers-category').value=item.inputs.cat||'landers'; calcLanders(); }
-            else if(item.type==='EMI'){ document.getElementById('emi-principal').value=item.inputs.P||''; document.getElementById('emi-rate').value=item.inputs.EIR||'1.69'; document.getElementById('emi-months').value=item.inputs.N||'6'; document.getElementById('emi-days-year').value=item.inputs.D||'365'; document.getElementById('emi-start-date').value=item.inputs.startDate||new Date().toISOString().split('T')[0]; calcEMI(); }
+            else if(item.type==='EMI'){ document.getElementById('emi-principal').value=item.inputs.P||''; document.getElementById('emi-rate').value=item.inputs.EIR||'1.69'; document.getElementById('emi-months').value=item.inputs.N||'6'; document.getElementById('emi-days-year').value=item.inputs.D||'365'; document.getElementById('emi-start-date').value=item.inputs.startDate||todayLocalISO(); calcEMI(); }
             else if(item.type==='Billing'){ document.getElementById('bil-outstanding').value=item.inputs.bal||''; document.getElementById('bil-is-past-due').checked=item.inputs.pastDue||false; calcBilling(); }
             else if(item.type==='Due Date'){ document.getElementById('due-stmt-date').value=item.inputs.stmtDate||''; document.getElementById('due-grace-days').value=item.inputs.grace||'21'; calcDueDate(); }
             else if(item.type==='FX'){ document.getElementById('fx-currency-select').value=item.inputs.curr||'USD'; document.getElementById('fx-foreign-amt').value=item.inputs.forAmt||''; document.getElementById('fx-rate').value=item.inputs.rate||''; calcFX(); }
@@ -1372,6 +1463,21 @@
         document.getElementById('receiptModal').addEventListener('click',function(e){if(e.target===this)closeReceiptModal();});
         document.getElementById('sendReceiptModal').addEventListener('click',function(e){if(e.target===this)closeSendReceiptModal();});
         document.getElementById('itSupportModal').addEventListener('click',function(e){if(e.target===this)closeITSupportModal();});
+
+        // ===== NAV SCROLL-SPY (highlight the module you're looking at) =====
+        (function(){
+            var links = document.querySelectorAll('.quick-nav-btn');
+            var targets = [];
+            links.forEach(function(a){ var sec = document.querySelector(a.getAttribute('href')); if (sec) targets.push({ a: a, sec: sec }); });
+            function spy(){
+                var pos = window.scrollY + 160, current = null;
+                targets.forEach(function(t){ if (t.sec.getBoundingClientRect().top + window.scrollY <= pos) current = t; });
+                links.forEach(function(a){ a.classList.remove('f-nav-active'); });
+                if (current) current.a.classList.add('f-nav-active');
+            }
+            window.addEventListener('scroll', spy, { passive: true });
+            spy();
+        })();
     </script>
 </body>
 </html>
